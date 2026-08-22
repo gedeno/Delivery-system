@@ -8,11 +8,7 @@ from .models import User
 class UserModelTest(TestCase):
 
     def test_create_user(self):
-        user = User.objects.create_user(
-            username="gedeno",
-            email="gedeno@gmail.com",
-            password="password123"
-        )
+        user = User.objects.create_user(username="gedeno",email="gedeno@gmail.com",password="password123")
 
         self.assertEqual(user.username, "gedeno")
         self.assertEqual(user.email, "gedeno@gmail.com")
@@ -21,12 +17,7 @@ class UserModelTest(TestCase):
         self.assertTrue(user.is_active)
 
     def test_create_superuser(self):
-        user = User.objects.create_superuser(
-            username="admin",
-            email="admin@gmail.com",
-            password="admin123"
-        )
-
+        user = User.objects.create_superuser(username="admin",email="admin@gmail.com",password="admin123" )
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_active)
@@ -44,10 +35,7 @@ class UserAPITest(APITestCase):
             "password": "password123",
         }
 
-        response = self.client.post(
-            "/users/user/",
-            data,
-            format="json"
+        response = self.client.post("/users/user/",data,format="json"
         )
 
         self.assertEqual(
