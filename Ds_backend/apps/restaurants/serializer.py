@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Restaurants,Menu_item
+
+from .models import Menu_item, Restaurants
+
 
 class Restaurantserializer(serializers.ModelSerializer):
     class Meta:

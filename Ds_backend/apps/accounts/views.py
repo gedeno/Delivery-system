@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from .models import CustomUserManager ,User
-from . serializer import Userserializer
-from rest_framework.viewsets import ModelViewSet
+from typing import ClassVar
+
 from rest_framework.permissions import AllowAny
-from django.views.generic import CreateView ,ListView 
+from rest_framework.viewsets import ModelViewSet
+
+from .models import User
+from .serializer import Userserializer
+
 # Create your views here.
 
 class Createuser(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = Userserializer
-    permission_class = [AllowAny]
- 
+    permission_classes: ClassVar = [AllowAny]

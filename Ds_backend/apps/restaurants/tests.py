@@ -1,13 +1,12 @@
 from django.test import TestCase
-
-from django.test import TestCase
+from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.urls import reverse
 
 from apps.accounts.models import User
-from .models import Restaurants, Menu_item
-from .serializer import Restaurantserializer, Menu_itemserializer
+
+from .models import Menu_item, Restaurants
+from .serializer import Menu_itemserializer, Restaurantserializer
 
 
 class RestaurantSerializerTest(TestCase):
