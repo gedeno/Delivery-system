@@ -19,11 +19,7 @@ class CreateMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
     serializer_class = Menu_itemserializer
     permission_classes = [AllowAny]
-    def get_object(self):
-        res = Restaurants.objects.get(id = self.kwargs['pk'])
-        return res
-
     def perform_create(self, serializer):
-        serializer.save(restaurant = self.get_object())
+        serializer.save(restaurant = Restaurants.objects.get(id = self.kwargs['pk']))
         return super().perform_create(serializer)
     

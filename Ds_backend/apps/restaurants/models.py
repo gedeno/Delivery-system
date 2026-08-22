@@ -6,11 +6,12 @@ class Restaurants(models.Model):
     Res_name = models.CharField(max_length=200, unique=True)
     is_appruved = models.BooleanField(default=False)
     def __str__(self):
-        return self.R_name
+        return self.Res_name
     
 class Menu_item(models.Model):
     restaurant = models.ForeignKey(Restaurants , on_delete=models.CASCADE)
     Item_name = models.CharField(max_length=200)
-    price = models.DecimalField()
+    price = models.DecimalField(max_digits=10,
+    decimal_places=2)
     def __str__(self):
         return self.Item_name
