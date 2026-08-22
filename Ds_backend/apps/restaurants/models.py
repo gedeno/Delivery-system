@@ -4,6 +4,7 @@ from apps.accounts.models import User
 class Restaurants(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE )
     Res_name = models.CharField(max_length=200, unique=True)
+    is_appruved = models.BooleanField(default=False)
     def __str__(self):
         return self.R_name
     
