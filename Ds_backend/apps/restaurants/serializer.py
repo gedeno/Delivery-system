@@ -6,7 +6,7 @@ from .models import Menu_item, Restaurants
 class Restaurantserializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurants
-        fields = ["owner" , "Res_name" , "is_appruved"]
+        fields = ["owner" , "Res_name" ]
         extra_kwargs = {'owner':{'read_only':True}}
 
 class Menu_itemserializer(serializers.ModelSerializer):
