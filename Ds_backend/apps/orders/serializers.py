@@ -5,7 +5,7 @@ class Orderserializer(ModelSerializer):
     class Meta:
         model = Orders
         fields = ["id","customer","restaurants","status","totoal_amount"]
-        read_only_fields = ["customer","restaurants"]
+        read_only_fields = ["customer","restaurants","status"]
 
 class OrderItemSerializer(ModelSerializer):
     class Meta:

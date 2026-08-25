@@ -6,7 +6,7 @@ from apps.restaurants.models import Restaurants , Menu_item
 class Orders(models.Model):
     customer = models.ForeignKey(User, on_delete=models.CASCADE , related_name='customers')
     delivery = models.ForeignKey(User,on_delete=models.CASCADE ,default=1 , related_name='delivery')
-    restaurants = models.ForeignKey(User, on_delete=models.CASCADE )
+    restaurants = models.ForeignKey(Restaurants, on_delete=models.CASCADE )
     status = models.CharField(max_length=200)
     totoal_amount =  models.DecimalField(max_digits=5 , decimal_places=2)
     def __str__(self):

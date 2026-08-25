@@ -11,33 +11,33 @@ from apps.accounts.models import User
 class OrderViwSet(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = Orderserializer
-    def get_object(self):
-        return Restaurants.objects.get(id = self.kwargs['restaurants_id'])
+    def get_restaurant(self):
+        return Restaurants.objects.get(id = int(self.request.query_params.get('restaurant_id')))
     #def user(self):
         #deliver = User.objects.get(id = self.query_params.get("delivery"))
 
 
     def perform_create(self, serializer):
-        serializer.save(customer = self.request.user,restaurants = self.get_object)
+        serializer.save(customer = self.request.user,restaurants = self.get_restaurant())
         return super().perform_create(serializer)
     #..../?delivery=id&resturant=id
 
 class OrdermenuViewSet(ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-    def get_object(self):
-            return Restaurants.objects.get(id = self.kwargs['restaurants_id'])
+    def get_restaurant(self):
+            return Restaurants.objects.get(id = int(self.request.query_params.get('restaurant_id')))
     
     def perform_create(self, serializer):
-         serializer.save(restaurants = self.get_object)
+         serializer.save(restaurants = self.get_restaurant())
          return super().perform_create(serializer)
 
 class PymentViewSet(ModelViewSet):
      queryset = Payments.objects.all()
      serializer_class = PaymentsSerializer
-     def get_object(self):
-        return Restaurants.objects.get(id = self.kwargs['restaurants_id'])
+     def get_order(self):
+        return Orders.objects.get(id = int(self.request.query_params.get('order_id')))
         
      def perform_create(self, serializer):
-        serializer.save(restaurants = self.get_object)
+        serializer.save(order = self.get_order())
         return super().perform_create(serializer)
