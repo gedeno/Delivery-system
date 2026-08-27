@@ -25,7 +25,7 @@ export default function Home() {
 
         <section className="mx-auto max-w-7xl px-4 py-16">
           <h2 className="mb-12 text-center text-3xl font-bold to-gray-900">Built for Everyone</h2>
-          <div className="grid gap-8 sm:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {
               [
               { icon: UtensilsCrossed, title: "Customers", desc: "Browse, order, track & review" },
