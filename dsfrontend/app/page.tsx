@@ -2,6 +2,7 @@ import Image from "next/image";
 import { UtensilsCrossed, Truck, Store, Shield, Icon } from "lucide-react";
 import Link from "next/link";
 import { title } from "process";
+import { Button } from "./components/ui/Button";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
@@ -14,10 +15,10 @@ export default function Home() {
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Link href="">
-                <button className="bg-white text-black px-2 py-2 rounded-lg"> borwse Restaurants</button>
+                <Button className="bg-white text-black hover:scale-102 hover:bg-amber-700 border border-gray-200"> borwse Restaurants</Button>
               </Link>
               <Link href="">
-                <button className="bg-white text-black px-2 py-2 rounded-lg">Get Started</button>
+                <Button className="bg-white text-black hover:scale-102 hover:bg-amber-700 border border-gray-200">Get Started</Button>
               </Link>
             </div>
           </div>
