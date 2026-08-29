@@ -11,4 +11,5 @@ from .serializer import Userserializer
 class Createuser(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = Userserializer
-    permission_classes: ClassVar = [AllowAny]
+    permission_classes= [AllowAny]
+  

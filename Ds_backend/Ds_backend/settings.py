@@ -60,7 +60,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-
+APPEND_SLASH=False
 ROOT_URLCONF = 'Ds_backend.urls'
 AUTH_USER_MODEL = "accounts.User"
 TEMPLATES = [
