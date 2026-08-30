@@ -7,13 +7,17 @@ import api from '@/lib/api'
 import { useRouter } from "next/navigation"
 import { Input } from '@/app/components/ui/input'
 import { Button } from '@/app/components/ui/Button'
+import { Publicheader } from '@/app/components/layout/publiclayout'
+import { PublickFooter } from '@/app/components/layout/publiclayout'
 type Props = {}
 
 export default function Loginpage({}: Props) {
     
   return (
-    <div className='mt-20'>
+    <div className=''>
+        <Publicheader/>
         <Loginform/>
+        <PublickFooter/>
     </div>
 
   )

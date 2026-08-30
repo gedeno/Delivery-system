@@ -64,7 +64,7 @@ export default function Registerform(){
                 <Select onChange={(e)=>setformdata({...formdata,role:e.target.value})}  options={ROLE_OPTIONS} label="Role"/>
                 <div className="grid grid-cols-2 gap-3">
                     <Input onChange={imputhandler} label="Password"/>
-                    <Input onChange={imputhandler} label="Password"/>
+                    <Input onChange={imputhandler} label="confirm Password"/>
                 </div>
                 
                 <Button type="submit" className="w-full" >Create Account</Button>
