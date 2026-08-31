@@ -19,7 +19,7 @@ export function Publicheader() {
                     </Link>
                 </div>
                 <nav className="hidden items-center gap-4 lg:flex">
-                    <Link href="/restaurants" className="text-sm font-medium text-gray-600 hover:text-orange-500">Restarurants</Link>
+                    <Link href="/restaurants" className="text-sm font-medium text-gray-900 hover:text-orange-500 ">Restarurants</Link>
                     <Link href="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Login</Link>
                     <Link href="/register"  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600"
                     >Sign up</Link>

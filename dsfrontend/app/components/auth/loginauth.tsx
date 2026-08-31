@@ -55,8 +55,8 @@ export default function Loginform({}: Props) {
             <p className="text-center text-2xl font-bold">Welcom Back</p>
             <p className="mb-6 text-center text-sm text-gray-500">Sign in to you ASTUD Food account</p>
             <form action="" className="space-y-4" onSubmit={formsubmit}>
-                <Input onChange={inputhandler} label="username" type="text"/>
-                <Input onChange={inputhandler} label="password" type="password"/>
+                <Input onChange={inputhandler} label="username" type="text" name="username"/>
+                <Input onChange={inputhandler} label="password" type="password" name="password"/>
                 <Button className="w-full hover:scale-101" type="submit">Sign in</Button>
             </form>
             <p className="mt-6 text-center text-sm text-gray-500">Don&apos;t have an account? 

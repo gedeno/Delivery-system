@@ -13,6 +13,8 @@ interface RegisterData{
      username:string;
      password:string
      email:string;
+     role:string;
+     phone:string;
 }
 export const Register = async (data:RegisterData) => {
     const response = await api.post('/users/user/',data)
@@ -45,7 +47,7 @@ export default function Registerform(){
         e.preventDefault();
         try{
             await Register(formdata);
-            route.push("login")
+            route.push("/login")
         }catch(error){
             console.log(error)
         }
@@ -56,17 +58,20 @@ export default function Registerform(){
             <p className="mb-6 text-center text-sm text-gray-500">Join ASTU Food today</p>
             <form onSubmit={formhandle} action="" className="space-y-4">
                 <div className=" grid grid-cols-2 gap-3">
-                    <Input onChange={imputhandler} label="First name" name="first name" />
-                    <Input onChange={imputhandler} label="Last name"/>
+                    <Input onChange={imputhandler} label="First name" name="first_name" />
+                    <Input onChange={imputhandler} label="Last name" name="last_name"/>
                 </div>
-                <Input onChange={imputhandler} label="Phone"/>
-                <Input onChange={imputhandler} label="Email"/>
-                <Select onChange={(e)=>setformdata({...formdata,role:e.target.value})}  options={ROLE_OPTIONS} label="Role"/>
-                <div className="grid grid-cols-2 gap-3">
-                    <Input onChange={imputhandler} label="Password"/>
-                    <Input onChange={imputhandler} label="confirm Password"/>
+                <div className=" grid grid-cols-2 gap-3">
+                    <Input onChange={imputhandler} label="username" name="username"/>
+                    <Input onChange={imputhandler} label="Phone" name="phone"/>
                 </div>
                 
+                <Input onChange={imputhandler} label="Email" name="email"/>
+                <Select onChange={(e)=>setformdata({...formdata,role:e.target.value})}  options={ROLE_OPTIONS} name="role" label="Role"/>
+                <div className="grid grid-cols-2 gap-3">
+                    <Input onChange={imputhandler} label="Password" type="password" name="password"/>
+                    <Input label="confirm Password"/>
+                </div>
                 <Button type="submit" className="w-full" >Create Account</Button>
             </form>
             <p className="mt-6 text-center text-sm text-gray-500">Already have an account?
