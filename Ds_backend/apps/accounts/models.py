@@ -26,6 +26,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=300)
     username = models.CharField(max_length=200 , unique=True)
     email = models.CharField(max_length=200,unique=True)
+    phone = models.CharField(max_length=20)
+    role = models.CharField(max_length=300)
 
     is_verified = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

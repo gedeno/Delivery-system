@@ -12,4 +12,8 @@ class Createuser(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = Userserializer
     permission_classes= [AllowAny]
+    def perform_create(self, serializer):
+        serializer.save()
+        print(serializer.data)
+        
   
