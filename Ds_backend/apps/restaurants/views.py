@@ -1,6 +1,6 @@
 from typing import ClassVar
 
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Menu_item, Restaurants
@@ -11,10 +11,10 @@ from .serializer import Menu_itemserializer, Restaurantserializer
 class CreateRestaurant(ModelViewSet):
     queryset = Restaurants.objects.all()
     serializer_class = Restaurantserializer
-    permission_classes: ClassVar = [AllowAny]
+    permission_classes: ClassVar = [IsAuthenticated]
     def perform_create(self, serializer):
         serializer.save(owner = self.request.user)
-        return super().perform_create(serializer)
+        print(serializer.data)
     
 class CreateMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
