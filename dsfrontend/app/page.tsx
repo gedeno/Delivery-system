@@ -1,10 +1,15 @@
+"use client"
 import Image from "next/image";
 import { UtensilsCrossed, Truck, Store, Shield, Icon } from "lucide-react";
 import Link from "next/link";
 import { title } from "process";
 import { Button } from "./components/ui/Button";
+import { PublickFooter,Publicheader } from "./components/layout/publiclayout";
 export default function Home() {
   return (
+    <div>
+    <Publicheader/>
+
     <div className="flex min-h-screen flex-col">
       <main className="flex-1">
         <section className="bg-linear-to-br from-orange-500 to-orange-600 px-4 py-20 text-white">
@@ -47,7 +52,8 @@ export default function Home() {
           </div>
         </section>
       </main>
-      
+    </div>
+    <PublickFooter/>
     </div>
   );
 }

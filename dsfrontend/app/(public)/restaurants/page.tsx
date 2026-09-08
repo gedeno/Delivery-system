@@ -19,7 +19,15 @@ export default function RestaurantsPage(){
                             </div>
                         </div>
                     </div>
-                    <div className=" mt-20 grid grid-cols-2 md:grid-cols-3">
+                    <div className=" mt-20 grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
+                        <Restaurantcard/>
                         <Restaurantcard/>
                     </div>
                     
