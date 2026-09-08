@@ -78,7 +78,7 @@ const restaurant_owner = [
   },
   {
     label: "My Restaurants",
-    href: "/dashboard/owner/restaurants",
+    href: "/dashboard/owner/MyRestaurants",
     icon: <Store className="h-5 w-5" />,
   },
   {
@@ -138,7 +138,7 @@ const admin = [
 export function DashboardHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const Roles = customer;
+  const Roles = restaurant_owner;
   const itemCount = 5;
   return (
     <>
@@ -203,8 +203,13 @@ export function DashboardHeader() {
       >
         <nav className="flex flex-col gap-2">
           {Roles.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+            // Determine if this item is the base/dashboard route
+            const isBaseRoute = item.href === "/dashboard/owner";
+
+            const isActive = isBaseRoute
+              ? pathname === item.href // Must be an EXACT match for the dashboard link
+              : pathname === item.href || pathname.startsWith(`${item.href}/`); // Nested match allowed for other links
+
             return (
               <Link
                 key={item.href}
@@ -213,7 +218,7 @@ export function DashboardHeader() {
                   "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                   isActive
                     ? "bg-orange-500 text-white"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-amber-600 dark:hover:bg-slate-800 dark:hover:text-white",
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-amber-600 dark:hover:bg-slate-800 dark:hover:text-white"
                 )}
               >
                 {item.icon}

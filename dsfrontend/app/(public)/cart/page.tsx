@@ -54,8 +54,8 @@ export default function Cart(){
                         </div>
                         </div>
                         <div className="mt-4 flex justify-between text-lg font-bold">
-                        <span>${total}</span>
-                        <span className="text-orange-500">50</span>
+                        <span>Total</span>
+                        <span className="text-orange-500">${total}</span>
                         </div>
                         <Link href='' className="mt-6 block">
                         <Button className="w-full">Proceed to Checkout</Button>
