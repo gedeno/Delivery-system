@@ -4,10 +4,62 @@ import { Button } from "@/app/components/ui/Button"
 import Link from "next/link"
 import { MapPin, Plus ,X } from "lucide-react"
 import Restaurantcard from "@/app/components/ui/restaurantcard"
-import { useState } from "react"
+import { useState ,useEffect } from "react"
 import { Input } from "@/app/components/ui/input"
+import api from "@/lib/api"
 export default function OwnerRestaurantpage(){
     const [isOpen, setIsOpen] = useState(false);
+    const [formdata , setFormdata] = useState({
+        "Res_name":"",
+        "address":"",
+        "image":"",
+    })
+    const changehandler = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setFormdata({
+            ...formdata,
+            [e.target.name]:e.target.value
+        })
+    }
+   
+
+    const filechangehandler = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setFormdata({
+            ...formdata,
+            [e.target.name]:e.target.files?.[0]
+        })
+    }
+     const submitform = async(e:React.FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+        const FD = new FormData()
+        FD.append("Res_name",formdata.Res_name)
+        FD.append("address",formdata.address)
+        FD.append("image",formdata.image)
+        try{
+            const response = await api.post("/restaurants/restaurant/",FD)
+            console.log(response.data)
+            setIsOpen(false)
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    const [restaurants ,setRestaurants]=useState<any[]>([])
+
+    useEffect(()=>{
+        const fetchRestaurants = async()=>{
+            try{
+                const response = await api.get("/restaurants/restaurant/")
+                setRestaurants(response.data)
+            }catch(error){
+                console.log(error)
+            }
+        }
+        fetchRestaurants()
+    },[])
+
+
+
+    
     return(
         <div>
             <DashboardHeader/>
@@ -20,12 +72,12 @@ export default function OwnerRestaurantpage(){
                         <Button  onClick={() => setIsOpen(true)}><Plus className="h-4 w-4" /> Add Restaurant</Button>
                 </div>
                 <div className="grid gap-6 lg:grid-cols-2">
-                    <Restaurantcard/>
-                    <Restaurantcard/>
-                    <Restaurantcard/>
-                    <Restaurantcard/>
-                    <Restaurantcard/>
-                    <Restaurantcard/>
+                    {restaurants.map((item) => (
+                    <Restaurantcard
+                    key={item.id}
+                    item={item}
+                    />
+                    ))}
                 </div>
                 {isOpen && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -33,13 +85,13 @@ export default function OwnerRestaurantpage(){
                         <div className="bg-white rounded-2xl w-full max-w-xl p-4 flex flex-col">
                             <button onClick={() => setIsOpen(false)} className="self-end justify-end hover:bg-red-300 rounded bg-gray-400" ><X/></button>
                             <h1 className="font-semibold">Restaurant Details</h1>
-                            <div className="mt-6 space-y-4">
-                                <Input label="Restaurant Name"/>
-                                <Input label="Address"/>
+                            <form onSubmit={submitform} className="mt-6 space-y-4">
+                                <Input name ="Res_name" onChange={changehandler} label="Restaurant Name"/>
+                                <Input name="address" label="Address" onChange={changehandler} />
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
                                         <label className="mb-1.5 block text-sm font-medium text-gray-700">Restaurant Logo</label>
-                                        <input type="text"  
+                                        <input type="file"name="image" onChange={filechangehandler} 
                                         className="w-full rounded-lg border border-gray-300 p-2 text-sm text-gray-600" />
                                     </div>
                                     <div>
@@ -49,8 +101,8 @@ export default function OwnerRestaurantpage(){
                                     </div>
                                 </div>
                                 
-                                <Button onClick={()=> setIsOpen(false)} className="w-full">Create Restaurant</Button>
-                            </div>
+                                <Button type="submit" className="w-full">Create Restaurant</Button>
+                            </form>
                             
                         </div>
 

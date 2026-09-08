@@ -4,7 +4,22 @@ import { DashboardHeader } from "@/app/components/layout/Dashboardlayout";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import Restaurantcard from "@/app/components/ui/restaurantcard";
+import { useState, useEffect } from "react";
 export default function RestaurantsPage(){
+     const [restaurants ,setRestaurants]=useState<any[]>([])
+    
+        useEffect(()=>{
+            const fetchRestaurants = async()=>{
+                try{
+                    const response = await api.get("/restaurants/restaurant/")
+                    setRestaurants(response.data)
+                }catch(error){
+                    console.log(error)
+                }
+            }
+            fetchRestaurants()
+        },[])
+    
     return(
         <div>
             <DashboardHeader/> 
@@ -20,15 +35,13 @@ export default function RestaurantsPage(){
                         </div>
                     </div>
                     <div className=" mt-20 grid grid-cols-2 md:grid-cols-3 gap-3">
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
-                        <Restaurantcard/>
+                        {restaurants.map((item) => (
+                                            <Restaurantcard
+                                            key={item.id}
+                                            item={item}
+                                            />
+                                            ))}
+                 
                     </div>
                     
                 </div>

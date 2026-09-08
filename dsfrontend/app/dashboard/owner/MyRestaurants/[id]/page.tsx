@@ -58,8 +58,12 @@ export default function OwnerRestaurantpage(){
                             <button onClick={() => setIsOpen(false)} className="self-end justify-end hover:bg-red-300 rounded bg-gray-400" ><X/></button>
                             <h1 className="font-semibold">Restaurant Details</h1>
                             <div className="mt-6 space-y-4">
-                                <Input label="Menu Name"/>
                                 <Input label="Category"/>
+                                <Input label="Menu Name"/>
+                               
+                                <label className="mb-1.5 block text-sm font-medium text-gray-700">Menu Logo</label>
+                                        <input type="file"  
+                                        className="w-full rounded-lg border border-gray-300 p-2 text-sm text-gray-600" />
                                 <div className="grid grid-cols-2 gap-2">
                                     <div>
                                        
