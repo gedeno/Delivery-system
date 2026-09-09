@@ -3,8 +3,8 @@ from typing import ClassVar
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Menu_item, Restaurants
-from .serializer import Menu_itemserializer, Restaurantserializer
+from .models import Menu_item, Restaurants ,Cart
+from .serializer import Menu_itemserializer, Restaurantserializer , Cartserialiser
 
 # Create your views here.
 
@@ -30,4 +30,14 @@ class CreateMenu(ModelViewSet):
         if restaurant_id:
             return Menu_item.objects.filter(restaurant_id = restaurant_id)
         return Menu_item.objects.all()
-    
+class CreateCart(ModelViewSet):
+    queryset = Cart.objects.all()
+    serializer_class = Cartserialiser
+    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        menu_id = self.request.query_params.get("menu_id")
+        menu = Menu_item.objects.get(id = menu_id)
+        serializer.save(item=menu , user=self.request.user)
+    def get_queryset(self):
+        cart_items = Cart.objects.filter( user=self.request.user) 
+        return cart_items
