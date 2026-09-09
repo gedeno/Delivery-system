@@ -24,6 +24,10 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useEffect } from "react";
+import { UserData } from "@/lib/UserData";
+import { UserLogout } from "../auth/logout";
+import { REFRESH_TOKEN, ACCESS_TOKEN } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 const customer = [
   {
@@ -70,7 +74,7 @@ const delivery = [
     icon: <User className="h-5 w-5" />,
   },
 ];
-const restaurant_owner = [
+const Restaurant_owner = [
   {
     label: "Dashboard",
     href: "/dashboard/owner",
@@ -138,8 +142,25 @@ const admin = [
 export function DashboardHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  const Roles = restaurant_owner;
+  
   const itemCount = 5;
+  const user = UserData();
+  const navItems =
+    user?.role === "Restaurant_owner"
+        ? Restaurant_owner
+        : user?.role === "delivery"
+        ? delivery
+        : user?.role === "admin"
+        ? admin
+        : customer;
+  const router = useRouter()
+  const UserLogout = () =>{
+      localStorage.removeItem(ACCESS_TOKEN)
+      localStorage.removeItem(REFRESH_TOKEN)
+      router.push("/login")
+  
+  }
+  
   return (
     <>
       <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 dark:bg-gray-900 dark:border-gray-500 backdrop-blur">
@@ -178,12 +199,14 @@ export function DashboardHeader() {
             </Link>
             <div className="hidden text-sm text-gray-600 sm:block dark:text-slate-200">
               <span className="font-medium text-gray-900 dark:text-white">
-                Jeles Geremew
+                {user?.first_name} {user?.last_name}
               </span>
             </div>
             <button
               className="p-2 rounded-lg text-gray-600 hover:bg-red-500 hover:text-red-600 dark:text-gray-300 dark:hover:bg-red-900/20"
               aria-label="logout"
+              onClick={UserLogout}
+
             >
               <IoLogOutOutline size={20} />
             </button>
@@ -202,7 +225,7 @@ export function DashboardHeader() {
         }`}
       >
         <nav className="flex flex-col gap-2">
-          {Roles.map((item) => {
+          {navItems.map((item) => {
             // Determine if this item is the base/dashboard route
             const isBaseRoute = item.href === "/dashboard/owner";
 

@@ -19,7 +19,7 @@ export default function Home() {
               meals at your doorstep.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-              <Link href="">
+              <Link href="restaurants/">
                 <Button className="bg-white text-black hover:scale-102 hover:bg-amber-700 border border-gray-200"> borwse Restaurants</Button>
               </Link>
               <Link href="">

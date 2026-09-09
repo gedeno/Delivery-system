@@ -5,20 +5,11 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import Restaurantcard from "@/app/components/ui/restaurantcard";
 import { useState, useEffect } from "react";
+import { RestaurantData } from "@/lib/RestaurantsData";
 export default function RestaurantsPage(){
-     const [restaurants ,setRestaurants]=useState<any[]>([])
-    
-        useEffect(()=>{
-            const fetchRestaurants = async()=>{
-                try{
-                    const response = await api.get("/restaurants/restaurant/")
-                    setRestaurants(response.data)
-                }catch(error){
-                    console.log(error)
-                }
-            }
-            fetchRestaurants()
-        },[])
+    const restaurants = RestaurantData() || [];
+
+     
     
     return(
         <div>

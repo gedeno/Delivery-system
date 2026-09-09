@@ -3,7 +3,9 @@ import { useState } from "react"
 import { Menu,UtensilsCrossed,X } from "lucide-react"
 import Link from "next/link";
 
+
 export function Publicheader() {
+    
     const [mobileOpen, setMobileOpen] = useState(false);
     return(
         <>

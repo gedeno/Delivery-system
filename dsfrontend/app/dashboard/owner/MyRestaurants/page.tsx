@@ -7,6 +7,7 @@ import Restaurantcard from "@/app/components/ui/restaurantcard"
 import { useState ,useEffect } from "react"
 import { Input } from "@/app/components/ui/input"
 import api from "@/lib/api"
+import { RestaurantData } from "@/lib/RestaurantsData"
 export default function OwnerRestaurantpage(){
     const [isOpen, setIsOpen] = useState(false);
     const [formdata , setFormdata] = useState({
@@ -43,19 +44,8 @@ export default function OwnerRestaurantpage(){
         }
     }
 
-    const [restaurants ,setRestaurants]=useState<any[]>([])
-
-    useEffect(()=>{
-        const fetchRestaurants = async()=>{
-            try{
-                const response = await api.get("/restaurants/restaurant/")
-                setRestaurants(response.data)
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchRestaurants()
-    },[])
+    const restaurants =  RestaurantData() || []
+   
 
 
 
