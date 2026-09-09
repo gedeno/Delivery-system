@@ -8,7 +8,7 @@ import Restaurantcard from "@/app/components/ui/restaurantcard";
 import { useParams } from "next/navigation";
 import { RestaurantData } from "@/lib/RestaurantsData";
 import { MenuData } from "@/lib/MenuData";
-
+import { useState,useEffect } from "react";
 export default function RestaurantDetailPage(){
     const params = useParams()
     const id = Number(params.id)
@@ -17,6 +17,17 @@ export default function RestaurantDetailPage(){
     const current_restaurant = restaurants.find(
         (restaurant) => restaurant.id === id
     )
+    const addcart = () =>{
+        api.post(`/restaurants/cart/?menu_id=${id}`)
+        .then((res) =>{
+            console.log(res.data)
+        }).catch((error)=>{
+            console.log(error)
+        })
+
+    }
+
+
     return(
         <div>
             <DashboardHeader/>

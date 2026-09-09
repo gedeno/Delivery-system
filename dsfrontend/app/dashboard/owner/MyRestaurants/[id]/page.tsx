@@ -66,9 +66,6 @@ export default function OwnerRestaurantpage(){
     return(
         <div>
             <DashboardHeader/>
-
-          
-
             <div className="space-y-6 px-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -99,7 +96,7 @@ export default function OwnerRestaurantpage(){
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     {menus?.map((item)=>(
-                        <FoodCard key={item.description} item={item}/>
+                        <FoodCard key={item.id} item={item}/>
                     ))}
                  
                 </div>

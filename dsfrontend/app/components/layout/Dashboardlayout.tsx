@@ -74,7 +74,7 @@ const delivery = [
     icon: <User className="h-5 w-5" />,
   },
 ];
-const Restaurant_owner = [
+const restaurant_owner = [
   {
     label: "Dashboard",
     href: "/dashboard/owner",
@@ -146,8 +146,8 @@ export function DashboardHeader() {
   const itemCount = 5;
   const user = UserData();
   const navItems =
-    user?.role === "Restaurant_owner"
-        ? Restaurant_owner
+    user?.role === "restaurant_owner"
+        ? restaurant_owner
         : user?.role === "delivery"
         ? delivery
         : user?.role === "admin"

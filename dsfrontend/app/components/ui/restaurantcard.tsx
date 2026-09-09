@@ -22,7 +22,7 @@ interface RestaurantCardProps {
 export default function Restaurantcard({ item }: RestaurantCardProps) {
 
     const user = UserData();
-    const hrif = user?.role === "Restaurant_owner"
+    const hrif = user?.role === "restaurant_owner"
     ? "dashboard/owner/MyRestaurants"
     : "restaurants";
 
