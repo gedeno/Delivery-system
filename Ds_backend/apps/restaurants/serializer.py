@@ -12,5 +12,5 @@ class Restaurantserializer(serializers.ModelSerializer):
 class Menu_itemserializer(serializers.ModelSerializer):
     class Meta:
         model= Menu_item
-        fields = ["restaurant","Item_name" , "price","image","description","Category"]
-        #extra_kwargs ={'restaurant':{'read_only':True}}
+        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category"]
+        extra_kwargs ={'restaurant':{'read_only':True} ,'id':{'read_only':True}}
