@@ -1,5 +1,5 @@
 from typing import ClassVar
-
+from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
@@ -41,3 +41,10 @@ class CreateCart(ModelViewSet):
     def get_queryset(self):
         cart_items = Cart.objects.filter( user=self.request.user) 
         return cart_items
+    def delete(self, request ,*args,**kwargs):
+        menu_id = self.request.query_params.get("menu_id")
+        menu = Cart.objects.get(item = menu_id)
+        menu.delete()
+        return Response({
+        "message": "Item removed from cart"
+         })

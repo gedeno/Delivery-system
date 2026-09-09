@@ -48,6 +48,10 @@ export default function Cart(){
             console.log(error)
          })
     },[])
+      const removefromcart =(id:number)=>{
+        api.delete(`/restaurants/cart/?menu_id=${id}`)
+    }
+
 
 
 
@@ -80,7 +84,8 @@ export default function Cart(){
                                     <p>{quantity}</p>
                                     <button className=" border rounded border-gray-400 " onClick={count}><Plus size={20}/></button>
                                     </div> 
-                                <div className="flex items-center gap-3 mr-3 font-semibold" ><p>${total}</p><Trash2 size={16} className="text-orange-500"/></div>
+                                <div className="flex items-center gap-3 mr-3 font-semibold" ><p>${total}</p> 
+                                <button onClick={() => removefromcart(item.items.id)}><Trash2 size={16} className="text-orange-500"/></button></div>
                             </div>
                         
                         </div>
