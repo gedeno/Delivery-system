@@ -14,11 +14,18 @@ interface Menu {
     "id":number;
 
 }
-interface Menucardprop{
-    item:Menu;
+
+interface Modal {
+    isOpen: boolean;
+    food_id?: number | null;
 }
 
-export default function FoodCard({ item }:Menucardprop){
+interface Menucardprop{
+    item:Menu;
+    setModal: null | ((modal: Modal)=>void) ;
+}
+
+export default function FoodCard({ item, setModal }:Menucardprop){
      const addcart = () =>{
         api.post(`/restaurants/cart/?menu_id=${item.id}`)
         .then((res) =>{
@@ -28,10 +35,15 @@ export default function FoodCard({ item }:Menucardprop){
         })
     }
 
+    const buy = () =>{
+        if (!setModal) return;
+        setModal({isOpen: true, food_id: item.id})
+    }
+
     return(
         <div className="border dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-2xl pb-3 hover:shadow-2xl hover:-translate-y-1 transition hover:border-orange-500 ">
-            <div className="h-60 border dark:border-gray-600 rounded-2xl border-gray-200  bg-amber-500">
-                <img src={item.image} alt={item.Item_name} className='w-full h-full object-cover rounded-2xl md:rounded-l-2xl' />
+            <div className="h-60 border dark:border-gray-600 rounded-t-2xl border-gray-200  bg-amber-500">
+                <img src={item.image} alt={item.Item_name} className='w-full h-full object-cover rounded-t-2xl md:rounded-t-2xl' />
             </div>
             <div className="">
                 <div className="flex justify-between items-center w-full px-5 mt-4">
@@ -45,7 +57,7 @@ export default function FoodCard({ item }:Menucardprop){
                 <div className="flex justify-between items-center w-full px-5">
                     <p className="font-bold text-xl ">${item.price}</p>
                     <div className="flex gap-4">
-                        <Button>buy</Button>
+                        <Button onClick={buy}>buy</Button>
                     <Button onClick={addcart}><Plus className ="text-sm" size={20}/> add to cart</Button>
                     </div>
                 </div>

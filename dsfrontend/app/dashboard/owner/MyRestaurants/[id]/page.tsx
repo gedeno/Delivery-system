@@ -96,7 +96,7 @@ export default function OwnerRestaurantpage(){
 
                 <div className="grid gap-6 lg:grid-cols-3">
                     {menus?.map((item)=>(
-                        <FoodCard key={item.id} item={item}/>
+                        <FoodCard key={item.id} setModal={null} item={item}/>
                     ))}
                  
                 </div>

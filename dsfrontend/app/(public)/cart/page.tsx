@@ -53,10 +53,6 @@ export default function Cart(){
     }
 
 
-
-
-
-
     return(
         <div>
             <DashboardHeader/>
@@ -83,17 +79,15 @@ export default function Cart(){
                                     <button className=" border rounded border-gray-400 " onClick={discount}><Minus size={20}/></button>
                                     <p>{quantity}</p>
                                     <button className=" border rounded border-gray-400 " onClick={count}><Plus size={20}/></button>
-                                    </div> 
+                                </div> 
                                 <div className="flex items-center gap-3 mr-3 font-semibold" ><p>${total}</p> 
                                 <button onClick={() => removefromcart(item.items.id)}><Trash2 size={16} className="text-orange-500"/></button></div>
                             </div>
                         
                         </div>
-                    </div>
-                               
+                    </div>     
                     ))}
-                    
-                    
+        
                 </div>
                 <div className="h-fit border rounded-2xl border-gray-400 p-4 mt-10">
                         <h3 className="mb-4 text-lg font-semibold">Order Summary</h3>

@@ -4,11 +4,19 @@ import { DashboardHeader } from "@/app/components/layout/Dashboardlayout";
 import Link from "next/link";
 import { ArrowLeft, MapPin } from "lucide-react";
 import FoodCard from "@/app/components/ui/foodcard"
-import Restaurantcard from "@/app/components/ui/restaurantcard";
 import { useParams } from "next/navigation";
 import { RestaurantData } from "@/lib/RestaurantsData";
 import { MenuData } from "@/lib/MenuData";
 import { useState,useEffect } from "react";
+import { Modalview } from "@/app/components/ui/modal";
+
+
+
+export interface Modal {
+    isOpen: boolean;
+    food_id?: number | null;
+}
+
 export default function RestaurantDetailPage(){
     const params = useParams()
     const id = Number(params.id)
@@ -17,15 +25,10 @@ export default function RestaurantDetailPage(){
     const current_restaurant = restaurants.find(
         (restaurant) => restaurant.id === id
     )
-    const addcart = () =>{
-        api.post(`/restaurants/cart/?menu_id=${id}`)
-        .then((res) =>{
-            console.log(res.data)
-        }).catch((error)=>{
-            console.log(error)
-        })
-
-    }
+   
+    const [modal, setModal] = useState<Modal>({isOpen:false, food_id:null})
+    
+    
   
 
     return(
@@ -50,16 +53,17 @@ export default function RestaurantDetailPage(){
                             </div>      
                         </div>
                     </div>
- 
+
                 <div className="grid lg:grid-cols-3 sm:grid-cols-2 gap-3">
                    {menus?.map((item)=>(
-                        <FoodCard key={item.id} item ={item}/>
+                        <FoodCard key={item.id} item ={item}  setModal={setModal}/>
                     ))}
-
                 </div>
-
             </div>
-
+            {modal?.isOpen &&(
+                <Modalview setModal={setModal} modal={modal}></Modalview>
+            )}
+            
         </div>
     )
 
