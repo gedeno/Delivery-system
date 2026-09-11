@@ -8,7 +8,7 @@ class Orders(models.Model):
     delivery = models.ForeignKey(User,on_delete=models.CASCADE ,default=1 , related_name='delivery')
     restaurants = models.ForeignKey(Restaurants, on_delete=models.CASCADE )
     status = models.CharField(max_length=200 , default="ordering")
-    totoal_amount =  models.DecimalField(max_digits=5 , decimal_places=2)
+    total_amount =  models.DecimalField(max_digits=5 , decimal_places=2)
     def __str__(self):
         return self.status
 

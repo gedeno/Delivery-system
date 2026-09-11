@@ -4,7 +4,7 @@ from .models import Orders,OrderItem,Payments,Reviews
 class Orderserializer(ModelSerializer):
     class Meta:
         model = Orders
-        fields = ["id","customer","restaurants","status","totoal_amount"]
+        fields = ["id","customer","restaurants","status","total_amount"]
         read_only_fields = ["id", "customer","restaurants","status"]
 
 class OrderItemSerializer(ModelSerializer):
