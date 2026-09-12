@@ -5,6 +5,7 @@ import { Minus,Plus,X } from 'lucide-react'
 import api from '@/lib/api'
 import { useParams } from 'next/navigation'
 import { MenuData } from '@/lib/MenuData'
+import { Button } from './Button'
 type Props = {
     setModal:(modal:Modal)=>void;
     modal:Modal
@@ -14,7 +15,7 @@ interface Order{
     id:number;
     customer:number;
     restaurants:number;
-    totoal_amount:number
+    total_amount:number
 }
 interface OrderItem {
   id: number;
@@ -49,12 +50,13 @@ export const Modalview = (props: Props) => {
         const menu = menus?.find((m)=>m.id === props.modal.food_id)
         const menu_price = menu?.price
 
-        const submithandler = (e:React.FormEvent<HTMLInputElement>) =>{
-            e.preventDefault()
+        const submithandler = () =>{
             if (!menu_price)return
-            api.post(`/orders/order/?restaurant_id=${id}/menu_id=${props.modal.food_id}`,{totoal_amount:quantity*menu_price})
+            api.post(`/orders/order/?restaurant_id=${id}&menu_id=${props.modal.food_id}`,
+                {total_amount:quantity*menu_price,quantity:quantity})
             .then((res) =>{
                 console.log(res.data)
+                props.setModal({...props.modal, isOpen: false})
             }).catch((error)=>{
                 console.log(error)
             })
@@ -67,12 +69,16 @@ export const Modalview = (props: Props) => {
                     <div className="bg-white rounded-2xl w-full max-w-xl p-4 flex flex-col">
                         <button onClick={() => props.setModal({...props.modal, isOpen: false})} className="self-end justify-end hover:bg-red-300 rounded bg-gray-400" ><X/></button>
                             <h1 className="font-semibold">Order foods</h1>
-                            <div className="flex items-center gap-3">
+                            
+                                <div  className='flex flex-col gap-3'>
+                                    <div className="flex items-center gap-3">
                                     <button className=" border rounded border-gray-400 " onClick={()=>{discount()}}><Minus size={20}/></button>
                                     <p>{quantity}</p>
                                     <button className=" border rounded border-gray-400 " onClick={count}><Plus size={20}/></button>
-                                </div> 
-                         
+                                    </div>
+                                    <Button onClick={submithandler} >order</Button>
+                                </div>
+                                    
                     </div>
                 </div>
     </div>

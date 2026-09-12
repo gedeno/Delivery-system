@@ -48,7 +48,7 @@ export default function RestaurantDetailPage(){
                                 </div>
                                 <div className='mt-5 flex gap-2 items-center self-end text-black'>
                                     <MapPin size={20} className="dark:text-white" />
-                                    <span className="dark:text-white" >{current_restaurant?.address} </span>
+                                    <span className="dark:text-white" >{current_restaurant?.address}</span>
                                 </div>
                             </div>      
                         </div>
