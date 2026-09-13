@@ -38,3 +38,5 @@ class OrderViwSet(ModelViewSet):
 
 class OtherOrderset(ModelViewSet):
     queryset = Orders.objects.all()
+    serializer_class = Orderserializer
+    permission_classes = [IsAuthenticated]
