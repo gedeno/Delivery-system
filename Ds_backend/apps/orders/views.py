@@ -35,3 +35,6 @@ class OrderViwSet(ModelViewSet):
                 order = Create_order,
                 amount=Create_order.total_amount
             )
+
+class OtherOrderset(ModelViewSet):
+    queryset = Orders.objects.all()
