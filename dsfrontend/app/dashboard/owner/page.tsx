@@ -18,24 +18,24 @@ export default function Owerpage(){
                 <h1 className="font-bold text-2xl pt-3">Restaurant Owner Dashboard</h1>
                 <h1 className="text-gray-500 pb-6">Manage your restaurants, menu , and orders</h1>
             
-            <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
-                {boards.map((items) => (
-                <div
-                key={items.board}
-                className="dark:bg-gray-700 dark:border-gray-500 dark:text-white rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
-                >
-                <div className="flex items-start justify-between">
-                    <div className=" dark:text-white">
-                    <p className="text-gray-500 dark:text-white">{items.board}</p>
-                    <p className="text-4xl dark:text-white font-bold ">
-                        {items.quantity}
-                    </p>
+                <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    {boards.map((items) => (
+                    <div
+                    key={items.board}
+                    className="dark:bg-gray-700 dark:border-gray-500 dark:text-white rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+                    >
+                    <div className="flex items-start justify-between">
+                        <div className=" dark:text-white">
+                        <p className="text-gray-500 dark:text-white">{items.board}</p>
+                        <p className="text-4xl dark:text-white font-bold ">
+                            {items.quantity}
+                        </p>
+                        </div>
+                        
                     </div>
-                    
+                    </div>
+                ))}
                 </div>
-                </div>
-            ))}
-            </div>
                 <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]" >
                     <div className="border border-gray-300 rounded-2xl p-3 my-6 shadow-xl ">
                         <p className="font-semibold text-xl my-3">Recent orders</p>
@@ -67,7 +67,7 @@ export default function Owerpage(){
                         </div>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
     )
 }

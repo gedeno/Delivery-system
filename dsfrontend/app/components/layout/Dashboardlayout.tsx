@@ -59,11 +59,6 @@ const delivery = [
     icon: <LayoutDashboard className="h-5 w-5" />,
   },
   {
-    label: "Available",
-    href: "/dashboard/delivery",
-    icon: <MapPin className="h-5 w-5" />,
-  },
-  {
     label: "My Deliveries",
     href: "/dashboard/delivery/orders",
     icon: <Truck className="h-5 w-5" />,
