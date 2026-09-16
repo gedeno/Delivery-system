@@ -81,7 +81,8 @@ export default function Cart(){
                                     <button className=" border rounded border-gray-400 " onClick={count}><Plus size={20}/></button>
                                 </div> 
                                 <div className="flex items-center gap-3 mr-3 font-semibold" ><p>${total}</p> 
-                                <button onClick={() => removefromcart(item.items.id)}><Trash2 size={16} className="text-orange-500"/></button></div>
+                                <button className="" onClick={() => removefromcart(item.items.id)}>
+                                    <Trash2 size={12} className="text-orange-500 bg-gray-400 p-1 h-6 w-6 rounded items-center justify-center hover:bg-gray-700 hover:text-orange-500 "/></button></div>
                             </div>
                         
                         </div>

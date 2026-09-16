@@ -1,23 +1,8 @@
 "useclient";
 import { useState } from "react";
 import {
-  LayoutDashboard,
-  Store,
-  ShoppingBag,
-  ShoppingCart,
-  User,
-  Truck,
-  UtensilsCrossed,
-  ClipboardList,
-  Users,
-  CreditCard,
-  Star,
-  Settings,
-  Menu,
-  X,
-  MapPin,
-  Sun,
-  Moon,
+  LayoutDashboard,Store,ShoppingBag,ShoppingCart,User,Truck,UtensilsCrossed,
+  ClipboardList,Users,CreditCard,Star,Settings,Menu,X,Sun,Moon,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -25,10 +10,9 @@ import { usePathname } from "next/navigation";
 import { IoLogOutOutline } from "react-icons/io5";
 import { useEffect } from "react";
 import { UserData } from "@/lib/UserData";
-import { UserLogout } from "../auth/logout";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "@/lib/constants";
 import { useRouter } from "next/navigation";
-
+import api from "@/lib/api";
 const customer = [
   {
     label: "Dashboard",
@@ -133,12 +117,14 @@ const admin = [
     icon: <Settings className="h-5 w-5" />,
   },
 ];
-
+interface CartItem {
+    id: number;
+    user: number;
+    item: number;
+}
 export function DashboardHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
-  
-  const itemCount = 5;
   const user = UserData();
   const navItems =
     user?.role === "restaurant_owner"
@@ -155,6 +141,21 @@ export function DashboardHeader() {
       router.push("/login")
   
   }
+  const [carts , setcart] = useState<CartItem[]>([])
+
+    useEffect(()=>{
+         api.get('/restaurants/cart/')
+         .then((res)=>{
+            setcart(res.data)
+            console.log(res.data)
+         }).catch((error)=>{
+            console.log(error)
+         })
+    },[])
+    const cartcount = carts.length
+
+
+
   
   return (
     <>
@@ -186,9 +187,9 @@ export function DashboardHeader() {
               className="relative text-gray-600 hover:text-orange-500 dark:text-slate-200"
             >
               <ShoppingCart className="h-5 w-5" />
-              {itemCount > 0 && (
+              {cartcount > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs text-white">
-                  {itemCount}
+                  {cartcount}
                 </span>
               )}
             </Link>
