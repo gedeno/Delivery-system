@@ -4,7 +4,7 @@ import api from "@/lib/api"
 import { Button } from "./Button"
 import { Plus } from "lucide-react"
 
-interface Menu {
+export interface Menu {
    
     "Item_name":string;
     "price":number;

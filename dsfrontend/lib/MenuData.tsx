@@ -9,6 +9,7 @@ interface Menu {
     "description":string;
     "Category":string
     "id":number
+    "restaurants":string
 }
 interface Menudataprops {
     id: number;

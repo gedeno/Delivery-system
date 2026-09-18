@@ -144,7 +144,7 @@ export function DashboardHeader() {
   const [carts , setcart] = useState<CartItem[]>([])
 
     useEffect(()=>{
-         api.get('/restaurants/cart/')
+         api.get('/restaurants/cart-item/')
          .then((res)=>{
             setcart(res.data)
             console.log(res.data)
@@ -186,11 +186,16 @@ export function DashboardHeader() {
               href="/cart"
               className="relative text-gray-600 hover:text-orange-500 dark:text-slate-200"
             >
-              <ShoppingCart className="h-5 w-5" />
+             
               {cartcount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs text-white">
-                  {cartcount}
-                </span>
+                <div>
+                  <ShoppingCart className="h-5 w-5" />
+                  <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 text-xs text-white">
+                    {cartcount}
+                  </span>
+
+                </div>
+                
               )}
             </Link>
             <div className="hidden text-sm text-gray-600 sm:block dark:text-slate-200">
