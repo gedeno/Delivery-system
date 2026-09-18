@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Menu_item, Restaurants , Cart
+from .models import CartItem, Menu_item, Restaurants , Cart
 from apps.accounts.serializer import Userserializer
 
 class Restaurantserializer(serializers.ModelSerializer):
@@ -10,19 +10,37 @@ class Restaurantserializer(serializers.ModelSerializer):
         extra_kwargs = {'owner':{'read_only':True} ,'id':{'read_only':True} }
 
 class Menu_itemserializer(serializers.ModelSerializer):
+    restaurants = serializers.SerializerMethodField()
     class Meta:
         model= Menu_item
-        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category"]
-        extra_kwargs ={'restaurant':{'read_only':True} ,'id':{'read_only':True}}
+        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category","restaurants"]
+        extra_kwargs ={'restaurant':{'read_only':True} ,'id':{'read_only':True},'restaurants':{'read_only':True}}
+    def get_restaurants(self,obj):
+        restaurant = obj.restaurant
+        return Restaurantserializer(restaurant).data
 
 class Cartserialiser(serializers.ModelSerializer):
    
     items= serializers.SerializerMethodField()
     class Meta:
         model = Cart
-        fields = ["id" ,"user" ,"item" , "items" ]
-        extra_kwargs ={'user':{'read_only':True},'item':{'read_only':True},'items':{'read_only':True}}
+        fields = ["id" ,"user", "items" ]
+        extra_kwargs ={'user':{'read_only':True}, 'items':{'read_only':True}}
     
     def get_items(self,obj):
-        item = obj.item
-        return Menu_itemserializer(item).data
+        items = CartItem.objects.filter(cart=obj)
+        return CartItemSerializer(items, many=True).data
+
+class CartItemSerializer(serializers.ModelSerializer):
+    cart = serializers.PrimaryKeyRelatedField(read_only=True)
+    menu_item = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = CartItem
+        fields = ["id", "cart", "menu_item", "quantity"]
+        
+    # def get_menu_item(self, obj):
+    #     menu_item = obj.menu_item
+    #     return Menu_itemserializer(
+    #         menu_item
+    #     ).data

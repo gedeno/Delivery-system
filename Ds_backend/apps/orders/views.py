@@ -36,7 +36,27 @@ class OrderViwSet(ModelViewSet):
                 amount=Create_order.total_amount
             )
 
-class OtherOrderset(ModelViewSet):
+class CartOrderset(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = Orderserializer
     permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        restaurant = self.request.query_params.get('restaurant_id')
+        items = self.request.data.get("items")
+        deliver_person = User.objects.filter(role = "delivery").first()
+        with transaction.atomic():
+            Create_order = serializer.save(
+                customer= self.request.user ,
+                restaurants_id = restaurant ,
+                delivery = deliver_person )
+            for item in items:
+                OrderItem.objects.create(
+                    order = Create_order ,
+                    menuitem_id = item,
+                    quantity = item["quantity"]
+                )
+            Payments.objects.create(
+                order = Create_order,
+                amount=Create_order.total_amount
+            )
+

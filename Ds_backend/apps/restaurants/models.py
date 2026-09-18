@@ -23,6 +23,11 @@ class Menu_item(models.Model):
     Category = models.CharField(max_length=200)
     def __str__(self):
         return self.Item_name
+    
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    item = models.ForeignKey(Menu_item, on_delete=models.CASCADE)
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    menu_item  = models.ForeignKey(Menu_item, on_delete=models.CASCADE)
+    quantity = models.IntegerField()

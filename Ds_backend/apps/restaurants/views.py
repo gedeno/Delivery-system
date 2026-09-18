@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
-from .models import Menu_item, Restaurants ,Cart
-from .serializer import Menu_itemserializer, Restaurantserializer , Cartserialiser
+from .models import CartItem, Menu_item, Restaurants ,Cart
+from .serializer import CartItemSerializer, Menu_itemserializer, Restaurantserializer , Cartserialiser
 
 # Create your views here.
 
@@ -30,7 +30,7 @@ class CreateMenu(ModelViewSet):
         if restaurant_id:
             return Menu_item.objects.filter(restaurant_id = restaurant_id)
         return Menu_item.objects.all()
-class CreateCart(ModelViewSet):
+class CartViewSet(ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = Cartserialiser
     permission_classes = [IsAuthenticated]
@@ -38,9 +38,11 @@ class CreateCart(ModelViewSet):
         menu_id = self.request.query_params.get("menu_id")
         menu = Menu_item.objects.get(id = menu_id)
         serializer.save(item=menu , user=self.request.user)
-    def get_queryset(self):
-        cart_items = Cart.objects.filter( user=self.request.user) 
-        return cart_items
+
+
+    def get_object(self):
+        return Cart.objects.get(user=self.request.user)
+    
     def delete(self, request ,*args,**kwargs):
         menu_id = self.request.query_params.get("menu_id")
         menu = Cart.objects.get(item = menu_id)
@@ -48,4 +50,8 @@ class CreateCart(ModelViewSet):
         return Response({
         "message": "Item removed from cart"
          })
-    
+
+class CartItemViewSet(ModelViewSet):
+    serializer_class = CartItemSerializer
+    permission_classes = [AllowAny]
+    queryset = CartItem.objects.all()
