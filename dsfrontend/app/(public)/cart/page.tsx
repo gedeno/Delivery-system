@@ -31,7 +31,7 @@ export default function Cart(){
     const [cartItems , setCartItems] = useState<CartItem[]>([])
 
     useEffect(()=>{
-         api.get('/restaurants/cart-item/')
+         api.get(`/restaurants/cart-items/${33}/`)
          .then((res)=>{
             setCartItems(res.data)
             console.log(res.data)

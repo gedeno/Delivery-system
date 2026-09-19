@@ -9,6 +9,7 @@ import { RestaurantData } from "@/lib/RestaurantsData";
 import { MenuData } from "@/lib/MenuData";
 import { useState,useEffect } from "react";
 import { Modalview } from "@/app/components/ui/modal";
+import { CartItem } from "../../cart/page";
 
 
 
@@ -27,7 +28,11 @@ export default function RestaurantDetailPage(){
     )
    
     const [modal, setModal] = useState<Modal>({isOpen:false, food_id:null})
-    
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+    useEffect(()=>{
+        api.get(`retaurants/cart-items/`)
+    })
     
   
 

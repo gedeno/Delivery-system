@@ -3,6 +3,8 @@ import api from "@/lib/api"
 
 import { Button } from "./Button"
 import { Plus } from "lucide-react"
+import { useState } from "react";
+import { CartItem } from "@/app/(public)/cart/page";
 
 export interface Menu {
    
@@ -26,8 +28,20 @@ interface Menucardprop{
 }
 
 export default function FoodCard({ item, setModal }:Menucardprop){
-     const addcart = () =>{
-        api.post(`/restaurants/cart/?menu_id=${item.id}`)
+    const [inCart, setInCart] = useState<boolean>(false);
+
+    const addcart = () =>{
+        api.post(`/restaurants/cart-item/?menu_id=${item.id}`, {"quantity": 1})
+        .then((res) =>{
+            console.log(res.data)
+            setInCart(true)
+        }).catch((error)=>{
+            console.log(error)
+        })
+    }
+
+    const removeCart = () =>{
+        api.delete(`/restaurants/cart-item/?menu_id=${item.id}`)
         .then((res) =>{
             console.log(res.data)
         }).catch((error)=>{
@@ -58,7 +72,7 @@ export default function FoodCard({ item, setModal }:Menucardprop){
                     <p className="font-bold text-xl ">${item.price}</p>
                     <div className="flex gap-4">
                         <Button onClick={buy}>buy</Button>
-                    <Button onClick={addcart}><Plus className ="text-sm" size={20}/> add to cart</Button>
+                    <Button onClick={addcart}><Plus className ="text-sm" size={20}/>{ inCart ? "Remove" : "Add to cart"} </Button>
                     </div>
                 </div>
             </div>
