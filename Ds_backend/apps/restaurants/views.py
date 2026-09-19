@@ -30,10 +30,21 @@ class CreateMenu(ModelViewSet):
         if restaurant_id:
             return Menu_item.objects.filter(restaurant_id = restaurant_id)
         return Menu_item.objects.all()
+    
 class CartViewSet(ModelViewSet):
-    queryset = Cart.objects.all()
     serializer_class = Cartserialiser
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return CartItemSerializer
+        return Cartserialiser
+
+    
+    def get_queryset(self):
+        cart = Cart.objects.get(id=self.kwargs["cart_id"])
+        return CartItem.objects.filter(cart=cart)
+    
     def perform_create(self, serializer):
         menu_id = self.request.query_params.get("menu_id")
         menu = Menu_item.objects.get(id = menu_id)
@@ -55,3 +66,15 @@ class CartItemViewSet(ModelViewSet):
     serializer_class = CartItemSerializer
     permission_classes = [AllowAny]
     queryset = CartItem.objects.all()
+
+    def perform_create(self, serializer):
+        cart = Cart.objects.get(user=self.request.user)
+        menu_item = Menu_item.objects.get(id=self.request.query_params.get("menu_id"))
+        serializer.save(cart=cart, menu_item=menu_item)
+
+    def destroy(self, request, *args, **kwargs):
+        cart_item = CartItem.objects.get(menu_item__id=int(self.request.query_params.get("menu_id")))
+        cart_item.delete()
+        return Response(
+            "deleted"
+        )

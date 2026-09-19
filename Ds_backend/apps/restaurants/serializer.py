@@ -32,15 +32,15 @@ class Cartserialiser(serializers.ModelSerializer):
         return CartItemSerializer(items, many=True).data
 
 class CartItemSerializer(serializers.ModelSerializer):
-    cart = serializers.PrimaryKeyRelatedField(read_only=True)
-    menu_item = serializers.PrimaryKeyRelatedField(read_only=True)
+    menu_item = serializers.SerializerMethodField()
 
     class Meta:
         model = CartItem
-        fields = ["id", "cart", "menu_item", "quantity"]
+        fields = ["id", "menu_item", "quantity"]
+        read_only_fields = ["menu_item"]
         
-    # def get_menu_item(self, obj):
-    #     menu_item = obj.menu_item
-    #     return Menu_itemserializer(
-    #         menu_item
-    #     ).data
+    def get_menu_item(self, obj):
+        menu_item = obj.menu_item
+        return Menu_itemserializer(
+            menu_item
+        ).data
