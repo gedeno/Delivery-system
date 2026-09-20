@@ -5,6 +5,7 @@ import { Button } from "./Button"
 import { Plus } from "lucide-react"
 import { useState } from "react";
 import { CartItem } from "@/app/(public)/cart/page";
+import { UserData } from "@/lib/UserData";
 
 export interface Menu {
    
@@ -53,6 +54,7 @@ export default function FoodCard({ item, setModal }:Menucardprop){
         if (!setModal) return;
         setModal({isOpen: true, food_id: item.id})
     }
+    const userrole = UserData()
 
     return(
         <div className="border dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded-2xl pb-3 hover:shadow-2xl hover:-translate-y-1 transition hover:border-orange-500 ">
@@ -67,13 +69,17 @@ export default function FoodCard({ item, setModal }:Menucardprop){
                 <div className=" flex flex-col gap-2 my-2">
                     <p className= "font-bold text-xl px-4">{item.Category}</p>
                     <p className="text-gray-500 px-4 text-sm">{item.description}</p>
+                    <p className="font-bold text-xl px-4">${item.price}</p>
                 </div>
+                
                 <div className="flex justify-between items-center w-full px-5">
-                    <p className="font-bold text-xl ">${item.price}</p>
-                    <div className="flex gap-4">
+                    {userrole?.role === "customer" && (
+                        <div className="flex gap-4">
                         <Button onClick={buy}>buy</Button>
                     <Button onClick={addcart}><Plus className ="text-sm" size={20}/>{ inCart ? "Remove" : "Add to cart"} </Button>
                     </div>
+                    )}
+                    
                 </div>
             </div>
         </div>
