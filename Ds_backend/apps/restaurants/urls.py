@@ -11,5 +11,5 @@ router.register("cart-item", views.CartItemViewSet, basename="cart-item")
 
 urlpatterns = [
     path('', include(router.urls)),
-    path("cart-items/<int:cart_id>/", views.CartViewSet.as_view({"get":"list"}))
+    path("cart-items/", views.CartViewSet.as_view({"get":"list"}))
 ]

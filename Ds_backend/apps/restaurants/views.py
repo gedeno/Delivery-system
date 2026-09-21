@@ -42,7 +42,7 @@ class CartViewSet(ModelViewSet):
 
     
     def get_queryset(self):
-        cart = Cart.objects.get(id=self.kwargs["cart_id"])
+        cart = Cart.objects.get(user=self.request.user)
         return CartItem.objects.filter(cart=cart)
     
     def perform_create(self, serializer):
