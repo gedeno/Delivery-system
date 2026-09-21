@@ -60,8 +60,12 @@ export default function RestaurantDetailPage(){
                     </div>
 
                 <div className="grid lg:grid-cols-3 sm:grid-cols-2 gap-3">
-                   {menus?.map((item)=>(
-                        <FoodCard key={item.id} item ={item}  setModal={setModal}/>
+                   {current_restaurant && menus?.map((item)=>(
+                        <FoodCard
+                            key={item.id}
+                            item={{ ...item, restaurants: current_restaurant }}
+                            setModal={setModal}
+                        />
                     ))}
                 </div>
             </div>

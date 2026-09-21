@@ -8,15 +8,21 @@ import { CartItem } from "@/app/(public)/cart/page";
 import { UserData } from "@/lib/UserData";
 
 export interface Menu {
-   
+    "restaurants": Restaurants;
+    "restaurant"?:string;
     "Item_name":string;
     "price":number;
     "image":string;
     "description":string;
     "Category":string;
     "id":number;
+}
+export interface Restaurants {
+    Res_name : string 
+    id : number
 
 }
+
 
 interface Modal {
     isOpen: boolean;

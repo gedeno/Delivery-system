@@ -1,10 +1,8 @@
 "use client"
 import { DashboardHeader } from "@/app/components/layout/Dashboardlayout"
 import { useState ,useEffect } from "react"
+import { Restaurants } from "@/app/components/ui/foodcard";
 
-import { MapPin } from "lucide-react"
-import { Plus ,Minus } from "lucide-react"
-import { Trash2 } from "lucide-react"
 import Link from "next/link";
 import { Button } from "@/app/components/ui/Button"
 import api from "@/lib/api"
@@ -31,7 +29,7 @@ export default function Cart(){
     const [cartItems , setCartItems] = useState<CartItem[]>([])
 
     useEffect(()=>{
-         api.get(`/restaurants/cart-items/${33}/`)
+         api.get(`/restaurants/cart-items/`)
          .then((res)=>{
             setCartItems(res.data)
             console.log(res.data)
@@ -39,6 +37,19 @@ export default function Cart(){
             console.log(error)
          })
     },[])
+    const rest_ids:number[] = []
+    cartItems.map((item) => {
+        if (!rest_ids.includes(item.menu_item.restaurants.id)) {
+            rest_ids.push(item.menu_item.restaurants.id)
+        }
+    }
+    )
+    const total_prices = rest_ids.map(()=>0)
+    console.log(rest_ids)
+
+    const orderhandler = (id:number) => {
+        api.post(`orders/cartorder/?restaurant_id=${id}`)
+    }
 
 
     return(
@@ -46,10 +57,39 @@ export default function Cart(){
             <DashboardHeader/>
             <div className="grid gap-8 lg:grid-cols-3 px-6">
                 <div className="space-y-4 lg:col-span-2">
-                    <h2 className="text-lg font-semibold text-gray-900">From Jeles restaurant</h2>
-                    {cartItems.map((item)=>(
-                       <CartCard key={item.id} item={item}/>
-                    ))}
+                    
+                    {
+                        rest_ids.map((restaurant, index) => (
+                            <div>
+                            <p className="text-lg font-semibold text-gray-900"></p>
+                            
+                            <div className="dark:bg-gray-600 border border-gray-400 bg-orange-100 dark:border-gray-600 py-3 px-2 rounded-lg flex flex-col gap-2">
+                                
+                                {
+                                    
+                                    cartItems.map((item) => {
+                                        if(item.menu_item.restaurants.id === restaurant){
+                                            total_prices[index] += item.menu_item.price * item.quantity;
+                                            return(
+                                                <div >
+                                                    <CartCard key={item.id} item={item} />
+                                                </div>
+                                            )
+                                        } 
+                                        
+
+                                    })
+                                    
+                                }
+                                <div className="flex justify-between">
+                                    <p>total price {total_prices[index]}</p>
+                                    <Button onClick={()=>orderhandler(restaurant)}>Proceed</Button>
+                                    
+                                </div>
+                                </div>
+                            </div>
+                        ))
+                    }
         
                 </div>
                 <div className="h-fit border rounded-2xl border-gray-400 p-4 mt-10">
