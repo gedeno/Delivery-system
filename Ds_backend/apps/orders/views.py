@@ -19,7 +19,7 @@ class OrderViwSet(ModelViewSet):
         return Orders.objects.filter(customer = self.request.user)
 
     def perform_create(self, serializer):
-        restaurantuser = self.request.query_params.get('restaurant_id')
+        restaurant = self.request.query_params.get('restaurant_id')
         menuitem = self.request.query_params.get('menu_id')
         quantity = self.request.data.get("quantity")
         deliver_person = User.objects.filter(role = "delivery").first()
@@ -72,3 +72,11 @@ class CartOrderset(ModelViewSet):
         for item in items:
             total+=item.menu_item.price*item.quantity
         return total
+
+class OwnerOrderfetch(ModelViewSet):
+    queryset = Orders.objects.all()
+    serializer_class =Orderserializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Orders.objects.filter()
+
