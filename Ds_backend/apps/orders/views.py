@@ -15,9 +15,11 @@ class OrderViwSet(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = Orderserializer
     permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Orders.objects.filter(customer = self.request.user)
 
     def perform_create(self, serializer):
-        restaurant = self.request.query_params.get('restaurant_id')
+        restaurantuser = self.request.query_params.get('restaurant_id')
         menuitem = self.request.query_params.get('menu_id')
         quantity = self.request.data.get("quantity")
         deliver_person = User.objects.filter(role = "delivery").first()
@@ -40,6 +42,11 @@ class CartOrderset(ModelViewSet):
     queryset = Orders.objects.all()
     serializer_class = Orderserializer
     permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Orders.objects.filter(customer = self.request.user)
+
+
+    
     def perform_create(self, serializer):
         restaurant = self.request.query_params.get('restaurant_id')
         deliver_person = User.objects.filter(role = "delivery").first()
