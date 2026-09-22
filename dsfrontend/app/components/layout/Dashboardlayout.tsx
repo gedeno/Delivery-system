@@ -232,7 +232,7 @@ export function DashboardHeader() {
 
             const isActive = isBaseRoute
               ? pathname === item.href // Must be an EXACT match for the dashboard link
-              : pathname === item.href || pathname.startsWith(`${item.href}/`); // Nested match allowed for other links
+              : pathname === item.href ; // Nested match allowed for other links
 
             return (
               <Link

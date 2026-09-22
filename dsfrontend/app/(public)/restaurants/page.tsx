@@ -25,7 +25,7 @@ export default function RestaurantsPage(){
                             </div>
                         </div>
                     </div>
-                    <div className=" mt-20 grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className=" mt-20 grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                         {restaurants.map((item) => (
                                             <Restaurantcard
                                             key={item.id}
