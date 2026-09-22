@@ -56,7 +56,7 @@ export default function OwnerRestaurantpage(){
             <div className="space-y-6 px-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">My Restaurant</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Restaurant</h2>
                         <h2 className="text-gray-500">Manage the restaurants you own</h2>
                     </div>
                         <Button  onClick={() => setIsOpen(true)}><Plus className="h-4 w-4" /> Add Restaurant</Button>

@@ -1,15 +1,22 @@
-"use client";
+'use client'
 import { DashboardHeader } from "@/app/components/layout/Dashboardlayout";
 import { formatCurrency } from "@/lib/utils";
 import { ShoppingBag, Clock, CheckCircle, Store } from "lucide-react";
-
+import { RestaurantData } from "@/lib/RestaurantsData";
+import { MenuData } from "@/lib/MenuData";
+import Orderfetch from "@/lib/orders";
 export default function Owerpage(){
+    const restaurats = RestaurantData()
+    const restaurant_length = restaurats?.length
     const boards = [
-    { board: "Restaurants", quantity :2 },
+    { board: "Restaurants", quantity : restaurant_length },
     { board: "Active", quantity :3 },
     { board: "Menu Items", quantity :5 },
     { board: "Revenue", quantity :"$80.35" },
-  ];
+    ];
+    const orders = Orderfetch()
+    const orders_length = orders?.length
+    console.log(orders_length)
 
     return(
         <div>
@@ -40,20 +47,24 @@ export default function Owerpage(){
                     <div className="border border-gray-300 rounded-2xl p-3 my-6 shadow-xl ">
                         <p className="font-semibold text-xl my-3">Recent orders</p>
                         <div>
-                             <div  className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-1 hover:shadow-xl hover:-translate-y-0.8 transition hover:border-orange-400">
-                                <div className="flex items-center gap-3 ">
-                                    <div className="bg-orange-400 rounded-lg h-15 w-15"></div>
-                                    <div>
-                                        <p className="font-medium">Order #101</p>
-                                        <p className="text-sm text-gray-500">ava Johnson</p>
-                                        <p className="text-xs text-gray-400">aug 20,2025,04:15 PM</p>
+                            {(orders ?? []).map((order) =>  (
+                                <div key={order.id} className="flex items-center justify-between gap-4 rounded-lg border border-gray-200 p-3">
+                                    <div className="flex items-center gap-3">
+                                        <div></div>
+                                        <div className="mt-4 space-y-3">
+                                            <p className="font-medium">Order #{order.id}</p>
+                                            <p className="text-sm text-gray-500">gedish</p>
+                                            <p className="text-xs text-gray-400">2-20-2026</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                    <div>deliverd</div>
+                                    <p className="mt-1 font-semibold text-gray-900">{order.total_amount}</p>
                                     </div>
                                 </div>
-                                <div className="text-right">
-                                <p className="bg-blue-200 rounded-full px-3 text-blue-600 text-sm font-semibold">out for Deliver</p>
-                                <p className="mt-1 font-semibold text-gray-900">$34.25</p>
-                                </div>
-                            </div>
+                            ))}
+                            
+                            
                         </div>
 
                     </div>
@@ -64,6 +75,7 @@ export default function Owerpage(){
                             <p>• 1 orders in perpration </p>
                             <p>• 1 completed orders</p>
                             <p>• 2 active restaurants</p>
+                            
                         </div>
                     </div>
                 </div>

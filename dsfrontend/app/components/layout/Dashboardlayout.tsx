@@ -180,7 +180,7 @@ export function DashboardHeader() {
               <UtensilsCrossed className="h-7 w-7" /> ASTU Food
             </Link>
           </div>
-          <nav className="hidden items-center gap-4 lg:flex">
+          <nav className=" items-center gap-4 flex">
             <ThemeToggle />
             <Link
               href="/cart"
