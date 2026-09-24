@@ -17,21 +17,21 @@ export default function Profilepage(){
       <div>
         <h1>Driver Details</h1>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg bg-gray-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Name</p>
-            <p className="mt-2 text-lg font-semibold text-gray-900">{user?.first_name}</p>
+          <div className="rounded-lg border border-gray-400 dark:border-gray-500  bg-gray-100 dark:bg-gray-700   p-4">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-300">Name</p>
+            <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-300">{user?.first_name}</p>
           </div>
-          <div className="rounded-lg bg-gray-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Vehicle</p>
-            <p className="mt-2 text-lg font-semibold text-gray-900">Bike</p>
+          <div className="rounded-lg border border-gray-400 dark:border-gray-500  bg-gray-100 dark:bg-gray-700   p-4">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-300">Vehicle</p>
+            <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-300">Bike</p>
           </div>
-          <div className="rounded-lg bg-gray-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Email</p>
-            <p className="mt-2 text-lg font-semibold text-gray-900">{user?.email}</p>
+          <div className="rounded-lg border border-gray-400 dark:border-gray-500  bg-gray-100 dark:bg-gray-700   p-4">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-300">Email</p>
+            <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-300">{user?.email}</p>
           </div>
-          <div className="rounded-lg bg-gray-50 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Phone</p>
-            <p className="mt-2 text-lg font-semibold text-gray-900">{user?.phone}</p>
+          <div className="rounded-lg border border-gray-400 dark:border-gray-500  bg-gray-100 dark:bg-gray-700   p-4">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-300">Phone</p>
+            <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-300">{user?.phone}</p>
           </div>
         </div>
         <div className="mt-6">
