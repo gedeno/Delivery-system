@@ -78,5 +78,5 @@ class OwnerOrderfetch(ModelViewSet):
     serializer_class =Orderserializer
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
-        return Orders.objects.filter()
+        return Orders.objects.all()
 

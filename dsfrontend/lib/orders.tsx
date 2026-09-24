@@ -26,6 +26,10 @@ export interface Orders{
 
 }
 
+export interface  res {
+    
+}
+
 export default function Orderfetch (){
     const [orders, setorders] = useState<Orders[] | null>([])
     useEffect(()=>{
