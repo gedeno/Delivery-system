@@ -61,11 +61,11 @@ function CustumerDashboard() {
             </p>
           ) : (
             <div className="flex flex-col gap-3">
-              {(orders ?? []).map((order) =>  (
+              {(orders ?? []).slice(0,4).map((order) =>  (
               <Link
                 key={order.id}
                 href={`/dashboard/customer/orders/${order.id}`}
-                className="flex items-center border rounded-xl p-3 justify-between py-4 hover:bg-gray-700
+                className="flex items-center border rounded-xl p-3 justify-between py-4 dark:hover:bg-gray-700
                 border-gray-300 dark:border-gray-800
                                 hover:shadow-2xl hover:-translate-y-1 transition hover:border-orange-500 dark:hover:border-gray-500 "
               >

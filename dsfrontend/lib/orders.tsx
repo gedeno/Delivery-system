@@ -26,14 +26,26 @@ export interface Orders{
 
 }
 
-export interface  res {
-    
-}
+
 
 export default function Orderfetch (){
     const [orders, setorders] = useState<Orders[] | null>([])
     useEffect(()=>{
         api.get('orders/cartorder/')
+        .then((res)=>{
+            setorders(res.data)
+            console.log(res.data)
+        }).catch((error)=>{
+            console.log(error)
+        })
+        
+    },[])
+    return orders
+}
+export function Orderownerfetch (){
+    const [orders, setorders] = useState<Orders[] | null>([])
+    useEffect(()=>{
+        api.get('orders/cartorderfetch/')
         .then((res)=>{
             setorders(res.data)
             console.log(res.data)
