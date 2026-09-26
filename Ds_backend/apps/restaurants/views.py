@@ -15,6 +15,12 @@ class CreateRestaurant(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner = self.request.user)
         print(serializer.data)
+class Restaurants_ower_fetch(ModelViewSet):
+    queryset = Restaurants.objects.all()
+    serializer_class = Restaurantserializer
+    pagination_class = [IsAuthenticated]
+    def get_queryset(self):
+        return Restaurants.objects.filter(owner=self.request.user)
     
 class CreateMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
