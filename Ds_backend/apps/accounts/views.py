@@ -14,7 +14,8 @@ class Createuser(ModelViewSet):
     permission_classes= [AllowAny]
     
     def perform_create(self, serializer):
-        serializer.save()
+        user = serializer.save()
+        print(user)
 
     def list(self, request):
         return Response({
