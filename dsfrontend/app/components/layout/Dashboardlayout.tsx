@@ -256,26 +256,54 @@ export function DashboardHeader() {
   );
 }
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<string>(() => {
-    if (typeof window === "undefined") return "light";
-    const saved = localStorage.getItem("Astu-theme");
-    if (saved) return saved;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
-  });
+  const [theme, setTheme] = useState<string>("light");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
+    const saved = localStorage.getItem("Astu-theme");
+
+    if (saved) {
+      setTheme(saved);
+      return;
+    }
+
+    const systemTheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches
+      ? "dark"
+      : "light";
+
+    setTheme(systemTheme);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const isDark = theme === "dark";
+
     document.documentElement.classList.toggle("dark", isDark);
     localStorage.setItem("Astu-theme", theme);
-  }, [theme]);
+  }, [theme, mounted]);
+
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        aria-label="Toggle dark mode"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+      />
+    );
+  }
 
   return (
     <button
       type="button"
       aria-label="Toggle dark mode"
-      onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+      onClick={() =>
+        setTheme((prev) => (prev === "dark" ? "light" : "dark"))
+      }
       className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 transition-colors hover:bg-gray-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
     >
       {theme === "dark" ? <Sun /> : <Moon />}

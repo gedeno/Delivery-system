@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { Menu,UtensilsCrossed,X } from "lucide-react"
 import Link from "next/link";
+import { ThemeToggle } from "./Dashboardlayout";
 
 
 export function Publicheader() {
@@ -9,7 +10,7 @@ export function Publicheader() {
     const [mobileOpen, setMobileOpen] = useState(false);
     return(
         <>
-        <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur">
+        <header className="sticky top-0 z-30 border-b border-gray-200 bg-white/95 backdrop-blur dark:bg-gray-900">
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
                 <div className="flex items-center gap-3">
                     <button arial-label= "Toggle naveigation menu"
@@ -21,6 +22,7 @@ export function Publicheader() {
                     </Link>
                 </div>
                 <nav className="hidden items-center gap-4 lg:flex">
+                    <ThemeToggle />
                     <Link href="/restaurants" className="text-sm font-medium text-gray-900 hover:text-orange-500 ">Restarurants</Link>
                     <Link href="/login" className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Login</Link>
                     <Link href="/register"  className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-medium text-white hover:bg-orange-600"
@@ -47,7 +49,7 @@ export function Publicheader() {
 }
 export function PublickFooter(){
     return(
-        <footer className="mt-auto border-t border-gray-200 bg-white py-8">
+        <footer className="mt-auto border-t border-gray-200 bg-white py-8 dark:bg-gray-900">
             <div className="mx-auto max-w-7xl px-4 text-center text-sm text-gray-500">
                 <p>&copy; {new Date().getFullYear()} ASTU Food. All rights reserved.</p>
             </div>

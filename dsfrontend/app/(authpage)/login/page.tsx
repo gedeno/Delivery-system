@@ -14,7 +14,7 @@ type Props = {}
 export default function Loginpage({}: Props) {
     
   return (
-    <div className=''>
+    <div className='flex flex-col gap-50'>
         <Publicheader/>
         <Loginform/>
         <PublickFooter/>

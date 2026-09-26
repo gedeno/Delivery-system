@@ -7,7 +7,7 @@ import Restaurantcard from "@/app/components/ui/restaurantcard"
 import { useState ,useEffect } from "react"
 import { Input } from "@/app/components/ui/input"
 import api from "@/lib/api"
-import { RestaurantData } from "@/lib/RestaurantsData"
+import { RestaurantData, RestaurantOwnerData } from "@/lib/RestaurantsData"
 export default function OwnerRestaurantpage(){
     const [isOpen, setIsOpen] = useState(false);
     const [formdata , setFormdata] = useState({
@@ -44,7 +44,7 @@ export default function OwnerRestaurantpage(){
         }
     }
 
-    const restaurants =  RestaurantData() || []
+    const restaurants =  RestaurantOwnerData() || []
    
 
 
@@ -98,11 +98,7 @@ export default function OwnerRestaurantpage(){
 
                     </div>
                 )}
-               
 
-
-
-                
             </div>
         </div>
     )

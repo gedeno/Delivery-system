@@ -6,7 +6,7 @@ import { PublickFooter } from '@/app/components/layout/publiclayout'
 export default function RegisterPage(){
     
     return(
-        <div className="">
+        <div className='flex flex-col gap-19'>
             <Publicheader/>
             <Registerform/>
             <PublickFooter/>

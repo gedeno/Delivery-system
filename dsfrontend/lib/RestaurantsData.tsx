@@ -22,3 +22,17 @@ export function RestaurantData(){
     },[])
     return restaurats
 }
+
+export function RestaurantOwnerData(){
+    const [restaurats ,setRestaurants]= useState<Restaurant[]|null>([])
+    useEffect(()=>{
+        api.get<Restaurant[]>("/restaurants/restaurant_owners/")
+        .then((res) =>{
+            setRestaurants(res.data)
+
+        }).catch((error)=>{
+            console.log(error)
+        })
+    },[])
+    return restaurats
+}
