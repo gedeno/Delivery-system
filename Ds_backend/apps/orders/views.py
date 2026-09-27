@@ -44,12 +44,18 @@ class CartOrderset(ModelViewSet):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return Orders.objects.filter(customer = self.request.user)
+    def get_status(self):
+        deliver_person = User.objects.filter(role = "delivery", )
+        for i in deliver_person:
+            if i == "on rest":
+                return i
+        
 
 
     
     def perform_create(self, serializer):
         restaurant = self.request.query_params.get('restaurant_id')
-        deliver_person = User.objects.filter(role = "delivery").first()
+        deliver_person = User.objects.filter(role = "delivery", Delivery_status="on rest" ).first()
         items = CartItem.objects.filter(cart__user=self.request.user).filter(menu_item__restaurant__id=restaurant)
         with transaction.atomic():
             Create_order = serializer.save(

@@ -15,6 +15,7 @@ interface RegisterData{
      email:string;
      role:string;
      phone:string;
+     Delivery_status:string;
 }
 export const Register = async (data:RegisterData) => {
     const response = await api.post('/users/user/',data)
@@ -34,19 +35,26 @@ export default function Registerform(){
         password:"",
         phone:"",
         email:"",
-        role:""})
+        role:"",
+        Delivery_status:""
+    })
     const imputhandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
         setformdata({
             ...formdata,
             [e.target.name] : e.target.value,
         })
     }
+    
 
     const route = useRouter()
     const formhandle = async(e:React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
+        const data = {
+            ...formdata,
+            Delivery_status:formdata.role === "delivery"?"on rest":"no",
+        }
         try{
-            await Register(formdata);
+            await Register(data);
             route.push("/login")
         }catch(error){
             console.log(error)
