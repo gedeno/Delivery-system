@@ -33,6 +33,7 @@ export default function Registerform(){
         last_name:"",
         username:"",
         password:"",
+        confirmPassword:"",
         phone:"",
         email:"",
         role:"",
@@ -47,18 +48,31 @@ export default function Registerform(){
     
 
     const route = useRouter()
+    const [errormessage , seterrorMessage] = useState("")
     const formhandle = async(e:React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
+       
         const data = {
             ...formdata,
             Delivery_status:formdata.role === "delivery"?"on rest":"no",
         }
-        try{
-            await Register(data);
-            route.push("/login")
-        }catch(error){
-            console.log(error)
+        
+
+        if (formdata.password === formdata.confirmPassword) {
+            try {
+                await Register(data);
+                route.push("/login")
+            } catch (error) {
+                console.log(error)
+            }
+
         }
+        else{
+            seterrorMessage("password and confirm password is not match")
+            
+        }
+
+       
     };
     return(
         <div className="mx-auto w-full max-w-md border  rounded-2xl p-6 border-gray-200 shadow-2xl">
@@ -76,9 +90,16 @@ export default function Registerform(){
                 
                 <Input onChange={imputhandler} label="Email" name="email"/>
                 <Select onChange={(e)=>setformdata({...formdata,role:e.target.value})}  options={ROLE_OPTIONS} name="role" label="Role"/>
+                {errormessage &&(
+                    <div className="rounded-xl bg-amber-200 text-red-500 px-2 border"><p className="font-semibold ">{errormessage}</p></div>
+
+                )
+
+                }
+                
                 <div className="grid grid-cols-2 gap-3">
                     <Input onChange={imputhandler} label="Password" type="password" name="password"/>
-                    <Input label="confirm Password"/>
+                    <Input name="confirmPassword" onChange={imputhandler} type="password" label="confirm Password"/>
                 </div>
                 <Button type="submit" className="w-full" >Create Account</Button>
             </form>
