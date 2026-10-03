@@ -10,10 +10,14 @@ import api from "@/lib/api"
 import { RestaurantData, RestaurantOwnerData } from "@/lib/RestaurantsData"
 export default function OwnerRestaurantpage(){
     const [isOpen, setIsOpen] = useState(false);
-    const [formdata , setFormdata] = useState({
+    const [formdata , setFormdata] = useState<{
+    Res_name: string;
+    address: string;
+    image: File | null;
+}>({
         "Res_name":"",
         "address":"",
-        "image":"",
+        image: null,
     })
     const changehandler = (e:React.ChangeEvent<HTMLInputElement>)=>{
         setFormdata({
@@ -26,7 +30,7 @@ export default function OwnerRestaurantpage(){
     const filechangehandler = (e:React.ChangeEvent<HTMLInputElement>)=>{
         setFormdata({
             ...formdata,
-            [e.target.name]:e.target.files?.[0]
+            image: e.target.files?.[0] || null,
         })
     }
      const submitform = async(e:React.FormEvent<HTMLFormElement>)=>{
@@ -34,14 +38,18 @@ export default function OwnerRestaurantpage(){
         const FD = new FormData()
         FD.append("Res_name",formdata.Res_name)
         FD.append("address",formdata.address)
-        FD.append("image",formdata.image)
+        if (formdata.image) {
+            FD.append("image", formdata.image);
+        }
+        console.log([...FD.entries()]); 
         try{
             const response = await api.post("/restaurants/restaurant/",FD)
             console.log(response.data)
             setIsOpen(false)
-        }catch(error){
-            console.log(error)
-        }
+        }catch (error: any) {
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data); // 
+    }
     }
 
     const restaurants =  RestaurantOwnerData() || []
