@@ -2,6 +2,7 @@ from typing import ClassVar
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 
 from .models import CartItem, Menu_item, Restaurants ,Cart
 from .serializer import CartItemSerializer, Menu_itemserializer, Restaurantserializer , Cartserialiser
@@ -18,7 +19,7 @@ class CreateRestaurant(ModelViewSet):
 class Restaurants_ower_fetch(ModelViewSet):
     queryset = Restaurants.objects.all()
     serializer_class = Restaurantserializer
-    pagination_class = [IsAuthenticated]
+    permission_classes: ClassVar = [IsAuthenticated]
     def get_queryset(self):
         return Restaurants.objects.filter(owner=self.request.user)
     
@@ -70,11 +71,11 @@ class CartViewSet(ModelViewSet):
 
 class CartItemViewSet(ModelViewSet):
     serializer_class = CartItemSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = CartItem.objects.all()
 
     def perform_create(self, serializer):
-        cart = Cart.objects.get(user=self.request.user)
+        cart, created = Cart.objects.get_or_create(user=self.request.user)
         menu_item = Menu_item.objects.get(id=self.request.query_params.get("menu_id"))
         serializer.save(cart=cart, menu_item=menu_item)
 
@@ -84,3 +85,14 @@ class CartItemViewSet(ModelViewSet):
         return Response(
             "deleted"
         )
+
+    @action(methods=["POST"], permission_classes=[IsAuthenticated], detail=False)
+    def toggle_cart(self, request, pk=None):
+        cart = Cart.objects.get(user=self.request.user)
+        menu_item = Menu_item.objects.filter(id=int(self.request.query_params.get("menu_id"))).first()
+        if cart.cartitem_set.filter(menu_item__id=int(self.request.query_params.get("menu_id"))).exists():
+            cart.cartitem_set.get(menu_item__id=int(self.request.query_params.get("menu_id"))).delete()
+            return Response("removed")
+        else:
+            CartItem.objects.create(menu_item=menu_item, cart=cart, quantity=request.data['quantity'])
+            return Response("added")

@@ -11,14 +11,23 @@ class Restaurantserializer(serializers.ModelSerializer):
 
 class Menu_itemserializer(serializers.ModelSerializer):
     restaurants = serializers.SerializerMethodField()
+    incart = serializers.SerializerMethodField()
     class Meta:
         model= Menu_item
-        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category","restaurants"]
+        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category","restaurants", "incart"]
         extra_kwargs ={'restaurant':{'read_only':True} ,'id':{'read_only':True},'restaurants':{'read_only':True}}
     def get_restaurants(self,obj):
         restaurant = obj.restaurant
         return Restaurantserializer(restaurant).data
 
+    def get_incart(self, obj):
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return False
+
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        return cart.cartitem_set.filter(menu_item=obj).exists()
+    
 class Cartserialiser(serializers.ModelSerializer):
    
     items= serializers.SerializerMethodField()
