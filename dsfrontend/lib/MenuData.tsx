@@ -7,9 +7,10 @@ interface Menu {
     "price":number;
     "image":string;
     "description":string;
-    "Category":string
-    "id":number
-    "restaurants":string
+    "Category":string;
+    "id":number;
+    "restaurants":string;
+    "incart": boolean;
 }
 interface Menudataprops {
     id: number;
@@ -22,6 +23,7 @@ export function MenuData({id}:Menudataprops){
         api.get(`/restaurants/menu/?restaurant_id=${id}`)
         .then((res) =>{
             setmenu(res.data)
+            console.log(res.data)
         }).catch((error)=>{
             console.log(error)
         })

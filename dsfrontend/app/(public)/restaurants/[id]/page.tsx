@@ -28,11 +28,6 @@ export default function RestaurantDetailPage(){
     )
    
     const [modal, setModal] = useState<Modal>({isOpen:false, food_id:null})
-    const [cartItems, setCartItems] = useState<CartItem[]>([]);
-
-    useEffect(()=>{
-        api.get(`retaurants/cart-items/`)
-    })
     
   
 

@@ -15,7 +15,6 @@ export function RestaurantData(){
         api.get<Restaurant[]>("/restaurants/restaurant/")
         .then((res) =>{
             setRestaurants(res.data)
-
         }).catch((error)=>{
             console.log(error)
         })

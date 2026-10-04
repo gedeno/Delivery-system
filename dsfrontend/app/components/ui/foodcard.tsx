@@ -3,7 +3,7 @@ import api from "@/lib/api"
 
 import { Button } from "./Button"
 import { Plus } from "lucide-react"
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { CartItem } from "@/app/(public)/cart/page";
 import { UserData } from "@/lib/UserData";
 
@@ -16,6 +16,7 @@ export interface Menu {
     "description":string;
     "Category":string;
     "id":number;
+    "incart": boolean
 }
 export interface Restaurants {
     Res_name : string 
@@ -35,26 +36,24 @@ interface Menucardprop{
 }
 
 export default function FoodCard({ item, setModal }:Menucardprop){
-    const [inCart, setInCart] = useState<boolean>(false);
+    const [inCart, setInCart] = useState<boolean>(item.incart);
 
-    const addcart = () =>{
-        api.post(`/restaurants/cart-item/?menu_id=${item.id}`, {"quantity": 1})
+
+
+
+    const toggleCart = () =>{
+        api.post(`/restaurants/cart-item/toggle_cart/?menu_id=${item.id}`, {"quantity": 1})
         .then((res) =>{
             console.log(res.data)
-            setInCart(true)
+            setInCart(!inCart)
         }).catch((error)=>{
             console.log(error)
         })
+
     }
 
-    const removeCart = () =>{
-        api.delete(`/restaurants/cart-item/?menu_id=${item.id}`)
-        .then((res) =>{
-            console.log(res.data)
-        }).catch((error)=>{
-            console.log(error)
-        })
-    }
+
+  
 
     const buy = () =>{
         if (!setModal) return;
@@ -82,7 +81,7 @@ export default function FoodCard({ item, setModal }:Menucardprop){
                     {userrole?.role === "customer" && (
                         <div className="flex gap-4">
                         <Button onClick={buy}>buy</Button>
-                    <Button onClick={addcart}><Plus className ="text-sm" size={20}/>{ inCart ? "Remove" : "Add to cart"} </Button>
+                    <Button onClick={toggleCart}><Plus className ="text-sm" size={20}/>{ inCart ? "Remove" : "Add to cart"} </Button>
                     </div>
                     )}
                     
