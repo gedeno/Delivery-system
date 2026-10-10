@@ -1,10 +1,11 @@
 "use client";
 
-import Button from "@/app/components/Ui/Button";
 // components/SignInForm.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { useId, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import Button from "@/app/components/Ui/Button";
+import Input from "@/app/components/Ui/Input";
 
 /* ---------- Config ---------- */
 
@@ -33,9 +34,6 @@ const roles: { id: Role; label: string; description: string }[] = [
   },
 ];
 
-const inputClass =
-  "w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57]";
-
 /* ---------- Main component ---------- */
 
 type SignInFormProps = {
@@ -58,8 +56,6 @@ export default function SignInForm({
 }: SignInFormProps) {
   const [role, setRole] = useState<Role>(defaultRole);
   const [imageFailed, setImageFailed] = useState(false);
-  const emailId = useId();
-  const passwordId = useId();
 
   const current = roles.find((r) => r.id === role)!;
 
@@ -76,11 +72,11 @@ export default function SignInForm({
 
   return (
     <section className="w-full bg-[#faf8f3]">
-      <div className="mx-auto w-full max-w-360 px-6 py-10 md:px-17.5">
+      <div className="mx-auto w-full max-w-[90rem] px-6 py-10 md:px-[70px]">
         <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
           {/* Left column */}
           <div>
-            <div className="relative aspect-1.5/1 w-full overflow-hidden rounded-2xl bg-[#efe8d8]">
+            <div className="relative aspect-[1.5/1] w-full overflow-hidden rounded-2xl bg-[#efe8d8]">
               {imageFailed ? (
                 <div
                   role="img"
@@ -112,14 +108,14 @@ export default function SignInForm({
               back at the table.
             </h1>
 
-            <p className="mt-5 max-w-130 text-[15px] leading-relaxed text-neutral-500">
+            <p className="mt-5 max-w-[520px] text-[15px] leading-relaxed text-neutral-500">
               Your favorite kitchens, saved addresses and fresh discoveries are
               waiting.
             </p>
           </div>
 
           {/* Right column */}
-          <div className="max-w-160">
+          <div className="max-w-[640px]">
             <h2 className="text-[30px] font-extrabold tracking-tight text-[#1b2b24]">
               Welcome back.
             </h2>
@@ -164,36 +160,23 @@ export default function SignInForm({
               </p>
 
               <form onSubmit={handleSubmit} className="mt-5">
-                <label
-                  htmlFor={emailId}
-                  className="mb-2 block text-[11px] font-bold text-[#1b2b24]"
-                >
-                  Email address
-                </label>
-                <input
-                  id={emailId}
+                <Input
+                  label="Email address"
                   name="email"
                   type="email"
                   required
                   autoComplete="email"
                   placeholder="you@example.com"
-                  className={inputClass}
                 />
 
-                <label
-                  htmlFor={passwordId}
-                  className="mb-2 mt-4 block text-[11px] font-bold text-[#1b2b24]"
-                >
-                  Password
-                </label>
-                <input
-                  id={passwordId}
+                <Input
+                  className="mt-4"
+                  label="Password"
                   name="password"
                   type="password"
                   required
                   autoComplete="current-password"
                   placeholder="••••••••••••"
-                  className={inputClass}
                 />
 
                 <div className="mt-4 flex items-center justify-between">

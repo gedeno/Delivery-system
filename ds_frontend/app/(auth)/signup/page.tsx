@@ -1,12 +1,11 @@
 "use client";
 
-import Button from "@/app/components/Ui/Button";
 // components/JoinForm.tsx
 import Image from "next/image";
 import Link from "next/link";
-import { useId, useState, type FormEvent } from "react";
-
-
+import { useState, type FormEvent } from "react";
+import Button from "@/app/components/Ui/Button";
+import Input from "@/app/components/Ui/Input";
 /* ---------- Types & config ---------- */
 
 type Role = "customer" | "delivery" | "vendor" | "admin";
@@ -137,63 +136,6 @@ const leftInfo =
   "Customers add a delivery address. Couriers submit vehicle and identity details. Restaurants provide business details. Admin access is invitation-only.";
 
 /* ---------- Small pieces ---------- */
-
-const inputClass =
-  "w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57]";
-
-function FormField({ field }: { field: Field }) {
-  const id = useId();
-  const hintId = `${id}-hint`;
-
-  return (
-    <div className={field.half ? "col-span-1" : "col-span-2"}>
-      <label htmlFor={id} className="mb-2 block text-[11px] font-bold text-[#1b2b24]">
-        {field.label}
-      </label>
-
-      {field.type === "select" ? (
-        <select id={id} name={field.name} className={inputClass} defaultValue={field.options?.[0]}>
-          {field.options?.map((o) => (
-            <option key={o}>{o}</option>
-          ))}
-        </select>
-      ) : field.type === "file" ? (
-        <label
-          htmlFor={id}
-          className={`${inputClass} flex cursor-pointer items-center gap-2 text-neutral-500 focus-within:border-[#237a57] focus-within:ring-1 focus-within:ring-[#237a57]`}
-        >
-          <span aria-hidden="true">↥</span>
-          <span>{field.placeholder}</span>
-          <input
-            id={id}
-            name={field.name}
-            type="file"
-            accept={field.accept}
-            aria-describedby={field.hint ? hintId : undefined}
-            className="sr-only"
-          />
-        </label>
-      ) : (
-        <input
-          id={id}
-          name={field.name}
-          type={field.type}
-          placeholder={field.placeholder}
-          autoComplete={field.autoComplete}
-          aria-describedby={field.hint ? hintId : undefined}
-          required
-          className={inputClass}
-        />
-      )}
-
-      {field.hint && (
-        <p id={hintId} className="mt-2 text-[10.5px] text-neutral-500">
-          {field.hint}
-        </p>
-      )}
-    </div>
-  );
-}
 
 const CheckCircle = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -331,7 +273,19 @@ export default function JoinForm({
 
                   <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
                     {config.fields.map((f) => (
-                      <FormField key={f.name} field={f} />
+                      <Input
+                        key={f.name}
+                        className={f.half ? "col-span-1" : "col-span-2"}
+                        label={f.label}
+                        name={f.name}
+                        type={f.type === "select" ? undefined : f.type}
+                        options={f.options}
+                        placeholder={f.placeholder}
+                        hint={f.hint}
+                        autoComplete={f.autoComplete}
+                        accept={f.accept}
+                        required={f.type !== "file"}
+                      />
                     ))}
                   </div>
 
