@@ -45,7 +45,7 @@ export default function FoodCard(props: FoodCardProps) {
             alt={name}
             fill
             sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-            className="object-cover"
+            className="object-cover w-full h-full bg-orange-300"
           />
         </div>
         <div className="px-2 pb-2 pt-4">
@@ -70,12 +70,12 @@ export default function FoodCard(props: FoodCardProps) {
           alt={name}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover"
+          className="object-cover w-full h-full bg-orange-300"
         />
       </div>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <h3 className="text-[18px] font-bold text-[#1b2b24]">{name}</h3>
-        <p className="mt-2 min-h-[36px] text-[12px] leading-relaxed text-neutral-500">
+        <p className="mt-2 min-h-9 text-[12px] leading-relaxed text-neutral-500">
           {description}
         </p>
         <p className="mt-3 text-[13px] font-semibold text-[#237a57]">
