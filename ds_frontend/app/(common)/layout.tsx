@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import Header from "../../components/layout comp/header";
 import Footer from "../../components/layout comp/homefooter";
 
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <div>
-        <Header/>
+        
         <main className="flex-1">{children}</main>
         <Footer/>
     </div>

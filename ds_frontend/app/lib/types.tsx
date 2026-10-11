@@ -8,3 +8,12 @@ export interface RegisterData{
      phone:string;
      Delivery_status:string;
 }
+export interface LoginData{
+    username:string;
+    password:string
+
+}
+export interface TokenResponse{
+    access:string;
+    refresh:string;
+}
