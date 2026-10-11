@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
+import Singupform from "@/components/authforms/singup";
 
 /* ---------- Types & config ---------- */
 
@@ -80,26 +81,7 @@ export default function JoinForm({
 
             <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6">
               
-                <form  className="space-y-0">
-                  <h3 className="text-[16px] font-bold text-[#1b2b24]">Create your account</h3>
-                    <div >
-                      <div
-                      className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
-                        <Input label="First name"/>
-                        <Input label="Last name"/>
-                      </div>
-                      <Input label="Phone number"/>
-                      <Input label="Email"/>
-                      <div
-                      className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
-                          <Input label="Password"/>
-                          <Input label="confirmed Password"/>
-                      </div>
-                    </div>
-                  <Button type="submit" fullWidth className="mt-5">
-                     create account
-                  </Button>
-                </form>
+               <Singupform/>
             </div>
 
             <p className="mt-6 text-[12px] text-neutral-500">
