@@ -4,8 +4,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
-import Button from "@/app/components/Ui/Button";
-import Input from "@/app/components/Ui/Input";
+import Button from "@/components/Ui/Button";
+import Input from "@/components/Ui/Input";
 
 /* ---------- Config ---------- */
 

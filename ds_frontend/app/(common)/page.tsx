@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Hero from "./components/home/home";
-import FoodBrowse from "./components/home/Foodbrowse";
-import HowItWorks from "./components/home/Howitwork";
+import Hero from "../../components/home/home";
+import FoodBrowse from "../../components/home/Foodbrowse";
+import HowItWorks from "../../components/home/Howitwork";
 
 export default function Home() {
   return (

@@ -196,8 +196,8 @@ export default function FoodBrowse({ onAddToCart }: FoodBrowseProps) {
   const visibleDishes = dishes.filter((d) => matches(d.category));
 
   return (
-    <section className="bg-[#faf8f3]">
-      <div className="mx-auto max-w-8xl space-y-12 px-6 py-10">
+    <section className="bg-[#faf8f3] w-full">
+      <div className="mx-auto space-y-12 px-6 py-10">
         {/* Follow your craving */}
         <div>
           <SectionHeader
