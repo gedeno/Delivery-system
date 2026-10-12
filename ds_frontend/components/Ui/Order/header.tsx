@@ -60,7 +60,7 @@ export default function BasilBlockDesignSystem() {
 
   return (
     <div className="min-h-screen bg-[#faf8f4] text-[#202026]">
-      <main className="mx-auto max-w-5xl space-y-8 px-6 py-10">
+      <main className="mx-auto w-full space-y-8 px-6 py-10">
         {/* Header */}
         <header>
           <p className="inline-block rounded-full bg-[#e6f0ea] px-3 py-1 text-[10px] font-bold uppercase text-[#297451]">
