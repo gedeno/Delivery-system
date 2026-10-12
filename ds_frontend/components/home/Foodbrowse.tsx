@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Button from "../Ui/Button";
 import FoodCard from "../Ui/FoodCard";
+import { MenuData } from "@/app/lib/Menudata";
 
 
 /* ---------- Data (replace with your API / CMS) ---------- */
@@ -18,97 +19,7 @@ const categories = [
   { id: "coffee", label: "Coffee", emoji: "☕" },
 ];
 
-const restaurants = [
-  {
-    id: "maple-kitchen",
-    category: "bowls",
-    image: "/images/maple-kitchen.jpg",
-    name: "Maple Kitchen",
-    cuisine: "Fresh bowls · Seasonal comfort",
-    rating: 4.9,
-    reviews: "240+",
-    time: "20–30 min",
-    delivery: "$2.49 delivery",
-    tag: "Neighborhood favorite",
-  },
-  {
-    id: "little-ember-pizza",
-    category: "pizza",
-    image: "/images/little-ember-pizza.jpg",
-    name: "Little Ember Pizza",
-    cuisine: "Wood-fired pizza · Italian",
-    rating: 4.8,
-    reviews: "180+",
-    time: "25–35 min",
-    delivery: "$1.99 delivery",
-    tag: "Free delivery over $25",
-  },
-  {
-    id: "block-burger",
-    category: "burgers",
-    image: "/images/block-burger.jpg",
-    name: "Block Burger",
-    cuisine: "Smash burgers · American",
-    rating: 4.7,
-    reviews: "310+",
-    time: "15–25 min",
-    delivery: "$2.99 delivery",
-    tag: "Popular nearby",
-  },
-  {
-    id: "green-table",
-    category: "plant",
-    image: "/images/green-table.jpg",
-    name: "Green Table",
-    cuisine: "Plant-based · Salads",
-    rating: 4.9,
-    reviews: "120+",
-    time: "20–35 min",
-    delivery: "$1.49 delivery",
-    tag: "Fresh & plant-based",
-  },
-];
 
-const dishes = [
-  {
-    id: "harvest-chicken-bowl",
-    category: "bowls",
-    image: "/images/harvest-chicken-bowl.jpg",
-    name: "Harvest chicken bowl",
-    description:
-      "Roasted chicken, quinoa, avocado, seasonal greens & lemon tahini.",
-    price: "$14.50",
-    badge: "Bestseller",
-  },
-  {
-    id: "garden-crunch-salad",
-    category: "plant",
-    image: "/images/garden-crunch-salad.jpg",
-    name: "Garden crunch salad",
-    description:
-      "Crisp greens, cucumber, avocado, toasted seeds & herb dressing.",
-    price: "$11.50",
-    badge: "Vegan",
-  },
-  {
-    id: "margherita-pizza",
-    category: "pizza",
-    image: "/images/margherita-pizza.jpg",
-    name: "Margherita pizza",
-    description: "San Marzano tomatoes, fresh mozzarella, basil & olive oil.",
-    price: "$16.00",
-    badge: "Popular",
-  },
-  {
-    id: "double-smash-burger",
-    category: "burgers",
-    image: "/images/double-smash-burger.jpg",
-    name: "Double smash burger",
-    description: "Two beef patties, cheddar, pickles & our house-made sauce.",
-    price: "$13.00",
-    badge: "Popular",
-  },
-];
 
 /* ---------- Small internal pieces ---------- */
 
@@ -182,18 +93,9 @@ function PromoCard({
   );
 }
 
-/* ---------- Main component ---------- */
-
-type FoodBrowseProps = {
-  onAddToCart?: (dishId: string) => void;
-};
-
-export default function FoodBrowse({ onAddToCart }: FoodBrowseProps) {
+export default function FoodBrowse() {
   const [active, setActive] = useState("all");
-
-  const matches = (category: string) => active === "all" || category === active;
-  const visibleRestaurants = restaurants.filter((r) => matches(r.category));
-  const visibleDishes = dishes.filter((d) => matches(d.category));
+  const menus = MenuData()||[]
 
   return (
     <section className="bg-[#faf8f3] w-full">
@@ -240,22 +142,10 @@ export default function FoodBrowse({ onAddToCart }: FoodBrowseProps) {
             linkLabel="View all"
             href="/restaurants"
           />
-          {visibleRestaurants.length ? (
+          {menus.length ? (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {visibleRestaurants.map((r) => (
-                <FoodCard
-                  key={r.id}
-                  variant="restaurant"
-                  href={`/restaurants/${r.id}`}
-                  image={r.image}
-                  name={r.name}
-                  cuisine={r.cuisine}
-                  rating={r.rating}
-                  reviews={r.reviews}
-                  time={r.time}
-                  delivery={r.delivery}
-                  tag={r.tag}
-                />
+              {menus.map((item)=>(
+                <FoodCard variant="boss" key={item.id} item= {item}/>
               ))}
             </div>
           ) : (
@@ -292,19 +182,10 @@ export default function FoodBrowse({ onAddToCart }: FoodBrowseProps) {
             linkLabel="View all"
             href="/dishes"
           />
-          {visibleDishes.length ? (
+          {menus.length ? (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {visibleDishes.map((d) => (
-                <FoodCard
-                  key={d.id}
-                  variant="dish"
-                  image={d.image}
-                  name={d.name}
-                  description={d.description}
-                  price={d.price}
-                  badge={d.badge}
-                  onAdd={() => onAddToCart?.(d.id)}
-                />
+              {menus.map((item)=>(
+                <FoodCard variant="user" key={item.id} item= {item}/>
               ))}
             </div>
           ) : (

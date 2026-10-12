@@ -17,3 +17,13 @@ export interface TokenResponse{
     access:string;
     refresh:string;
 }
+export interface Menu {
+    "Item_name":string;
+    "price":number;
+    "image":string;
+    "description":string;
+    "Category":string;
+    "id":number;
+    "restaurants":string;
+    "incart": boolean;
+}

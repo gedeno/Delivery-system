@@ -37,6 +37,10 @@ class CreateMenu(ModelViewSet):
         if restaurant_id:
             return Menu_item.objects.filter(restaurant_id = restaurant_id)
         return Menu_item.objects.all()
+class FetchMenu(ModelViewSet):
+    queryset = Menu_item.objects.all()
+    serializer_class = Menu_itemserializer
+    permission_classes: ClassVar = [AllowAny]
     
 class CartViewSet(ModelViewSet):
     serializer_class = Cartserialiser
