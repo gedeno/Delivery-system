@@ -27,3 +27,9 @@ export interface Menu {
     "restaurants":string;
     "incart": boolean;
 }
+export interface Restaurant {
+    id:number;
+    Res_name :string;
+    image:string;
+    address:string;
+}

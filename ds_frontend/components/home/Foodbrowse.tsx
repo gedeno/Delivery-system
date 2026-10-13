@@ -5,6 +5,8 @@ import { useState } from "react";
 import Button from "../Ui/Button";
 import FoodCard from "../Ui/FoodCard";
 import { MenuData } from "@/app/lib/Menudata";
+import { RestaurantData } from "@/app/lib/restaurantdata";
+import RestaurantCard from "../Ui/RestaurantCard";
 
 
 /* ---------- Data (replace with your API / CMS) ---------- */
@@ -96,6 +98,7 @@ function PromoCard({
 export default function FoodBrowse() {
   const [active, setActive] = useState("all");
   const menus = MenuData()||[]
+  const restaurants = RestaurantData()||[]
 
   return (
     <section className="bg-[#faf8f3] w-full">
@@ -142,15 +145,16 @@ export default function FoodBrowse() {
             linkLabel="View all"
             href="/restaurants"
           />
-          {menus.length ? (
+          {restaurants.length ? (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {menus.map((item)=>(
-                <FoodCard variant="boss" key={item.id} item= {item}/>
+              {restaurants.map((item)=>(
+                <RestaurantCard key={item.id} item= {item}/>
               ))}
             </div>
           ) : (
+            
             <p className="mt-6 text-[14px] text-neutral-500 w-full">
-              No kitchens in this category yet. Try another cuisine.
+              No kitchens in this category yet. Try another cuisine. {restaurants.length}
             </p>
           )}
         </div>
