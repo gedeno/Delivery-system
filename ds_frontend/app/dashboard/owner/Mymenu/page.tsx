@@ -1,0 +1,318 @@
+"use client";
+
+// components/AddMenuItemPage.tsx
+import { useState, type FormEvent } from "react";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
+import Input from "@/components/Ui/Input";
+import Button from "@/components/Ui/Button";
+
+
+/* ---------- types ---------- */
+
+export type MenuItemPayload = {
+  Item_name: string;
+  price: number;
+  image: string;
+  description: string;
+  Category: string;
+  restaurants: string;
+};
+
+type Props = {
+  /** Restaurants the vendor can add this item to. */
+  restaurantOptions?: string[];
+  /** Called with the validated payload. Send it to your API here. */
+  onSubmit?: (item: MenuItemPayload) => void | Promise<void>;
+};
+
+/* ---------- data ---------- */
+
+const PLACEHOLDER_CATEGORY = "Select a category";
+const PLACEHOLDER_RESTAURANT = "Select a restaurant";
+
+const categories = [
+  PLACEHOLDER_CATEGORY,
+  "Fresh bowls",
+  "Salads",
+  "Pizza",
+  "Burgers",
+  "Sides",
+  "Drinks",
+  "Desserts",
+];
+
+type FormState = {
+  Item_name: string;
+  price: string; // kept as text while typing, converted to number on submit
+  image: string;
+  description: string;
+  Category: string;
+  restaurants: string;
+};
+
+type Errors = Partial<Record<keyof FormState, string>>;
+
+function validate(f: FormState, restaurantOptions: string[]): Errors {
+  const e: Errors = {};
+  if (!f.Item_name.trim()) e.Item_name = "Enter the item name.";
+  const price = Number(f.price);
+  if (f.price.trim() === "" || Number.isNaN(price) || price <= 0)
+    e.price = "Enter a price greater than 0.";
+  if (!f.image.trim()) e.image = "Add an image path or URL.";
+  if (!f.description.trim()) e.description = "Add a short description.";
+  if (f.Category === PLACEHOLDER_CATEGORY) e.Category = "Choose a category.";
+  if (restaurantOptions.length > 0 && f.restaurants === PLACEHOLDER_RESTAURANT)
+    e.restaurants = "Choose a restaurant.";
+  return e;
+}
+
+const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
+const heading = "text-[15px] font-bold text-[#1b2b24]";
+
+/* ---------- main component ---------- */
+
+export default function AddMenuItemPage({
+  restaurantOptions = ["Maple Kitchen", "Little Ember Pizza", "Block Burger", "Green Table"],
+  onSubmit,
+}: Props) {
+  const restaurantList = [PLACEHOLDER_RESTAURANT, ...restaurantOptions];
+
+  const initial: FormState = {
+    Item_name: "",
+    price: "",
+    image: "",
+    description: "",
+    Category: PLACEHOLDER_CATEGORY,
+    restaurants: PLACEHOLDER_RESTAURANT,
+  };
+
+  const [form, setForm] = useState<FormState>(initial);
+  const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [done, setDone] = useState(false);
+  const [resetKey, setResetKey] = useState(0); // remounts the uncontrolled selects on reset
+
+  const errors = submitted ? validate(form, restaurantOptions) : {};
+  const errorCount = Object.keys(errors).length;
+
+  const set =
+    (key: keyof FormState) =>
+    (e: { target: { value: string } }) => {
+      setDone(false);
+      setForm((f) => ({ ...f, [key]: e.target.value }));
+    };
+
+  async function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setSubmitted(true);
+    if (Object.keys(validate(form, restaurantOptions)).length > 0) {
+      setDone(false);
+      return;
+    }
+
+    const payload: MenuItemPayload = {
+      Item_name: form.Item_name.trim(),
+      price: Number(form.price),
+      image: form.image.trim(),
+      description: form.description.trim(),
+      Category: form.Category,
+      restaurants: form.restaurants,
+    };
+
+    setSaving(true);
+    try {
+      await onSubmit?.(payload);
+      setDone(true);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function reset() {
+    setForm(initial);
+    setSubmitted(false);
+    setDone(false);
+    setResetKey((k) => k + 1);
+  }
+
+  const priceNumber = Number(form.price);
+  const previewPrice =
+    form.price.trim() !== "" && !Number.isNaN(priceNumber) ? `$${priceNumber.toFixed(2)}` : "$0.00";
+
+  return (
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
+      {/* Heading */}
+      <header>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">
+          Vendor workspace · Menu &amp; restaurant
+        </p>
+        <h1 className="mt-2 text-[28px] font-bold tracking-tight sm:text-[32px]">
+          Add a menu item
+        </h1>
+        <p className="mt-2 text-[13px] text-neutral-500">
+          New dishes appear to customers as soon as the item is saved.
+        </p>
+      </header>
+
+      {/* Alerts */}
+      <div className="mt-5 space-y-3" aria-live="polite">
+        {done && (
+          <div role="status" className="flex gap-3 rounded-xl bg-[#e6f0ea] p-4">
+            <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57]" />
+            <div>
+              <p className="text-[12px] font-bold">Changes saved</p>
+              <p className="mt-1 text-[11px] text-neutral-600">
+                Your menu is up to date and visible to customers.
+              </p>
+            </div>
+          </div>
+        )}
+        {submitted && errorCount > 0 && (
+          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+            <div>
+              <p className="text-[12px] font-bold">
+                {errorCount} field{errorCount > 1 ? "s" : ""} need your attention
+              </p>
+              <p className="mt-1 text-[11px] text-neutral-600">
+                Check the highlighted fields and try again.
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_340px]"
+      >
+        {/* ---------- left: form ---------- */}
+        <div className="space-y-6">
+          <section className={panel}>
+            <h2 className={heading}>Item details</h2>
+
+            <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+              <Input
+                label="Item name"
+                name="Item_name"
+                placeholder="e.g. Harvest chicken bowl"
+                value={form.Item_name}
+                onChange={set("Item_name")}
+                error={errors.Item_name}
+              />
+
+              <Input
+                label="Price (USD)"
+                name="price"
+                inputMode="decimal"
+                placeholder="14.50"
+                value={form.price}
+                onChange={set("price")}
+                error={errors.price}
+              />
+
+              {/* Input's <select> doesn't forward onChange, so listen on the wrapper (change events bubble) */}
+              <div
+                key={`cat-${resetKey}`}
+                
+              >
+                <Input label="Category" name="Category" options={categories} error={errors.Category} />
+              </div>
+
+              <div
+                key={`rest-${resetKey}`}
+               
+              >
+                <Input
+                  label="Restaurant"
+                  name="restaurants"
+                  options={restaurantList}
+                  error={errors.restaurants}
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label htmlFor="description" className="mb-2 block text-[11px] font-bold">
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={3}
+                  maxLength={160}
+                  value={form.description}
+                  onChange={set("description")}
+                  aria-invalid={errors.description ? true : undefined}
+                  aria-describedby={errors.description ? "description-error" : undefined}
+                  placeholder="Roasted chicken, quinoa, avocado, seasonal greens & lemon tahini."
+                  className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1 ${
+                    errors.description
+                      ? "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]"
+                      : "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57]"
+                  }`}
+                />
+                {errors.description && (
+                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                    {errors.description}
+                  </p>
+                )}
+                <p className="mt-2 text-[10.5px] text-neutral-500">
+                  {form.description.length}/160 characters
+                </p>
+              </div>
+
+              <Input
+                label="Image"
+                name="image"
+                className="sm:col-span-2"
+                placeholder="/images/harvest-chicken-bowl.jpg or https://…"
+                hint="Path or URL of the dish photo. Landscape photos work best."
+                value={form.image}
+                onChange={set("image")}
+                error={errors.image}
+              />
+            </div>
+          </section>
+
+          {/* Actions */}
+          <div className="flex flex-wrap justify-end gap-3">
+            <Button variant="outline" onClick={reset}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? "Saving…" : "Save item"}
+            </Button>
+          </div>
+        </div>
+
+        {/* ---------- right: live preview ---------- */}
+        <aside className="space-y-4 lg:sticky lg:top-6">
+          <section className={panel}>
+            <h2 className={heading}>Live preview</h2>
+
+            <div className="mt-4">
+             
+            </div>
+
+            <p className="mt-3 text-[10px] text-neutral-500">
+              {form.restaurants === PLACEHOLDER_RESTAURANT
+                ? "Choose a restaurant to publish this item."
+                : `Will be added to ${form.restaurants}.`}
+            </p>
+          </section>
+
+          <section className="rounded-2xl bg-[#e6f0ea] p-5">
+            <h3 className="text-[14px] font-bold">Good food. Good neighbors.</h3>
+            <p className="mt-2 text-[11px] text-neutral-600">
+              Need a hand with your menu? Our local support team is here.
+            </p>
+            <Button variant="light" href="/support" className="mt-3">
+              Contact support ↗
+            </Button>
+          </section>
+        </aside>
+      </form>
+    </div>
+  );
+}
