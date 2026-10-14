@@ -16,6 +16,14 @@ class CreateRestaurant(ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner = self.request.user)
         print(serializer.data)
+
+class RetchRestaurant(ModelViewSet):
+    queryset = Restaurants.objects.all()
+    serializer_class = Restaurantserializer
+    permission_classes: ClassVar = [AllowAny]
+
+   
+
 class Restaurants_ower_fetch(ModelViewSet):
     queryset = Restaurants.objects.all()
     serializer_class = Restaurantserializer
