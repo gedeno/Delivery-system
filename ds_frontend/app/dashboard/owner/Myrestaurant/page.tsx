@@ -2,9 +2,11 @@
  
 // components/AddRestaurantPage.tsx
 import { useEffect, useState, type FormEvent } from "react";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle, ArrowUpRight, CheckCircle2 } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
+import Link from "next/link";
+import { RestaurantData } from "@/app/lib/restaurantdata";
 
 /* ---------- data ---------- */
  
@@ -340,6 +342,132 @@ export default function AddRestaurantPage() {
           </section>
         </aside>
       </form>
+      <MyRestaurantsList/>
     </div>
+  );
+}
+
+
+
+export type MyRestaurant = {
+  id: string;
+  name: string;
+  cuisine?: string;
+  address?: string;
+  status?: string; // e.g. "approved" | "pending" | "rejected"
+};
+
+type Props = {
+  endpoint?: string; // change to your real API route
+  refreshKey?: number; // bump this to re-fetch (e.g. after a successful submit)
+};
+
+const statusTone: Record<string, string> = {
+  approved: "bg-[#e3f1ea] text-[#237a57]",
+  pending: "bg-[#fdf0c9] text-[#8a6100]",
+  rejected: "bg-[#fbe6e1] text-[#d4472f]",
+};
+const statusLabel: Record<string, string> = {
+  approved: "Live",
+  pending: "Pending approval",
+  rejected: "Rejected",
+};
+
+export  function MyRestaurantsList({
+  endpoint = "/api/restaurants/mine",
+  refreshKey = 0,
+}: Props) {
+  const [items, setItems] = useState<MyRestaurant[] | null>(null); // null = still loading
+  const [attempt, setAttempt] = useState(0);
+  const restaurant = RestaurantData() 
+  const status = "Live"
+
+  useEffect(() => {
+    const ctrl = new AbortController();
+
+    fetch(endpoint, { credentials: "include", signal: ctrl.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        // accepts either [ ... ] or { restaurants: [ ... ] }
+        setItems(Array.isArray(data) ? data : (data.restaurants ?? []));
+       
+      })
+     
+    return () => ctrl.abort();
+  }, [endpoint, refreshKey, attempt]);
+
+  // Error
+  
+
+  // Loading
+  if (restaurant === null) {
+    return (
+      <section className={`${panel} mt-6`} aria-busy="true" aria-label="Loading your restaurants">
+        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100" />
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-20 animate-pulse rounded-2xl bg-neutral-100" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  // No restaurants yet: show nothing, the form below is the next step
+  if (restaurant.length === 0) return null;
+
+  return (
+    <section className={`${panel} mt-6`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className={heading}>Your restaurants</h2>
+          <p className="mt-2 text-[11px] text-neutral-500">
+            You have {restaurant.length} {restaurant.length === 1 ? "restaurant" : "restaurants"}.
+          </p>
+        </div>
+        <Link href="/dashboard/owner/MyRestaurants" className="text-[11px] font-semibold text-[#237a57]">
+          Manage restaurants
+        </Link>
+      </div>
+
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {restaurant.map((item) => {
+          const key = (status ?? "").toLowerCase();
+          return (
+             <li key={item.id}>
+  <Link
+    href={`/dashboard/owner/Myrestaurant/${item.id}`}
+    className="group block rounded-2xl border border-neutral-200 bg-white p-4 transition-all duration-200 hover:border-[#237a57] hover:shadow-md focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-0.5"
+  >
+    <div className="flex items-start justify-between gap-3">
+      <p className="text-[14px] font-bold transition-colors group-hover:text-[#237a57]">
+        {item.Res_name}
+      </p>
+      <span
+        className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold ${
+          statusTone[key] ?? "bg-neutral-100 text-neutral-500"
+        }`}
+      >
+        {statusLabel[key] ?? status}
+      </span>
+    </div>
+
+    <div className="mt-2 flex items-center justify-between gap-3">
+      {item.address && (
+        <p className="text-[11px] text-neutral-500">{item.address}</p>
+      )}
+      <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100">
+        Manage <ArrowUpRight size={12} aria-hidden />
+      </span>
+    </div>
+  </Link>
+</li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }

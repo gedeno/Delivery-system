@@ -21,13 +21,14 @@ import {
   UtensilsCrossed,
   X,
 } from "lucide-react";
+import { UserData } from "@/app/lib/Userdata";
 
-export type Role = "customer" | "delivery" | "restaurant_owner" | "admin";
+
 
 type NavItem = { label: string; href: string; icon: ReactNode };
 
 const customer: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard/customer", icon: <LayoutDashboard className="h-5 w-5" /> },
+  { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "Restaurants", href: "/restaurants", icon: <Store className="h-5 w-5" /> },
   { label: "My Orders", href: "/dashboard/customer/orders", icon: <ShoppingBag className="h-5 w-5" /> },
   { label: "Cart", href: "/cart", icon: <ShoppingCart className="h-5 w-5" /> },
@@ -35,14 +36,14 @@ const customer: NavItem[] = [
 ];
 
 const delivery: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard/delivery", icon: <LayoutDashboard className="h-5 w-5" /> },
+  { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Deliveries", href: "/dashboard/delivery/orders", icon: <Truck className="h-5 w-5" /> },
   { label: "Profile", href: "/dashboard/delivery/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const restaurant_owner: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard/owner", icon: <LayoutDashboard className="h-5 w-5" /> },
-  { label: "My Restaurants", href: "/dashboard/owner/MyRestaurants", icon: <Store className="h-5 w-5" /> },
+  { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+  { label: "My Restaurants", href: "/dashboard/owner/Myrestaurant", icon: <Store className="h-5 w-5" /> },
   { label: "Orders", href: "/dashboard/owner/orders", icon: <ClipboardList className="h-5 w-5" /> },
   { label: "Profile", href: "/dashboard/owner/profile", icon: <User className="h-5 w-5" /> },
 ];
@@ -58,28 +59,30 @@ const admin: NavItem[] = [
   { label: "Settings", href: "/dashboard/admin/settings", icon: <Settings className="h-5 w-5" /> },
 ];
 
-const navByRole: Record<Role, NavItem[]> = { customer, delivery, restaurant_owner, admin };
-
-const roleTitle: Record<Role, string> = {
-  customer: "Customer workspace",
-  delivery: "Delivery workspace",
-  restaurant_owner: "Vendor workspace",
-  admin: "Admin workspace",
-};
 
 type SidebarProps = {
-  role: Role;
+  
   open: boolean;
   onClose: () => void;
 };
 
-export default function Sidebar({ role, open, onClose }: SidebarProps) {
+export default function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
   const closeRef = useRef<HTMLButtonElement>(null);
-  const items = navByRole[role] ?? [];
+ 
+  const user = UserData()
+
+   const navItems =
+    user?.role === "restaurant_owner"
+        ? restaurant_owner
+        : user?.role === "delivery"
+        ? delivery
+        : user?.role === "admin"
+        ? admin
+        : customer;
 
   // Longest matching href wins, so "/dashboard/owner" isn't active on "/dashboard/owner/orders".
-  const activeHref = items
+  const activeHref = navItems
     .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
     .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
@@ -133,11 +136,11 @@ export default function Sidebar({ role, open, onClose }: SidebarProps) {
         </div>
 
         <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
-          {roleTitle[role]}
+          {user?.role}
         </p>
 
         <nav aria-label="Dashboard" className="flex flex-col gap-1">
-          {items.map((item) => {
+          {navItems.map((item) => {
             const on = item.href === activeHref;
             return (
               <Link

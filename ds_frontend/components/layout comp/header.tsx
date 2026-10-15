@@ -3,22 +3,23 @@
 // components/Header.tsx
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import Sidebar, { type Role } from "./sidebar";
+import Sidebar from "./sidebar";
+import { UserData } from "@/app/lib/Userdata";
 
 
 type HeaderProps = {
-  role: Role; // decides which links the sidebar shows
+  // decides which links the sidebar shows
   addressLabel?: string; // e.g. "Home"
   address?: string; // e.g. "128 Maple Street"
   userName?: string;
 };
 
 export default function Header({
-  role,
   addressLabel = "Home",
   address = "128 Maple Street",
   userName = "Alex Morgan",
 }: HeaderProps) {
+  const user = UserData()
 
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
@@ -127,7 +128,7 @@ export default function Header({
         </div>
       </header>
 
-      <Sidebar role={role} open={menuOpen} onClose={closeMenu} />
+      <Sidebar open={menuOpen} onClose={closeMenu} />
     </>
   );
 }
