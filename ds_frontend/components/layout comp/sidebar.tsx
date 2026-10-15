@@ -67,7 +67,6 @@ type SidebarProps = {
 };
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
-  const pathname = usePathname();
   const closeRef = useRef<HTMLButtonElement>(null);
  
   const user = UserData()
@@ -83,7 +82,6 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
 
   // Longest matching href wins, so "/dashboard/owner" isn't active on "/dashboard/owner/orders".
   const activeHref = navItems
-    .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
     .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
   // Esc to close, lock page scroll, and move focus into the drawer while it's open.

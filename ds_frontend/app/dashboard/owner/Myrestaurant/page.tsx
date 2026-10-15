@@ -2,7 +2,7 @@
  
 // components/AddRestaurantPage.tsx
 import { useEffect, useState, type FormEvent } from "react";
-import { AlertCircle, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { AlertCircle, ArrowUpRight, CheckCircle2, MapPin } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
 import Link from "next/link";
@@ -381,6 +381,7 @@ export  function MyRestaurantsList({
   const [attempt, setAttempt] = useState(0);
   const restaurant = RestaurantData() 
   const status = "Live"
+  const cuisine = "good"
 
   useEffect(() => {
     const ctrl = new AbortController();
@@ -438,32 +439,73 @@ export  function MyRestaurantsList({
           const key = (status ?? "").toLowerCase();
           return (
              <li key={item.id}>
-  <Link
-    href={`/dashboard/owner/Myrestaurant/${item.id}`}
-    className="group block rounded-2xl border border-neutral-200 bg-white p-4 transition-all duration-200 hover:border-[#237a57] hover:shadow-md focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-0.5"
-  >
-    <div className="flex items-start justify-between gap-3">
-      <p className="text-[14px] font-bold transition-colors group-hover:text-[#237a57]">
-        {item.Res_name}
-      </p>
-      <span
-        className={`inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold ${
-          statusTone[key] ?? "bg-neutral-100 text-neutral-500"
-        }`}
-      >
-        {statusLabel[key] ?? status}
-      </span>
-    </div>
+ <Link
+      href={`/dashboard/owner/Myrestaurant/${item.id}`}
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57] hover:shadow-lg focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-1"
+    >
+      {/* cover image (falls back to the restaurant's first letter) */}
+      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#e6f0ea] to-[#fdf0c9]">
+        <span
+          aria-hidden
+          className="absolute inset-0 grid place-items-center text-[48px] font-bold text-[#237a57]/30"
+        >
+          {item.Res_name?.charAt(0).toUpperCase()}
+        </span>
 
-    <div className="mt-2 flex items-center justify-between gap-3">
-      {item.address && (
-        <p className="text-[11px] text-neutral-500">{item.address}</p>
-      )}
-      <span className="ml-auto inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:none)]:opacity-100">
-        Manage <ArrowUpRight size={12} aria-hidden />
-      </span>
-    </div>
-  </Link>
+        {item.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={item.image}
+            alt=""
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
+          />
+        )}
+
+        {status && (
+          <span
+            className={`absolute left-3 top-3 inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-white/70 ${
+              statusTone[key] ?? "bg-neutral-100 text-neutral-500"
+            }`}
+          >
+            {statusLabel[key] ?? status}
+          </span>
+        )}
+      </div>
+
+      {/* details */}
+      <div className="flex flex-1 flex-col p-4">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-[15px] font-bold leading-snug transition-colors group-hover:text-[#237a57]">
+            {item.Res_name}
+          </p>
+          {cuisine && (
+            <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-semibold text-neutral-600">
+              {cuisine}
+            </span>
+          )}
+        </div>
+
+        {item.address && (
+          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-500">
+            <MapPin size={12} aria-hidden className="shrink-0" />
+            {item.address}
+          </p>
+        )}
+
+        <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-[11px] font-semibold text-[#237a57]">
+          <span>Manage restaurant</span>
+          <ArrowUpRight
+            size={14}
+            aria-hidden
+            className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          />
+        </div>
+      </div>
+    </Link>
 </li>
           );
         })}

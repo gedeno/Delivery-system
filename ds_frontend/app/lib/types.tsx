@@ -24,7 +24,7 @@ export interface Menu {
     "description":string;
     "Category":string;
     "id":number;
-    "restaurants":string;
+    "restaurants":Restaurant | string;
     "incart": boolean;
 }
 export interface Restaurant {

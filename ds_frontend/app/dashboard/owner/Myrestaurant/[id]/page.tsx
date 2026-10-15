@@ -5,6 +5,12 @@ import { useState, type FormEvent } from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
+import { useMemo, } from "react";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+import { MenuData } from "@/app/lib/Menudata";
+
+ 
 
 
 /* ---------- types ---------- */
@@ -313,6 +319,144 @@ export default function AddMenuItemPage({
           </section>
         </aside>
       </form>
+      <MyMenuItemsList/>
     </div>
   );
 }
+
+
+
+
+ 
+
+
+ 
+export  function MyMenuItemsList() { 
+  const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
+  const heading = "text-[15px] font-bold text-[#1b2b24]";
+  
+  const [restaurant, setRestaurant] = useState("All");
+  const menus = MenuData()
+ 
+  const restaurantNames = useMemo(
+    () => Array.from(new Set((menus ?? []).map((item) =>
+      typeof item.restaurants === "string" ? item.restaurants : item.restaurants?.Res_name
+    ).filter((name): name is string => Boolean(name)))),
+    [menus]
+  );
+ 
+  // Loading
+  if (menus === null) {
+    return (
+      <section className={`${panel} mt-6`} aria-busy="true" aria-label="Loading your menu">
+        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100" />
+        <div className="mt-4 grid gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-56 animate-pulse rounded-2xl bg-neutral-100" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+ 
+  // Nothing added yet: show nothing, the form above is the next step
+  if (menus.length === 0) return null;
+ 
+  return (
+    <section className={`${panel} mt-6`}>
+      <div>
+        <h2 className={heading}>Your menu items</h2>
+        <p className="mt-2 text-[11px] text-neutral-500">
+          {menus.length} {menus.length === 1 ? "item" : "items"} added so far.
+        </p>
+      </div>
+ 
+      {/* restaurant filter (only when items belong to more than one restaurant) */}
+      {restaurantNames.length > 1 && (
+        <div role="group" aria-label="Filter by restaurant" className="mt-4 flex flex-wrap gap-2">
+          {["All", ...restaurantNames].map((name,i) => {
+            const on = restaurant === name;
+            return (
+              <button
+                key={i}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setRestaurant(name)}
+                className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors ${
+                  on ? "bg-[#e3f1ea] text-[#237a57]" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+                }`}
+              >
+                {name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+ 
+      <ul className="mt-5 grid gap-4 min-[480px]:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+        {menus.map((item) => (
+          <li key={item.id}>
+            <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-lg motion-safe:hover:-translate-y-1">
+              {/* image (falls back to the item's first letter) */}
+              <div className="relative aspect-[1.52/1] w-full overflow-hidden bg-gradient-to-br from-orange-200 to-orange-300">
+                <span
+                  aria-hidden
+                  className="absolute inset-0 grid place-items-center text-[40px] font-bold text-white/60"
+                >
+                  {item.Item_name?.charAt(0).toUpperCase()}
+                </span>
+                {item.image && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image}
+                    alt=""
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transition-none"
+                  />
+                )}
+                {item.Category && (
+                  <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-neutral-700 shadow-sm sm:text-[11px]">
+                    {item.Category}
+                  </span>
+                )}
+              </div>
+ 
+              {/* details */}
+              <div className="flex flex-1 flex-col p-3 sm:p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="line-clamp-2 text-[14px] font-bold leading-snug text-[#1b2b24] sm:text-[15px]">
+                    {item.Item_name}
+                  </h3>
+                  <p className="shrink-0 text-[13px] font-semibold text-[#237a57]">{item.price}</p>
+                </div>
+ 
+                {item.restaurants && (
+                  <p className="mt-1 truncate text-[11px] text-neutral-500">
+                    {typeof item.restaurants === "string" ? item.restaurants : item.restaurants.Res_name}
+                  </p>
+                )}
+ 
+                {item.description && (
+                  <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-neutral-500 sm:text-[12px]">
+                    {item.description}
+                  </p>
+                )}
+ 
+                <Link
+                  href="/"
+                  className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-[12px] font-semibold text-[#1b2b24] transition-colors hover:border-[#237a57] hover:text-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 sm:mt-auto sm:pt-2"
+                >
+                  <Pencil size={13} aria-hidden /> Edit item
+                </Link>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+ 
