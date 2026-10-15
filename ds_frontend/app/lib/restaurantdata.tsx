@@ -7,7 +7,7 @@ import { Restaurant } from "./types";
 export function RestaurantData(){
     const [restaurats ,setRestaurants]= useState<Restaurant[]|null>([])
     useEffect(()=>{
-        api.get<Restaurant[]>("/restaurants/restaurant/")
+        api.get<Restaurant[]>("/restaurants/restaurant_fetch/")
         .then((res) =>{
             setRestaurants(res.data)
         }).catch((error)=>{
