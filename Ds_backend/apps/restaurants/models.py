@@ -11,11 +11,14 @@ class Restaurants(models.Model):
     image = models.ImageField(upload_to='photo')
     address = models.CharField(max_length=200)
     description = models.CharField(max_length=300)
-    phonen= models.CharField(max_length=300)
+    phone= models.CharField(max_length=300)
     email = models.CharField(max_length=300)
     opening_time = models.CharField(max_length=10)
     closing_time = models.CharField(max_length=100)
     cuisine_type = models.CharField(max_length=200)
+    map_logitude = models.FloatField()
+    map_latiude = models.FloatField()
+    rating = models.FloatField(default=0.0)
 
     def __str__(self):
         return self.Res_name
@@ -27,6 +30,7 @@ class Menu_item(models.Model):
     image = models.ImageField(upload_to='photo')
     description = models.CharField(max_length=200)
     Category = models.CharField(max_length=200)
+    is_available = models.BooleanField(default=False)
     def __str__(self):
         return self.Item_name
     

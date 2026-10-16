@@ -6,7 +6,8 @@ from apps.accounts.serializer import Userserializer
 class Restaurantserializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurants
-        fields = [ "id", "owner" , "Res_name","image","address"  ]
+        fields = [ "id", "owner" , "Res_name","image","address", "description","phone"
+                  ,"email" ,"opening_time","closing_time","cuisine_type" , "map_logitude","map_latiude","rating" ]
         extra_kwargs = {'owner':{'read_only':True} ,'id':{'read_only':True} }
 
 class Menu_itemserializer(serializers.ModelSerializer):
@@ -14,7 +15,7 @@ class Menu_itemserializer(serializers.ModelSerializer):
     incart = serializers.SerializerMethodField()
     class Meta:
         model= Menu_item
-        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category","restaurants", "incart"]
+        fields = [ "id" , "restaurant","Item_name" , "price","image","description","Category","restaurants", "incart" , "is_available"]
         extra_kwargs ={'restaurant':{'read_only':True} ,'id':{'read_only':True},'restaurants':{'read_only':True}}
     def get_restaurants(self,obj):
         restaurant = obj.restaurant
