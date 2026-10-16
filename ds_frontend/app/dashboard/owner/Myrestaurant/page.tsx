@@ -7,7 +7,8 @@ import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
 
 import Link from "next/link";
-import { RestaurantData } from "@/app/lib/restaurantdata";
+import { RestaurantData, RestaurantOwnerData } from "@/app/lib/restaurantdata";
+import api from "@/app/lib/api";
  
 /* ---------- types ---------- */
  
@@ -107,71 +108,108 @@ const fieldBad = "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]";
 /* ---------- main component ---------- */
  
 export default function AddRestaurantPage({ onSubmit }: Props) {
-  const [form, setForm] = useState<Form>(initial);
-  const [submitted, setSubmitted] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [done, setDone] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0); // re-fetches "your restaurants" after a save
- 
-  const errors = submitted ? validate(form) : {};
+
+
+  //form submit handler and imput handlers 
+
+
+  const [formdata , setFormdata] = useState<{
+    Res_name: string;
+    address: string;
+    image: File | null;
+    description:string;
+    phone:string;
+    email:string;
+    opening_time:string;
+    closing_time:string;
+    cuisine_type:string;
+    map_logitude:string;
+    map_latiude:string;
+}>({
+         Res_name: "",
+         image: null,
+         address: "",
+         description: "",
+         phone: "",
+         email: "",
+         opening_time: "",
+         closing_time: "",
+         cuisine_type: "",
+         map_logitude: "",
+         map_latiude: "",
+    })
+    const [submitted, setSubmitted] = useState(false);
+    const [done, setDone] = useState(false);
+    const [failed, setFailed] = useState(false);
+
+
+
+
+
+
+    const changehandler = (e:React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>)=>{
+        setFormdata({
+            ...formdata,
+            [e.target.name]:e.target.value
+        })
+    }
+   
+
+    const filechangehandler = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setFormdata({
+            ...formdata,
+            image: e.target.files?.[0] || null,
+        })
+    }
+     const submitform = async(e:React.FormEvent<HTMLFormElement>)=>{
+        e.preventDefault();
+        const FD = new FormData()
+        FD.append("Res_name",formdata.Res_name)
+        FD.append("address",formdata.address)
+        FD.append("description",formdata.description)
+        FD.append("phone",formdata.phone)
+        FD.append("email",formdata.email)
+        FD.append("opening_time",formdata.opening_time)
+        FD.append("closing_time",formdata.closing_time)
+        FD.append("cuisine_type",formdata.cuisine_type)
+        FD.append("map_logitude",formdata.map_logitude)
+        FD.append("map_latiude",formdata.map_latiude)
+       
+        if (formdata.image) {
+            FD.append("image", formdata.image);
+        }
+        console.log([...FD.entries()]); 
+        try{
+            const response = await api.post("/restaurants/restaurant/",FD)
+            console.log(response.data)
+            setSubmitted(true)
+            setDone(true)
+            
+        }catch (error: any) {
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data); // 
+        setFailed(true)
+    }
+    }
+
+
+
+
+
+
+
+  const errors = submitted ? validate({
+    ...formdata,
+    image: formdata.image?.name ?? "",
+  }) : {};
   const errorCount = Object.keys(errors).length;
  
-  const set =
-    (key: keyof Form) =>
-    (e: { target: { value: string } }) => {
-      setDone(false);
-      setFailed(false);
-      setForm((f) => ({ ...f, [key]: e.target.value }));
-    };
- 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSubmitted(true);
-    if (Object.keys(validate(form)).length > 0) {
-      setDone(false);
-      return;
-    }
- 
-    const payload: RestaurantPayload = {
-      Res_name: form.Res_name.trim(),
-      image: form.image.trim(),
-      address: form.address.trim(),
-      description: form.description.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim(),
-      opening_time: form.opening_time,
-      closing_time: form.closing_time,
-      cuisine_type: form.cuisine_type,
-      map_logitude: Number(form.map_logitude),
-      map_latiude: Number(form.map_latiude),
-    };
- 
-    setSaving(true);
-    setFailed(false);
-    try {
-      await onSubmit?.(payload);
-      setDone(true);
-      setRefreshKey((k) => k + 1);
-    } catch {
-      setFailed(true);
-    } finally {
-      setSaving(false);
-    }
-  }
- 
-  function reset() {
-    setForm(initial);
-    setSubmitted(false);
-    setDone(false);
-    setFailed(false);
-  }
- 
-  const previewName = form.Res_name.trim();
-  const showImage = isImageRef(form.image);
-  const hasCuisine = form.cuisine_type !== PLACEHOLDER_CUISINE;
+
+  
+  const showImage = typeof formdata.image === "string" && isImageRef(formdata.image);
+  const hasCuisine = formdata.cuisine_type !== PLACEHOLDER_CUISINE;
   const coordsValid =
-    inRange(form.map_latiude, -90, 90) && inRange(form.map_logitude, -180, 180);
+    inRange(formdata.map_latiude, -90, 90) && inRange(formdata.map_logitude, -180, 180);
  
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
@@ -226,7 +264,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
       </div>
  
       <form
-        onSubmit={handleSubmit}
+        onSubmit={submitform}
         noValidate
         className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_340px]"
       >
@@ -240,8 +278,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 label="Restaurant name"
                 name="Res_name"
                 placeholder="e.g. Maple Kitchen"
-                value={form.Res_name}
-                onChange={set("Res_name")}
+                onChange={changehandler}
                 error={errors.Res_name}
               />
  
@@ -253,8 +290,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 <select
                   id="cuisine_type"
                   name="cuisine_type"
-                  value={form.cuisine_type}
-                  onChange={set("cuisine_type")}
+                  onChange={changehandler}
                   aria-invalid={errors.cuisine_type ? true : undefined}
                   aria-describedby={errors.cuisine_type ? "cuisine_type-error" : undefined}
                   className={`${fieldBase} ${errors.cuisine_type ? fieldBad : fieldOk}`}
@@ -281,8 +317,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   name="description"
                   rows={3}
                   maxLength={160}
-                  value={form.description}
-                  onChange={set("description")}
+                  onChange={changehandler}
                   aria-invalid={errors.description ? true : undefined}
                   aria-describedby={errors.description ? "description-error" : undefined}
                   placeholder="Seasonal bowls made with ingredients from local farms."
@@ -294,20 +329,17 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   </p>
                 )}
                 <p className="mt-2 text-[10.5px] text-neutral-500">
-                  {form.description.length}/160 characters
+                  {formdata.description.length}/160 characters
                 </p>
               </div>
  
-              <Input
-                label="Image"
-                name="image"
-                className="sm:col-span-2"
-                placeholder="https://… or /images/maple-kitchen.jpg"
-                hint="Link to a cover photo. Landscape food photos work best."
-                value={form.image}
-                onChange={set("image")}
-                error={errors.image}
-              />
+             
+              <label htmlFor="">Image</label><br />
+              <input type="file"
+              name="image"
+              className="border rounded-xl py-2 w-full"
+              onChange={filechangehandler}
+               />
             </div>
           </section>
  
@@ -318,19 +350,18 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
               <Input
                 label="Email"
                 name="email"
-                type="email"
+                type="text"
                 placeholder="hello@yourkitchen.com"
-                value={form.email}
-                onChange={set("email")}
+                onChange={changehandler}
                 error={errors.email}
               />
               <Input
                 label="Phone"
                 name="phone"
-                type="tel"
+                type="text"
                 placeholder="(555) 123-4567"
-                value={form.phone}
-                onChange={set("phone")}
+                
+                onChange={changehandler}
                 error={errors.phone}
               />
               <Input
@@ -338,8 +369,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 name="address"
                 className="sm:col-span-2"
                 placeholder="128 Maple Street"
-                value={form.address}
-                onChange={set("address")}
+                onChange={changehandler}
                 error={errors.address}
               />
  
@@ -351,8 +381,8 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                     name="map_latiude"
                     inputMode="decimal"
                     placeholder="e.g. 9.0054"
-                    value={form.map_latiude}
-                    onChange={set("map_latiude")}
+         
+                    onChange={changehandler}
                     error={errors.map_latiude}
                   />
                   <Input
@@ -360,8 +390,8 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                     name="map_logitude"
                     inputMode="decimal"
                     placeholder="e.g. 38.7636"
-                    value={form.map_logitude}
-                    onChange={set("map_logitude")}
+               
+                    onChange={changehandler}
                     error={errors.map_logitude}
                   />
                 </div>
@@ -370,7 +400,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 </p>
                 {coordsValid && (
                   <a
-                    href={`https://www.google.com/maps?q=${Number(form.map_latiude)},${Number(form.map_logitude)}`}
+                    href={`https://www.google.com/maps?q=${Number(formdata.map_latiude)},${Number(formdata.map_logitude)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] hover:underline"
@@ -390,16 +420,15 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 label="Opens"
                 name="opening_time"
                 type="time"
-                value={form.opening_time}
-                onChange={set("opening_time")}
+              
+                onChange={changehandler}
                 error={errors.opening_time}
               />
               <Input
                 label="Closes"
                 name="closing_time"
                 type="time"
-                value={form.closing_time}
-                onChange={set("closing_time")}
+                onChange={changehandler}
                 error={errors.closing_time}
               />
             </div>
@@ -407,11 +436,11 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
  
           {/* Actions */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
-            <Button type="button" variant="outline" onClick={reset} className="w-full sm:w-auto">
+            <Button type="button" variant="outline" className="w-full sm:w-auto">
               Reset
             </Button>
-            <Button type="submit" disabled={saving} className="w-full sm:w-auto">
-              {saving ? "Submitting…" : "Submit for approval"}
+            <Button type="submit" className="w-full sm:w-auto">
+              Submit for approval
             </Button>
           </div>
         </div>
@@ -438,9 +467,8 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   // key resets the element when the URL changes, so a failed load can recover
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    key={form.image}
-                    src={form.image.trim()}
-                    alt=""
+                    src={formdata.image ? URL.createObjectURL(formdata.image) : undefined}
+                    alt={formdata.Res_name}
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                     }}
@@ -449,7 +477,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 )}
                 {hasCuisine && (
                   <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm">
-                    {form.cuisine_type}
+                    {formdata.cuisine_type}
                   </span>
                 )}
               </div>
@@ -457,45 +485,45 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
               <div className="space-y-2 p-4">
                 <p
                   className={`truncate text-[16px] font-bold ${
-                    previewName ? "text-[#1b2b24]" : "text-neutral-300"
+                    formdata.Res_name ? "text-[#1b2b24]" : "text-neutral-300"
                   }`}
                 >
-                  {previewName || "Your restaurant name"}
+                  {formdata.Res_name || "Your restaurant name"}
                 </p>
  
                 <p
                   className={`line-clamp-2 text-[12px] leading-relaxed ${
-                    form.description.trim() ? "text-neutral-600" : "text-neutral-300"
+                    formdata.description.trim() ? "text-neutral-600" : "text-neutral-300"
                   }`}
                 >
-                  {form.description.trim() || "A short description of your kitchen."}
+                  {formdata.description.trim() || "A short description of your kitchen."}
                 </p>
  
                 <div className="space-y-2 pt-1 text-[12px] text-neutral-500">
                   <p className="flex items-start gap-1.5">
                     <MapPin size={14} aria-hidden className="mt-0.5 shrink-0" />
-                    <span className={form.address.trim() ? "" : "text-neutral-300"}>
-                      {form.address.trim() || "Street address"}
+                    <span className={formdata.address.trim() ? "" : "text-neutral-300"}>
+                      {formdata.address.trim() || "Street address"}
                     </span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Clock size={14} aria-hidden className="shrink-0" />
-                    <span className={form.opening_time && form.closing_time ? "" : "text-neutral-300"}>
-                      {form.opening_time && form.closing_time
-                        ? `${form.opening_time} – ${form.closing_time}`
+                    <span className={formdata.opening_time && formdata.closing_time ? "" : "text-neutral-300"}>
+                      {formdata.opening_time && formdata.closing_time
+                        ? `${formdata.opening_time} – ${formdata.closing_time}`
                         : "Opening hours"}
                     </span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Phone size={14} aria-hidden className="shrink-0" />
-                    <span className={form.phone.trim() ? "" : "text-neutral-300"}>
-                      {form.phone.trim() || "Phone number"}
+                    <span className={formdata.phone.trim() ? "" : "text-neutral-300"}>
+                      {formdata.phone.trim() || "Phone number"}
                     </span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Mail size={14} aria-hidden className="shrink-0" />
-                    <span className={`truncate ${form.email.trim() ? "" : "text-neutral-300"}`}>
-                      {form.email.trim() || "Email"}
+                    <span className={`truncate ${formdata.email.trim() ? "" : "text-neutral-300"}`}>
+                      {formdata.email.trim() || "Email"}
                     </span>
                   </p>
                 </div>
@@ -549,7 +577,7 @@ const statusLabel: Record<string, string> = {
 
 export  function MyRestaurantsList() {
 
-  const restaurant = RestaurantData() 
+  const restaurant = RestaurantOwnerData() 
   const status = "Live"
   const cuisine = "good"
 
