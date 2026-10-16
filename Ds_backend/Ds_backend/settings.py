@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Ds_backend',
     'apps.accounts',
     'apps.restaurants',
     'apps.orders',
