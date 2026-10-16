@@ -25,6 +25,7 @@ export interface Menu {
     "Category":string;
     "id":number;
     "restaurants":Restaurant | string;
+    "is_available": boolean;
     "incart": boolean;
 }
 export interface Restaurant {
@@ -32,6 +33,15 @@ export interface Restaurant {
     Res_name :string;
     image:string;
     address:string;
+    description:string;
+    phone:string;
+    email:string;
+    opening_time:string;
+    closing_time:string;
+    cuisine_type:string;
+    map_logitude:Number;
+    map_latiude:Number;
+    rating:string
 }
 
 export interface User {

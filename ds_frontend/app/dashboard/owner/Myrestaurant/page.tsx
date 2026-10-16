@@ -2,7 +2,7 @@
  
 // components/AddRestaurantPage.tsx
 import { useState, type FormEvent } from "react";
-import { AlertCircle, ArrowUpRight, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
+import { AlertCircle, ArrowUpRight, CheckCircle2, Clock, Mail, MapPin, Phone } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
 
@@ -11,63 +11,98 @@ import { RestaurantData } from "@/app/lib/restaurantdata";
  
 /* ---------- types ---------- */
  
-export interface Restaurant {
-  id: number;
-  Restaurant_name: string;
+/** What the form sends to your API (field names kept exactly as you wrote them). */
+export interface RestaurantPayload {
+  Res_name: string;
   image: string;
   address: string;
-  map: string;
-  email: string;
+  description: string;
   phone: string;
+  email: string;
+  opening_time: string;
+  closing_time: string;
+  cuisine_type: string;
+  map_logitude: number;
+  map_latiude: number;
 }
  
-/** What the form sends: everything except the id (the server creates that). */
-export type RestaurantPayload = Omit<Restaurant, "id">;
+/** A saved restaurant: the payload plus the id the server creates. */
+export interface Restaurant extends RestaurantPayload {
+  id: number;
+}
  
 type Props = {
   /** Called with the validated payload. Send it to your API here. */
   onSubmit?: (restaurant: RestaurantPayload) => void | Promise<void>;
 };
  
-type Form = RestaurantPayload;
+// Coordinates are kept as text while typing and converted to numbers on submit.
+type Form = Omit<RestaurantPayload, "map_logitude" | "map_latiude"> & {
+  map_logitude: string;
+  map_latiude: string;
+};
 type Errors = Partial<Record<keyof Form, string>>;
  
-/* ---------- helpers ---------- */
+/* ---------- data & helpers ---------- */
+ 
+const PLACEHOLDER_CUISINE = "Select a cuisine";
+const cuisines = [
+  PLACEHOLDER_CUISINE,
+  "Fresh bowls",
+  "Pizza",
+  "Burgers",
+  "Plant-based",
+  "Asian",
+  "Coffee",
+  "Bakery",
+  "Traditional",
+];
  
 const initial: Form = {
-  Restaurant_name: "",
+  Res_name: "",
   image: "",
   address: "",
-  map: "",
-  email: "",
+  description: "",
   phone: "",
-};
- 
-const isHttpUrl = (v: string) => {
-  try {
-    const u = new URL(v);
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
-  }
+  email: "",
+  opening_time: "09:00",
+  closing_time: "21:00",
+  cuisine_type: PLACEHOLDER_CUISINE,
+  map_logitude: "",
+  map_latiude: "",
 };
  
 const isImageRef = (v: string) => /^(https?:\/\/|\/)\S+$/.test(v.trim());
  
+const inRange = (v: string, min: number, max: number) => {
+  if (v.trim() === "") return false;
+  const n = Number(v);
+  return Number.isFinite(n) && n >= min && n <= max;
+};
+ 
 function validate(f: Form): Errors {
   const e: Errors = {};
-  if (!f.Restaurant_name.trim()) e.Restaurant_name = "Enter your restaurant name.";
+  if (!f.Res_name.trim()) e.Res_name = "Enter your restaurant name.";
+  if (f.cuisine_type === PLACEHOLDER_CUISINE) e.cuisine_type = "Choose a cuisine.";
+  if (!f.description.trim()) e.description = "Add a short description.";
   if (!isImageRef(f.image)) e.image = "Add an image URL (https://…) or a path starting with /.";
-  if (!f.address.trim()) e.address = "Enter the street address.";
-  if (!isHttpUrl(f.map.trim())) e.map = "Paste a map link that starts with https://";
   if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Enter a valid email address.";
   if (f.phone.replace(/\D/g, "").length < 10) e.phone = "Enter a valid phone number.";
+  if (!f.address.trim()) e.address = "Enter the street address.";
+  if (!inRange(f.map_latiude, -90, 90)) e.map_latiude = "Enter a latitude between -90 and 90.";
+  if (!inRange(f.map_logitude, -180, 180)) e.map_logitude = "Enter a longitude between -180 and 180.";
+  if (!f.opening_time) e.opening_time = "Choose an opening time.";
+  if (!f.closing_time) e.closing_time = "Choose a closing time.";
   return e;
 }
  
 const panel =
   "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-within:border-[#237a57]/40 sm:p-6";
 const heading = "text-[15px] font-bold text-[#1b2b24]";
+const fieldBase =
+  "w-full rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1";
+const fieldOk = "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57]";
+const fieldBad = "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]";
  
 /* ---------- main component ---------- */
  
@@ -99,12 +134,17 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
     }
  
     const payload: RestaurantPayload = {
-      Restaurant_name: form.Restaurant_name.trim(),
+      Res_name: form.Res_name.trim(),
       image: form.image.trim(),
       address: form.address.trim(),
-      map: form.map.trim(),
-      email: form.email.trim(),
+      description: form.description.trim(),
       phone: form.phone.trim(),
+      email: form.email.trim(),
+      opening_time: form.opening_time,
+      closing_time: form.closing_time,
+      cuisine_type: form.cuisine_type,
+      map_logitude: Number(form.map_logitude),
+      map_latiude: Number(form.map_latiude),
     };
  
     setSaving(true);
@@ -127,9 +167,11 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
     setFailed(false);
   }
  
-  const previewName = form.Restaurant_name.trim();
+  const previewName = form.Res_name.trim();
   const showImage = isImageRef(form.image);
-  const showMapLink = isHttpUrl(form.map.trim());
+  const hasCuisine = form.cuisine_type !== PLACEHOLDER_CUISINE;
+  const coordsValid =
+    inRange(form.map_latiude, -90, 90) && inRange(form.map_logitude, -180, 180);
  
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
@@ -190,19 +232,72 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
       >
         {/* ---------- left: form ---------- */}
         <div className="min-w-0 space-y-6">
-          {/* Basics */}
+          {/* Details */}
           <section className={panel}>
             <h2 className={heading}>Restaurant details</h2>
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
                 label="Restaurant name"
-                name="Restaurant_name"
-                className="sm:col-span-2"
+                name="Res_name"
                 placeholder="e.g. Maple Kitchen"
-                value={form.Restaurant_name}
-                onChange={set("Restaurant_name")}
-                error={errors.Restaurant_name}
+                value={form.Res_name}
+                onChange={set("Res_name")}
+                error={errors.Res_name}
               />
+ 
+              {/* native select, so the value is always tracked in state */}
+              <div>
+                <label htmlFor="cuisine_type" className="mb-2 block text-[11px] font-bold">
+                  Cuisine type
+                </label>
+                <select
+                  id="cuisine_type"
+                  name="cuisine_type"
+                  value={form.cuisine_type}
+                  onChange={set("cuisine_type")}
+                  aria-invalid={errors.cuisine_type ? true : undefined}
+                  aria-describedby={errors.cuisine_type ? "cuisine_type-error" : undefined}
+                  className={`${fieldBase} ${errors.cuisine_type ? fieldBad : fieldOk}`}
+                >
+                  {cuisines.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                {errors.cuisine_type && (
+                  <p id="cuisine_type-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                    {errors.cuisine_type}
+                  </p>
+                )}
+              </div>
+ 
+              <div className="sm:col-span-2">
+                <label htmlFor="description" className="mb-2 block text-[11px] font-bold">
+                  Short description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={3}
+                  maxLength={160}
+                  value={form.description}
+                  onChange={set("description")}
+                  aria-invalid={errors.description ? true : undefined}
+                  aria-describedby={errors.description ? "description-error" : undefined}
+                  placeholder="Seasonal bowls made with ingredients from local farms."
+                  className={`${fieldBase} resize-none ${errors.description ? fieldBad : fieldOk}`}
+                />
+                {errors.description && (
+                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                    {errors.description}
+                  </p>
+                )}
+                <p className="mt-2 text-[10.5px] text-neutral-500">
+                  {form.description.length}/160 characters
+                </p>
+              </div>
+ 
               <Input
                 label="Image"
                 name="image"
@@ -247,42 +342,66 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                 onChange={set("address")}
                 error={errors.address}
               />
+ 
               <div className="sm:col-span-2">
-                <p>map address</p>
-                <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-3">
+                <p className="text-[11px] font-bold">Map location</p>
+                <div className="mt-2 grid gap-x-6 gap-y-5 sm:grid-cols-2">
                   <Input
-                  label="latitiude"
-                  name="map"
-                  type="url"
-                  placeholder="3456789…"
-                  hint="Open your place in Google Maps, tap Share, and paste the link here."
-                  value={form.map}
-                  onChange={set("map")}
-                  error={errors.map}
-                />
-                 <Input
-                  label="longtude"
-                  name="map"
-                  type="url"
-                  placeholder="2345678…"
-                  hint="Open your place in Google Maps, tap Share, and paste the link here."
-                  value={form.map}
-                  onChange={set("map")}
-                  error={errors.map}
-                />
+                    label="Latitude"
+                    name="map_latiude"
+                    inputMode="decimal"
+                    placeholder="e.g. 9.0054"
+                    value={form.map_latiude}
+                    onChange={set("map_latiude")}
+                    error={errors.map_latiude}
+                  />
+                  <Input
+                    label="Longitude"
+                    name="map_logitude"
+                    inputMode="decimal"
+                    placeholder="e.g. 38.7636"
+                    value={form.map_logitude}
+                    onChange={set("map_logitude")}
+                    error={errors.map_logitude}
+                  />
                 </div>
-                
-                {showMapLink && (
+                <p className="mt-2 text-[10.5px] text-neutral-500">
+                  In Google Maps, right-click your place and tap the two numbers to copy them.
+                </p>
+                {coordsValid && (
                   <a
-                    href={form.map.trim()}
+                    href={`https://www.google.com/maps?q=${Number(form.map_latiude)},${Number(form.map_logitude)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] hover:underline"
                   >
-                    Test this link <ArrowUpRight size={12} aria-hidden />
+                    Check this spot on the map <ArrowUpRight size={12} aria-hidden />
                   </a>
                 )}
               </div>
+            </div>
+          </section>
+ 
+          {/* Hours */}
+          <section className={panel}>
+            <h2 className={heading}>Opening hours</h2>
+            <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
+              <Input
+                label="Opens"
+                name="opening_time"
+                type="time"
+                value={form.opening_time}
+                onChange={set("opening_time")}
+                error={errors.opening_time}
+              />
+              <Input
+                label="Closes"
+                name="closing_time"
+                type="time"
+                value={form.closing_time}
+                onChange={set("closing_time")}
+                error={errors.closing_time}
+              />
             </div>
           </section>
  
@@ -328,6 +447,11 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
                   />
                 )}
+                {hasCuisine && (
+                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm">
+                    {form.cuisine_type}
+                  </span>
+                )}
               </div>
  
               <div className="space-y-2 p-4">
@@ -339,24 +463,42 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   {previewName || "Your restaurant name"}
                 </p>
  
-                <p className="flex items-start gap-1.5 text-[12px] text-neutral-500">
-                  <MapPin size={14} aria-hidden className="mt-0.5 shrink-0" />
-                  <span className={form.address.trim() ? "" : "text-neutral-300"}>
-                    {form.address.trim() || "Street address"}
-                  </span>
+                <p
+                  className={`line-clamp-2 text-[12px] leading-relaxed ${
+                    form.description.trim() ? "text-neutral-600" : "text-neutral-300"
+                  }`}
+                >
+                  {form.description.trim() || "A short description of your kitchen."}
                 </p>
-                <p className="flex items-center gap-1.5 text-[12px] text-neutral-500">
-                  <Phone size={14} aria-hidden className="shrink-0" />
-                  <span className={form.phone.trim() ? "" : "text-neutral-300"}>
-                    {form.phone.trim() || "Phone number"}
-                  </span>
-                </p>
-                <p className="flex items-center gap-1.5 text-[12px] text-neutral-500">
-                  <Mail size={14} aria-hidden className="shrink-0" />
-                  <span className={`truncate ${form.email.trim() ? "" : "text-neutral-300"}`}>
-                    {form.email.trim() || "Email"}
-                  </span>
-                </p>
+ 
+                <div className="space-y-2 pt-1 text-[12px] text-neutral-500">
+                  <p className="flex items-start gap-1.5">
+                    <MapPin size={14} aria-hidden className="mt-0.5 shrink-0" />
+                    <span className={form.address.trim() ? "" : "text-neutral-300"}>
+                      {form.address.trim() || "Street address"}
+                    </span>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <Clock size={14} aria-hidden className="shrink-0" />
+                    <span className={form.opening_time && form.closing_time ? "" : "text-neutral-300"}>
+                      {form.opening_time && form.closing_time
+                        ? `${form.opening_time} – ${form.closing_time}`
+                        : "Opening hours"}
+                    </span>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <Phone size={14} aria-hidden className="shrink-0" />
+                    <span className={form.phone.trim() ? "" : "text-neutral-300"}>
+                      {form.phone.trim() || "Phone number"}
+                    </span>
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <Mail size={14} aria-hidden className="shrink-0" />
+                    <span className={`truncate ${form.email.trim() ? "" : "text-neutral-300"}`}>
+                      {form.email.trim() || "Email"}
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
  
@@ -378,7 +520,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
       </form>
  
       {/* restaurants you already have */}
-      <MyRestaurantsList  />
+      <MyRestaurantsList />
     </div>
   );
 }

@@ -27,9 +27,9 @@ export default function Header({
   return (
     <>
       <header className="sticky top-0 z-50 w-full border-b border-neutral-200 bg-white">
-        <div className="mx-auto grid h-22.5 max-w-380 grid-cols-[1fr_auto_1fr_auto] items-center gap-6 px-12">
+        <div className="mx-auto grid h-22.5 w-full grid-cols-[1fr_auto_1fr_auto] items-center gap-6 px-12">
           {/* Menu button + Logo */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-start gap-4">
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
