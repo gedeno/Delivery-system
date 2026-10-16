@@ -9,6 +9,9 @@ import { useMemo, } from "react";
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { MenuData } from "@/app/lib/Menudata";
+import { RestaurantData } from "@/app/lib/restaurantdata";
+import { useParams } from "next/dist/client/components/navigation";
+import api from "@/app/lib/api";
 
  
 
@@ -81,7 +84,7 @@ export default function AddMenuItemPage({
   restaurantOptions = ["Maple Kitchen", "Little Ember Pizza", "Block Burger", "Green Table"],
   onSubmit,
 }: Props) {
-  const restaurantList = [PLACEHOLDER_RESTAURANT, ...restaurantOptions];
+ 
 
   const initial: FormState = {
     Item_name: "",
@@ -94,45 +97,9 @@ export default function AddMenuItemPage({
 
   const [form, setForm] = useState<FormState>(initial);
   const [submitted, setSubmitted] = useState(false);
-  const [saving, setSaving] = useState(false);
+  
   const [done, setDone] = useState(false);
   const [resetKey, setResetKey] = useState(0); // remounts the uncontrolled selects on reset
-
-  const errors = submitted ? validate(form, restaurantOptions) : {};
-  const errorCount = Object.keys(errors).length;
-
-  const set =
-    (key: keyof FormState) =>
-    (e: { target: { value: string } }) => {
-      setDone(false);
-      setForm((f) => ({ ...f, [key]: e.target.value }));
-    };
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setSubmitted(true);
-    if (Object.keys(validate(form, restaurantOptions)).length > 0) {
-      setDone(false);
-      return;
-    }
-
-    const payload: MenuItemPayload = {
-      Item_name: form.Item_name.trim(),
-      price: Number(form.price),
-      image: form.image.trim(),
-      description: form.description.trim(),
-      Category: form.Category,
-      restaurants: form.restaurants,
-    };
-
-    setSaving(true);
-    try {
-      await onSubmit?.(payload);
-      setDone(true);
-    } finally {
-      setSaving(false);
-    }
-  }
 
   function reset() {
     setForm(initial);
@@ -141,9 +108,72 @@ export default function AddMenuItemPage({
     setResetKey((k) => k + 1);
   }
 
-  const priceNumber = Number(form.price);
-  const previewPrice =
-    form.price.trim() !== "" && !Number.isNaN(priceNumber) ? `$${priceNumber.toFixed(2)}` : "$0.00";
+
+ 
+   const params = useParams()
+    const id = Number(params.id)
+    
+    const restaurants = RestaurantData()||[]
+    const current_restaurant = restaurants.find(
+        (restaurant) => restaurant.id === id
+    );
+    
+  
+    
+    const [formdata, setformdata]=useState({
+        "Item_name":"",
+        "price":"",
+        "image":null as File | null,
+        "description":"",
+        "Category":""
+    })
+
+    const errors = submitted
+      ? validate({
+          ...formdata,
+          image: formdata.image ? "uploaded" : "",
+          restaurants: PLACEHOLDER_RESTAURANT,
+        }, restaurantOptions)
+      : {};
+    const errorCount = Object.keys(errors).length;
+
+    const inputhandler =(e:React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+        setformdata({
+            ...formdata,
+            [e.target.name]:e.target.value
+        })
+    }
+    const filehandler = (e:React.ChangeEvent<HTMLInputElement>) =>{
+        setformdata({
+            ...formdata,
+             image: e.target.files?.[0] ?? null,
+        })
+    }
+    const submitform = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const FD = new FormData()
+        FD.append("Item_name",formdata.Item_name)
+        FD.append("price",formdata.price)
+        FD.append("description",formdata.description)
+        FD.append("Category",formdata.Category)
+        if (formdata.image) {
+            FD.append("image", formdata.image);
+        }
+        api.post(`/restaurants/menu/?restaurant_id=${id}`,FD)
+        .then((res)=>{
+            console.log(res.data)
+           
+        }).catch((error) => {
+                console.log("STATUS:", error.response?.status);
+                console.log("DATA:", error.response?.data);
+            });
+            }
+
+
+
+
+
+
 
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
@@ -189,7 +219,7 @@ export default function AddMenuItemPage({
       </div>
 
       <form
-        onSubmit={handleSubmit}
+        onSubmit={submitform}
         noValidate
         className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_340px]"
       >
@@ -203,8 +233,8 @@ export default function AddMenuItemPage({
                 label="Item name"
                 name="Item_name"
                 placeholder="e.g. Harvest chicken bowl"
-                value={form.Item_name}
-                onChange={set("Item_name")}
+               
+                onChange={inputhandler}
                 error={errors.Item_name}
               />
 
@@ -213,8 +243,8 @@ export default function AddMenuItemPage({
                 name="price"
                 inputMode="decimal"
                 placeholder="14.50"
-                value={form.price}
-                onChange={set("price")}
+                
+                onChange={inputhandler}
                 error={errors.price}
               />
 
@@ -223,19 +253,13 @@ export default function AddMenuItemPage({
                 key={`cat-${resetKey}`}
                 
               >
-                <Input label="Category" name="Category" options={categories} error={errors.Category} />
+                <Input label="Category" name="Category" options={categories} onChange={inputhandler} error={errors.Category} />
               </div>
 
               <div
-                key={`rest-${resetKey}`}
+           
                
               >
-                <Input
-                  label="Restaurant"
-                  name="restaurants"
-                  options={restaurantList}
-                  error={errors.restaurants}
-                />
               </div>
 
               <div className="sm:col-span-2">
@@ -247,8 +271,8 @@ export default function AddMenuItemPage({
                   name="description"
                   rows={3}
                   maxLength={160}
-                  value={form.description}
-                  onChange={set("description")}
+                  
+                  onChange={inputhandler}
                   aria-invalid={errors.description ? true : undefined}
                   aria-describedby={errors.description ? "description-error" : undefined}
                   placeholder="Roasted chicken, quinoa, avocado, seasonal greens & lemon tahini."
@@ -268,16 +292,10 @@ export default function AddMenuItemPage({
                 </p>
               </div>
 
-              <Input
-                label="Image"
-                name="image"
-                className="sm:col-span-2"
-                placeholder="/images/harvest-chicken-bowl.jpg or https://…"
-                hint="Path or URL of the dish photo. Landscape photos work best."
-                value={form.image}
-                onChange={set("image")}
-                error={errors.image}
-              />
+             
+              <label htmlFor="">Image</label><br />
+              <input type="file" name="image" onChange={filehandler} 
+               className=" w-full rounded-xl py-2 border border-gray-500"/>
             </div>
           </section>
 
@@ -286,8 +304,8 @@ export default function AddMenuItemPage({
             <Button variant="outline" onClick={reset}>
               Cancel
             </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : "Save item"}
+            <Button type="submit">
+              Save item
             </Button>
           </div>
         </div>
@@ -302,9 +320,7 @@ export default function AddMenuItemPage({
             </div>
 
             <p className="mt-3 text-[10px] text-neutral-500">
-              {form.restaurants === PLACEHOLDER_RESTAURANT
-                ? "Choose a restaurant to publish this item."
-                : `Will be added to ${form.restaurants}.`}
+              {current_restaurant?.Res_name}
             </p>
           </section>
 
