@@ -1,107 +1,135 @@
 "use client";
  
 // components/AddRestaurantPage.tsx
-import { useEffect, useState, type FormEvent } from "react";
-import { AlertCircle, ArrowUpRight, CheckCircle2, MapPin } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { AlertCircle, ArrowUpRight, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
+
 import Link from "next/link";
 import { RestaurantData } from "@/app/lib/restaurantdata";
-
-/* ---------- data ---------- */
  
-const cuisines = [
-  "Select a cuisine",
-  "Fresh bowls",
-  "Pizza",
-  "Burgers",
-  "Plant-based",
-  "Asian",
-  "Coffee",
-];
-const dietaryOptions = ["Vegetarian", "Vegan", "Gluten-free", "Halal"];
+/* ---------- types ---------- */
  
-type Form = {
-  name: string;
-  cuisine: string;
-  description: string;
+export interface Restaurant {
+  id: number;
+  Restaurant_name: string;
+  image: string;
+  address: string;
+  map: string;
   email: string;
   phone: string;
-  address: string;
-  zip: string;
-  opens: string;
-  closes: string;
-  deliveryFee: string;
-  prepTime: string;
-  minOrder: string;
+}
+ 
+/** What the form sends: everything except the id (the server creates that). */
+export type RestaurantPayload = Omit<Restaurant, "id">;
+ 
+type Props = {
+  /** Called with the validated payload. Send it to your API here. */
+  onSubmit?: (restaurant: RestaurantPayload) => void | Promise<void>;
 };
+ 
+type Form = RestaurantPayload;
+type Errors = Partial<Record<keyof Form, string>>;
+ 
+/* ---------- helpers ---------- */
  
 const initial: Form = {
-  name: "",
-  cuisine: cuisines[0],
-  description: "",
+  Restaurant_name: "",
+  image: "",
+  address: "",
+  map: "",
   email: "",
   phone: "",
-  address: "",
-  zip: "",
-  opens: "09:00",
-  closes: "21:00",
-  deliveryFee: "2.49",
-  prepTime: "20–30",
-  minOrder: "10",
 };
  
-function validate(f: Form): Partial<Record<keyof Form, string>> {
-  const e: Partial<Record<keyof Form, string>> = {};
-  if (!f.name.trim()) e.name = "Enter your restaurant name.";
-  if (f.cuisine === cuisines[0]) e.cuisine = "Choose a cuisine.";
+const isHttpUrl = (v: string) => {
+  try {
+    const u = new URL(v);
+    return u.protocol === "http:" || u.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+ 
+const isImageRef = (v: string) => /^(https?:\/\/|\/)\S+$/.test(v.trim());
+ 
+function validate(f: Form): Errors {
+  const e: Errors = {};
+  if (!f.Restaurant_name.trim()) e.Restaurant_name = "Enter your restaurant name.";
+  if (!isImageRef(f.image)) e.image = "Add an image URL (https://…) or a path starting with /.";
+  if (!f.address.trim()) e.address = "Enter the street address.";
+  if (!isHttpUrl(f.map.trim())) e.map = "Paste a map link that starts with https://";
   if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Enter a valid email address.";
   if (f.phone.replace(/\D/g, "").length < 10) e.phone = "Enter a valid phone number.";
-  if (!f.address.trim()) e.address = "Enter the street address.";
-  if (!/^\d{5}$/.test(f.zip)) e.zip = "Enter a valid 5-digit ZIP code.";
-  if (!(Number(f.deliveryFee) >= 0) || f.deliveryFee === "") e.deliveryFee = "Enter a fee (0 or more).";
   return e;
 }
  
-const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
+const panel =
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-within:border-[#237a57]/40 sm:p-6";
 const heading = "text-[15px] font-bold text-[#1b2b24]";
  
 /* ---------- main component ---------- */
  
-export default function AddRestaurantPage() {
+export default function AddRestaurantPage({ onSubmit }: Props) {
   const [form, setForm] = useState<Form>(initial);
-  const [dietary, setDietary] = useState<string[]>([]);
-  const [photo, setPhoto] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
-  const [resetKey, setResetKey] = useState(0); // remounts the uncontrolled select/file inputs on reset
+  const [failed, setFailed] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0); // re-fetches "your restaurants" after a save
  
   const errors = submitted ? validate(form) : {};
   const errorCount = Object.keys(errors).length;
  
   const set =
     (key: keyof Form) =>
-    (e: { target: { value: string } }) =>
+    (e: { target: { value: string } }) => {
+      setDone(false);
+      setFailed(false);
       setForm((f) => ({ ...f, [key]: e.target.value }));
+    };
  
-  // free the temporary photo URL when it changes / unmounts
-  useEffect(() => () => { if (photo) URL.revokeObjectURL(photo); }, [photo]);
- 
-  function onSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setSubmitted(true);
-    if (Object.keys(validate(form)).length === 0) {
-      setDone(true);
-      // TODO: send `form`, `dietary` and the photo file to your API here
-    } else {
+    if (Object.keys(validate(form)).length > 0) {
       setDone(false);
+      return;
+    }
+ 
+    const payload: RestaurantPayload = {
+      Restaurant_name: form.Restaurant_name.trim(),
+      image: form.image.trim(),
+      address: form.address.trim(),
+      map: form.map.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+    };
+ 
+    setSaving(true);
+    setFailed(false);
+    try {
+      await onSubmit?.(payload);
+      setDone(true);
+      setRefreshKey((k) => k + 1);
+    } catch {
+      setFailed(true);
+    } finally {
+      setSaving(false);
     }
   }
  
-  const toggleDietary = (d: string) =>
-    setDietary((cur) => (cur.includes(d) ? cur.filter((x) => x !== d) : [...cur, d]));
+  function reset() {
+    setForm(initial);
+    setSubmitted(false);
+    setDone(false);
+    setFailed(false);
+  }
  
-  const fee = Number(form.deliveryFee) || 0;
+  const previewName = form.Restaurant_name.trim();
+  const showImage = isImageRef(form.image);
+  const showMapLink = isHttpUrl(form.map.trim());
  
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
@@ -110,7 +138,7 @@ export default function AddRestaurantPage() {
         <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">
           Vendor workspace
         </p>
-        <h1 className="mt-2 text-[28px] font-bold tracking-tight sm:text-[32px]">
+        <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">
           Add your restaurant
         </h1>
         <p className="mt-2 text-[13px] text-neutral-500">
@@ -131,6 +159,15 @@ export default function AddRestaurantPage() {
             </div>
           </div>
         )}
+        {failed && (
+          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+            <div>
+              <p className="text-[12px] font-bold">We couldn&apos;t save your restaurant</p>
+              <p className="mt-1 text-[11px] text-neutral-600">Check your connection and try again.</p>
+            </div>
+          </div>
+        )}
         {submitted && errorCount > 0 && (
           <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
             <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
@@ -147,73 +184,35 @@ export default function AddRestaurantPage() {
       </div>
  
       <form
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
         noValidate
         className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_340px]"
       >
         {/* ---------- left: form ---------- */}
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {/* Basics */}
           <section className={panel}>
-            <h2 className={heading}>Restaurant basics</h2>
+            <h2 className={heading}>Restaurant details</h2>
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
                 label="Restaurant name"
+                name="Restaurant_name"
+                className="sm:col-span-2"
                 placeholder="e.g. Maple Kitchen"
-                value={form.name}
-                onChange={set("name")}
-                error={errors.name}
+                value={form.Restaurant_name}
+                onChange={set("Restaurant_name")}
+                error={errors.Restaurant_name}
               />
-              {/* Input's <select> doesn't forward onChange, so listen on the wrapper (change events bubble) */}
-              <div
-                key={resetKey}
-                
-              >
-                <Input label="Cuisine" options={cuisines} error={errors.cuisine} />
-              </div>
- 
-              <div className="sm:col-span-2">
-                <label htmlFor="description" className="mb-2 block text-[11px] font-bold">
-                  Short description
-                </label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  maxLength={160}
-                  value={form.description}
-                  onChange={set("description")}
-                  placeholder="Seasonal bowls made with ingredients from local farms."
-                  className="w-full resize-none rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57]"
-                />
-                <p className="mt-2 text-[10.5px] text-neutral-500">
-                  {form.description.length}/160 characters
-                </p>
-              </div>
- 
-              <div className="sm:col-span-2">
-                <p className="mb-2 text-[11px] font-bold">Dietary options</p>
-                <div className="flex flex-wrap gap-2">
-                  {dietaryOptions.map((d) => {
-                    const on = dietary.includes(d);
-                    return (
-                      <button
-                        key={d}
-                        type="button"
-                        aria-pressed={on}
-                        onClick={() => toggleDietary(d)}
-                        className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                          on
-                            ? "bg-[#e3f1ea] text-[#237a57]"
-                            : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
-                        }`}
-                      >
-                        {on ? "✓ " : ""}
-                        {d}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              <Input
+                label="Image"
+                name="image"
+                className="sm:col-span-2"
+                placeholder="https://… or /images/maple-kitchen.jpg"
+                hint="Link to a cover photo. Landscape food photos work best."
+                value={form.image}
+                onChange={set("image")}
+                error={errors.image}
+              />
             </div>
           </section>
  
@@ -223,6 +222,7 @@ export default function AddRestaurantPage() {
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
                 label="Email"
+                name="email"
                 type="email"
                 placeholder="hello@yourkitchen.com"
                 value={form.email}
@@ -231,6 +231,7 @@ export default function AddRestaurantPage() {
               />
               <Input
                 label="Phone"
+                name="phone"
                 type="tel"
                 placeholder="(555) 123-4567"
                 value={form.phone}
@@ -239,95 +240,128 @@ export default function AddRestaurantPage() {
               />
               <Input
                 label="Street address"
-                className="sm:col-span-1"
+                name="address"
+                className="sm:col-span-2"
                 placeholder="128 Maple Street"
                 value={form.address}
                 onChange={set("address")}
                 error={errors.address}
               />
-              <Input
-                label="ZIP code"
-                inputMode="numeric"
-                maxLength={5}
-                placeholder="94110"
-                value={form.zip}
-                onChange={set("zip")}
-                error={errors.zip}
-              />
-            </div>
-          </section>
- 
-          {/* Hours & delivery */}
-          <section className={panel}>
-            <h2 className={heading}>Hours &amp; delivery</h2>
-            <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
-              <Input label="Opens" type="time" value={form.opens} onChange={set("opens")} />
-              <Input label="Closes" type="time" value={form.closes} onChange={set("closes")} />
-              <Input
-                label="Prep + delivery time (min)"
-                placeholder="20–30"
-                value={form.prepTime}
-                onChange={set("prepTime")}
-              />
-              <Input
-                label="Delivery fee (USD)"
-                inputMode="decimal"
-                value={form.deliveryFee}
-                onChange={set("deliveryFee")}
-                error={errors.deliveryFee}
-              />
-              <Input
-                label="Minimum order (USD)"
-                inputMode="decimal"
-                value={form.minOrder}
-                onChange={set("minOrder")}
-                hint="Leave 0 for no minimum."
-              />
-            </div>
-          </section>
- 
-          {/* Photo */}
-          <section className={panel}>
-            <h2 className={heading}>Cover photo</h2>
-            <div key={resetKey} className="mt-5 max-w-md">
-              <Input
-                label="Upload photo"
-                type="file"
-                accept="image/*"
-                placeholder="Upload a cover photo"
-                hint="JPG or PNG, at least 1200 × 800 px. Food photos work best."
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  setPhoto(file ? URL.createObjectURL(file) : null);
-                }}
-              />
+              <div className="sm:col-span-2">
+                <p>map address</p>
+                <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-3">
+                  <Input
+                  label="latitiude"
+                  name="map"
+                  type="url"
+                  placeholder="3456789…"
+                  hint="Open your place in Google Maps, tap Share, and paste the link here."
+                  value={form.map}
+                  onChange={set("map")}
+                  error={errors.map}
+                />
+                 <Input
+                  label="longtude"
+                  name="map"
+                  type="url"
+                  placeholder="2345678…"
+                  hint="Open your place in Google Maps, tap Share, and paste the link here."
+                  value={form.map}
+                  onChange={set("map")}
+                  error={errors.map}
+                />
+                </div>
+                
+                {showMapLink && (
+                  <a
+                    href={form.map.trim()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] hover:underline"
+                  >
+                    Test this link <ArrowUpRight size={12} aria-hidden />
+                  </a>
+                )}
+              </div>
             </div>
           </section>
  
           {/* Actions */}
-          <div className="flex flex-wrap justify-end gap-3">
-            <Button variant="outline" onClick={() => { setForm(initial); setDietary([]); setPhoto(null); setSubmitted(false); setDone(false); setResetKey((k) => k + 1); }}>
+          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
+            <Button type="button" variant="outline" onClick={reset} className="w-full sm:w-auto">
               Reset
             </Button>
-            <Button type="submit">Submit for approval</Button>
+            <Button type="submit" disabled={saving} className="w-full sm:w-auto">
+              {saving ? "Submitting…" : "Submit for approval"}
+            </Button>
           </div>
         </div>
  
         {/* ---------- right: live preview ---------- */}
         <aside className="space-y-4 lg:sticky lg:top-6">
           <section className={panel}>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <h2 className={heading}>Live preview</h2>
               <span className="rounded-full bg-[#fdf0c9] px-3 py-1 text-[11px] font-semibold text-[#8a6100]">
                 {done ? "Pending approval" : "Draft"}
               </span>
             </div>
  
-            <div className="mt-4">
-              
+            <div className="group mt-4 overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:shadow-md motion-safe:hover:-translate-y-0.5">
+              <div
+                className="relative aspect-[2/1] w-full overflow-hidden bg-[#9a6b35]"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(135deg, rgba(255,255,255,0.09) 0 2px, transparent 2px 9px)",
+                }}
+              >
+                {showImage && (
+                  // key resets the element when the URL changes, so a failed load can recover
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={form.image}
+                    src={form.image.trim()}
+                    alt=""
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
+                  />
+                )}
+              </div>
+ 
+              <div className="space-y-2 p-4">
+                <p
+                  className={`truncate text-[16px] font-bold ${
+                    previewName ? "text-[#1b2b24]" : "text-neutral-300"
+                  }`}
+                >
+                  {previewName || "Your restaurant name"}
+                </p>
+ 
+                <p className="flex items-start gap-1.5 text-[12px] text-neutral-500">
+                  <MapPin size={14} aria-hidden className="mt-0.5 shrink-0" />
+                  <span className={form.address.trim() ? "" : "text-neutral-300"}>
+                    {form.address.trim() || "Street address"}
+                  </span>
+                </p>
+                <p className="flex items-center gap-1.5 text-[12px] text-neutral-500">
+                  <Phone size={14} aria-hidden className="shrink-0" />
+                  <span className={form.phone.trim() ? "" : "text-neutral-300"}>
+                    {form.phone.trim() || "Phone number"}
+                  </span>
+                </p>
+                <p className="flex items-center gap-1.5 text-[12px] text-neutral-500">
+                  <Mail size={14} aria-hidden className="shrink-0" />
+                  <span className={`truncate ${form.email.trim() ? "" : "text-neutral-300"}`}>
+                    {form.email.trim() || "Email"}
+                  </span>
+                </p>
+              </div>
             </div>
+ 
             <p className="mt-3 text-[10px] text-neutral-500">
-              This is how customers will see your card in Explore.
+              A quick look at how your details will appear to customers.
             </p>
           </section>
  
@@ -342,11 +376,12 @@ export default function AddRestaurantPage() {
           </section>
         </aside>
       </form>
-      <MyRestaurantsList/>
+ 
+      {/* restaurants you already have */}
+      <MyRestaurantsList  />
     </div>
   );
 }
-
 
 
 export type MyRestaurant = {
@@ -357,10 +392,7 @@ export type MyRestaurant = {
   status?: string; // e.g. "approved" | "pending" | "rejected"
 };
 
-type Props = {
-  endpoint?: string; // change to your real API route
-  refreshKey?: number; // bump this to re-fetch (e.g. after a successful submit)
-};
+
 
 const statusTone: Record<string, string> = {
   approved: "bg-[#e3f1ea] text-[#237a57]",
@@ -373,32 +405,13 @@ const statusLabel: Record<string, string> = {
   rejected: "Rejected",
 };
 
-export  function MyRestaurantsList({
-  endpoint = "/api/restaurants/mine",
-  refreshKey = 0,
-}: Props) {
-  const [items, setItems] = useState<MyRestaurant[] | null>(null); // null = still loading
-  const [attempt, setAttempt] = useState(0);
+export  function MyRestaurantsList() {
+
   const restaurant = RestaurantData() 
   const status = "Live"
   const cuisine = "good"
 
-  useEffect(() => {
-    const ctrl = new AbortController();
-
-    fetch(endpoint, { credentials: "include", signal: ctrl.signal })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        // accepts either [ ... ] or { restaurants: [ ... ] }
-        setItems(Array.isArray(data) ? data : (data.restaurants ?? []));
-       
-      })
-     
-    return () => ctrl.abort();
-  }, [endpoint, refreshKey, attempt]);
+  
 
   // Error
   
@@ -439,74 +452,74 @@ export  function MyRestaurantsList({
           const key = (status ?? "").toLowerCase();
           return (
              <li key={item.id}>
- <Link
-      href={`/dashboard/owner/Myrestaurant/${item.id}`}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57] hover:shadow-lg focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-1"
-    >
-      {/* cover image (falls back to the restaurant's first letter) */}
-      <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#e6f0ea] to-[#fdf0c9]">
-        <span
-          aria-hidden
-          className="absolute inset-0 grid place-items-center text-[48px] font-bold text-[#237a57]/30"
-        >
-          {item.Res_name?.charAt(0).toUpperCase()}
-        </span>
+              <Link
+                    href={`/dashboard/owner/Myrestaurant/${item.id}`}
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57] hover:shadow-lg focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-1"
+                  >
+                    {/* cover image (falls back to the restaurant's first letter) */}
+                    <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#e6f0ea] to-[#fdf0c9]">
+                      <span
+                        aria-hidden
+                        className="absolute inset-0 grid place-items-center text-[48px] font-bold text-[#237a57]/30"
+                      >
+                        {item.Res_name?.charAt(0).toUpperCase()}
+                      </span>
 
-        {item.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.image}
-            alt=""
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
-          />
-        )}
+                      {item.image && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.image}
+                          alt=""
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none"
+                        />
+                      )}
 
-        {status && (
-          <span
-            className={`absolute left-3 top-3 inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-white/70 ${
-              statusTone[key] ?? "bg-neutral-100 text-neutral-500"
-            }`}
-          >
-            {statusLabel[key] ?? status}
-          </span>
-        )}
-      </div>
+                      {status && (
+                        <span
+                          className={`absolute left-3 top-3 inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-white/70 ${
+                            statusTone[key] ?? "bg-neutral-100 text-neutral-500"
+                          }`}
+                        >
+                          {statusLabel[key] ?? status}
+                        </span>
+                      )}
+                    </div>
 
-      {/* details */}
-      <div className="flex flex-1 flex-col p-4">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-[15px] font-bold leading-snug transition-colors group-hover:text-[#237a57]">
-            {item.Res_name}
-          </p>
-          {cuisine && (
-            <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-semibold text-neutral-600">
-              {cuisine}
-            </span>
-          )}
-        </div>
+                    {/* details */}
+                    <div className="flex flex-1 flex-col p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-[15px] font-bold leading-snug transition-colors group-hover:text-[#237a57]">
+                          {item.Res_name}
+                        </p>
+                        {cuisine && (
+                          <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-semibold text-neutral-600">
+                            {cuisine}
+                          </span>
+                        )}
+                      </div>
 
-        {item.address && (
-          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-500">
-            <MapPin size={12} aria-hidden className="shrink-0" />
-            {item.address}
-          </p>
-        )}
+                      {item.address && (
+                        <p className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-500">
+                          <MapPin size={12} aria-hidden className="shrink-0" />
+                          {item.address}
+                        </p>
+                      )}
 
-        <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-[11px] font-semibold text-[#237a57]">
-          <span>Manage restaurant</span>
-          <ArrowUpRight
-            size={14}
-            aria-hidden
-            className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-          />
-        </div>
-      </div>
-    </Link>
-</li>
+                      <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-[11px] font-semibold text-[#237a57]">
+                        <span>Manage restaurant</span>
+                        <ArrowUpRight
+                          size={14}
+                          aria-hidden
+                          className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                        />
+                      </div>
+                    </div>
+                  </Link>
+              </li>
           );
         })}
       </ul>

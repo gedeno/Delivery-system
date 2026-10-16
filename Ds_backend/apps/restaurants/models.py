@@ -10,6 +10,12 @@ class Restaurants(models.Model):
     is_appruved = models.BooleanField(default=False)
     image = models.ImageField(upload_to='photo')
     address = models.CharField(max_length=200)
+    description = models.CharField(max_length=300)
+    phonen= models.CharField(max_length=300)
+    email = models.CharField(max_length=300)
+    opening_time = models.CharField(max_length=10)
+    closing_time = models.CharField(max_length=100)
+    cuisine_type = models.CharField(max_length=200)
 
     def __str__(self):
         return self.Res_name
