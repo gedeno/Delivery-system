@@ -39,6 +39,7 @@ class CreateMenu(ModelViewSet):
         restaurant_id = self.request.query_params.get('restaurant_id')
         restaurant = Restaurants.objects.get(id = restaurant_id )
         serializer.save(restaurant=restaurant)
+        print(serializer.data)
         return super().perform_create(serializer)
     def get_queryset(self):
         restaurant_id = self.request.query_params.get('restaurant_id')

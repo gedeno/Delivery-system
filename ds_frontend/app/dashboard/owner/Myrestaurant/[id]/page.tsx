@@ -110,8 +110,8 @@ export default function AddMenuItemPage({
 
 
  
-   const params = useParams()
-    const id = Number(params.id)
+    const params = useParams<{ id: string }>();
+    const id = Number(params.id);
     
     const restaurants = RestaurantData()||[]
     const current_restaurant = restaurants.find(
@@ -253,7 +253,7 @@ export default function AddMenuItemPage({
                 key={`cat-${resetKey}`}
                 
               >
-                <Input label="Category" name="Category" options={categories} onChange={inputhandler} error={errors.Category} />
+                <Input label="Category" name="Category" onChange={inputhandler} error={errors.Category} />
               </div>
 
               <div
