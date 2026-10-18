@@ -5,6 +5,7 @@ import { useState, type Dispatch, type FormEvent, type SetStateAction } from "re
 import { AlertCircle, CheckCircle2, Circle, LogOut } from "lucide-react";
 import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
+import { UserData } from "@/app/lib/Userdata";
  
 /* ---------- types ---------- */
  
@@ -197,7 +198,7 @@ export default function OwnerProfilePage({
     clearNotice(setWFlow);
     setPw((p) => ({ ...p, [key]: e.target.value }));
   };
- 
+  const users = UserData()
   function savePassword(e: FormEvent) {
     e.preventDefault();
     runFlow(
@@ -256,7 +257,7 @@ export default function OwnerProfilePage({
             <p className="mt-1 truncate text-[12px] text-neutral-500">{saved.email}</p>
             <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#e3f1ea] px-3 py-1.5 text-[11px] font-semibold text-[#237a57]">
               <span className="size-1.5 rounded-full bg-[#237a57]" />
-              Restaurant owner
+             {users?.role}
             </span>
  
             <dl className="mt-5 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left">
@@ -287,11 +288,20 @@ export default function OwnerProfilePage({
             <h2 className={heading}>Personal details</h2>
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
-                label="Full name"
+                label="First name"
                 name="full_name"
                 className="sm:col-span-2"
                 autoComplete="name"
-                value={profile.full_name}
+                value={users?.first_name}
+                onChange={setField("full_name")}
+                error={shownP.full_name}
+              />
+              <Input
+                label="Last name"
+                name="full_name"
+                className="sm:col-span-2"
+                autoComplete="name"
+                value={users?.last_name}
                 onChange={setField("full_name")}
                 error={shownP.full_name}
               />
@@ -300,7 +310,7 @@ export default function OwnerProfilePage({
                 name="email"
                 type="email"
                 autoComplete="email"
-                value={profile.email}
+                value={users?.email}
                 onChange={setField("email")}
                 error={shownP.email}
               />
@@ -309,7 +319,7 @@ export default function OwnerProfilePage({
                 name="phone"
                 type="tel"
                 autoComplete="tel"
-                value={profile.phone}
+                value={users?.phone}
                 onChange={setField("phone")}
                 error={shownP.phone}
               />
