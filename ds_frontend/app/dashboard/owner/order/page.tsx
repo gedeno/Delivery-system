@@ -1,6 +1,6 @@
 "use client";
-
-// components/OwnerOrdersPage.tsx
+ 
+// app/dashboard/owner/orders/page.tsx
 import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
@@ -14,18 +14,18 @@ import {
   X,
 } from "lucide-react";
 import Button from "@/components/Ui/Button";
-
+ 
 /* ---------- types ---------- */
-
-export type OrderStatus = "New" | "Preparing" | "On the way" | "Delivered" | "Canceled";
-
-export interface OrderItem {
+ 
+type OrderStatus = "New" | "Preparing" | "On the way" | "Delivered" | "Canceled";
+ 
+interface OrderItem {
   name: string;
   quantity: number;
   price: number;
 }
-
-export interface Order {
+ 
+interface Order {
   id: number | string;
   order_number?: string; // e.g. "#BB-1048" (falls back to the id)
   customer: string;
@@ -38,7 +38,7 @@ export interface Order {
   phone?: string;
   note?: string;
 }
-
+ 
 type Props = {
   /** GET returns the owner's orders; PATCH {endpoint}/{id} with { status } updates one. */
   endpoint?: string;
@@ -49,11 +49,11 @@ type Props = {
   /** How often to refresh while the page is open (ms). 0 turns it off. */
   pollMs?: number;
 };
-
+ 
 /* ---------- helpers ---------- */
-
+ 
 const statuses: OrderStatus[] = ["New", "Preparing", "On the way", "Delivered", "Canceled"];
-
+ 
 const tone: Record<OrderStatus, string> = {
   New: "bg-[#fdf0c9] text-[#8a6100]",
   Preparing: "bg-[#fde8d6] text-[#b4561a]",
@@ -61,9 +61,9 @@ const tone: Record<OrderStatus, string> = {
   Delivered: "bg-[#e3f1ea] text-[#237a57]",
   Canceled: "bg-[#fbe6e1] text-[#d4472f]",
 };
-
+ 
 const money = (n: number) => `$${n.toFixed(2)}`;
-
+ 
 const fmtTime = (iso: string) => {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
@@ -75,12 +75,152 @@ const fmtTime = (iso: string) => {
       : { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }
   );
 };
-
+ 
 const panel = "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm sm:p-6";
 const compact = "!px-3 !py-2 !text-[12px]";
-
+ 
+/* ---------- mock data ---------- */
+ 
+// Set to false when your API is ready.
+const USE_MOCK_DATA = true;
+ 
+// minutes ago -> ISO date, so the times always look recent
+const ago = (min: number) => new Date(Date.now() - min * 60_000).toISOString();
+ 
+const mockOrders: Order[] = [
+  {
+    id: 1050,
+    order_number: "#BB-1050",
+    customer: "Jordan Lee",
+    restaurant: "Maple Kitchen",
+    status: "New",
+    created_at: ago(4),
+    address: "42 Cedar Ave, Apt 3",
+    phone: "(555) 201-8890",
+    note: "No onions please",
+    items: [
+      { name: "Harvest chicken bowl", quantity: 1, price: 14.5 },
+      { name: "Lemon tahini side", quantity: 1, price: 5.25 },
+    ],
+    total: 19.75,
+  },
+  {
+    id: 1049,
+    order_number: "#BB-1049",
+    customer: "Taylor Reed",
+    restaurant: "Maple Kitchen",
+    status: "New",
+    created_at: ago(9),
+    address: "9 Birch Lane",
+    phone: "(555) 330-1144",
+    items: [
+      { name: "Garden salad", quantity: 2, price: 11 },
+      { name: "Sparkling water", quantity: 2, price: 3.1 },
+      { name: "Brownie", quantity: 1, price: 6 },
+    ],
+    total: 34.2,
+  },
+  {
+    id: 2210,
+    order_number: "#EP-2210",
+    customer: "Morgan Bell",
+    restaurant: "Little Ember Pizza",
+    status: "New",
+    created_at: ago(11),
+    address: "250 Harbor St",
+    phone: "(555) 482-7716",
+    note: "Ring the bell twice",
+    items: [
+      { name: "Margherita pizza", quantity: 1, price: 16.9 },
+      { name: "Garlic knots", quantity: 1, price: 7 },
+      { name: "Lemonade", quantity: 2, price: 3 },
+      { name: "Tiramisu", quantity: 1, price: 9 },
+    ],
+    total: 38.9,
+  },
+  {
+    id: 1046,
+    order_number: "#BB-1046",
+    customer: "Sam Rivera",
+    restaurant: "Maple Kitchen",
+    status: "Preparing",
+    created_at: ago(22),
+    address: "17 Willow Court",
+    phone: "(555) 019-6632",
+    items: [
+      { name: "Harvest chicken bowl", quantity: 2, price: 14.5 },
+      { name: "Salmon plate", quantity: 1, price: 23.1 },
+    ],
+    total: 52.1,
+  },
+  {
+    id: 2209,
+    order_number: "#EP-2209",
+    customer: "Priya Nair",
+    restaurant: "Little Ember Pizza",
+    status: "Preparing",
+    created_at: ago(18),
+    address: "88 Orchard Rd",
+    phone: "(555) 764-2085",
+    items: [
+      { name: "Pepperoni pizza", quantity: 1, price: 18.5 },
+      { name: "Caesar salad", quantity: 1, price: 8.5 },
+    ],
+    total: 27,
+  },
+  {
+    id: 1048,
+    order_number: "#BB-1048",
+    customer: "Alex Morgan",
+    restaurant: "Maple Kitchen",
+    status: "On the way",
+    created_at: ago(34),
+    address: "128 Maple Street",
+    phone: "(555) 120-4471",
+    items: [
+      { name: "Block burger", quantity: 2, price: 12.9 },
+      { name: "Fries", quantity: 1, price: 6 },
+      { name: "Vanilla shake", quantity: 1, price: 9.04 },
+    ],
+    total: 40.84,
+  },
+  {
+    id: 1044,
+    order_number: "#BB-1044",
+    customer: "Casey Kim",
+    restaurant: "Maple Kitchen",
+    status: "Delivered",
+    created_at: ago(95),
+    items: [{ name: "Cold brew", quantity: 2, price: 6.2 }],
+    total: 12.4,
+  },
+  {
+    id: 2208,
+    order_number: "#EP-2208",
+    customer: "Drew Evans",
+    restaurant: "Little Ember Pizza",
+    status: "Delivered",
+    created_at: ago(120),
+    items: [{ name: "Slice combo", quantity: 1, price: 21.5 }],
+    total: 21.5,
+  },
+  {
+    id: 1041,
+    order_number: "#BB-1041",
+    customer: "Robin Patel",
+    restaurant: "Maple Kitchen",
+    status: "Canceled",
+    created_at: ago(150),
+    items: [
+      { name: "Veggie wrap", quantity: 1, price: 9.8 },
+      { name: "Fresh juice", quantity: 1, price: 5.5 },
+    ],
+    total: 15.3,
+  },
+];
+ 
 /* ---------- one order card ---------- */
-
+ 
 function OrderCard({
   order,
   busy,
@@ -94,12 +234,12 @@ function OrderCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [confirming, setConfirming] = useState(false);
-
+ 
   const shown = expanded ? order.items : order.items.slice(0, 2);
   const hidden = order.items.length - shown.length;
   const hasDetails = !!(order.address || order.phone || order.note);
   const label = order.order_number ?? `#${order.id}`;
-
+ 
   return (
     <article
       className={`flex h-full flex-col rounded-3xl border bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md motion-safe:hover:-translate-y-0.5 ${
@@ -123,13 +263,13 @@ function OrderCard({
           {order.status}
         </span>
       </div>
-
+ 
       {/* customer */}
       <p className="mt-4 text-[14px] font-semibold">{order.customer}</p>
       {multiRestaurant && order.restaurant && (
         <p className="mt-0.5 text-[11px] text-neutral-500">{order.restaurant}</p>
       )}
-
+ 
       {/* items */}
       <ul className="mt-3 space-y-1.5 text-[12px] text-neutral-700">
         {shown.map((it, i) => (
@@ -143,7 +283,7 @@ function OrderCard({
           </li>
         ))}
       </ul>
-
+ 
       {(hidden > 0 || hasDetails || expanded) && (
         <button
           type="button"
@@ -159,7 +299,7 @@ function OrderCard({
           />
         </button>
       )}
-
+ 
       {expanded && hasDetails && (
         <div className="mt-3 space-y-2 rounded-2xl bg-[#faf8f4] p-3 text-[12px] text-neutral-600">
           {order.address && (
@@ -182,11 +322,11 @@ function OrderCard({
           {order.note && <p className="italic">“{order.note}”</p>}
         </div>
       )}
-
+ 
       {/* footer */}
       <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 pt-4">
         <p className="font-mono text-[16px] font-semibold tabular-nums">{money(order.total)}</p>
-
+ 
         {confirming ? (
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-[11px] font-semibold text-neutral-600">Decline this order?</span>
@@ -225,15 +365,18 @@ function OrderCard({
     </article>
   );
 }
-
+ 
 /* ---------- main component ---------- */
-
+ 
 export default function OwnerOrdersPage({
   endpoint = "/api/owner/orders",
-  initialOrders,
+  initialOrders: initialOrdersProp,
   onStatusChange,
   pollMs = 30000,
 }: Props) {
+  // mock orders are used until your API is ready (see USE_MOCK_DATA above)
+  const initialOrders = initialOrdersProp ?? (USE_MOCK_DATA ? mockOrders : undefined);
+ 
   const [orders, setOrders] = useState<Order[] | null>(initialOrders ?? null); // null = loading
   const [failed, setFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
@@ -242,12 +385,12 @@ export default function OwnerOrdersPage({
   const [restaurant, setRestaurant] = useState("All");
   const [busyId, setBusyId] = useState<Order["id"] | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-
+ 
   // Load (and quietly refresh) orders
   useEffect(() => {
     if (initialOrders) return;
     const ctrl = new AbortController();
-
+ 
     const load = () =>
       fetch(endpoint, { credentials: "include", signal: ctrl.signal })
         .then((res) => {
@@ -261,7 +404,7 @@ export default function OwnerOrdersPage({
         .catch((err) => {
           if (err.name !== "AbortError") setFailed(true);
         });
-
+ 
     load();
     const id = pollMs > 0 ? setInterval(load, pollMs) : undefined;
     return () => {
@@ -269,25 +412,25 @@ export default function OwnerOrdersPage({
       if (id) clearInterval(id);
     };
   }, [endpoint, initialOrders, pollMs, attempt]);
-
+ 
   const restaurantNames = useMemo(
     () => Array.from(new Set((orders ?? []).map((o) => o.restaurant).filter(Boolean))) as string[],
     [orders]
   );
   const multiRestaurant = restaurantNames.length > 1;
-
+ 
   // Orders for the chosen restaurant (drives the stats and the tab counts)
   const scoped = useMemo(
     () => (orders ?? []).filter((o) => restaurant === "All" || o.restaurant === restaurant),
     [orders, restaurant]
   );
-
+ 
   const counts = useMemo(() => {
     const c: Record<string, number> = { All: scoped.length };
     statuses.forEach((s) => (c[s] = scoped.filter((o) => o.status === s).length));
     return c;
   }, [scoped]);
-
+ 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
     return scoped
@@ -301,16 +444,16 @@ export default function OwnerOrdersPage({
       )
       .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
   }, [scoped, tab, query]);
-
+ 
   const inProgress = counts["Preparing"] + counts["On the way"];
   const revenue = scoped.filter((o) => o.status !== "Canceled").reduce((s, o) => s + o.total, 0);
-
+ 
   async function changeStatus(order: Order, next: OrderStatus) {
     const prev = order.status;
     setActionError(null);
     setBusyId(order.id);
     setOrders((os) => (os ?? []).map((o) => (o.id === order.id ? { ...o, status: next } : o)));
-
+ 
     try {
       if (onStatusChange) {
         await onStatusChange(order.id, next);
@@ -331,15 +474,15 @@ export default function OwnerOrdersPage({
       setBusyId(null);
     }
   }
-
+ 
   function clearFilters() {
     setTab("All");
     setQuery("");
     setRestaurant("All");
   }
-
+ 
   const filtersActive = tab !== "All" || query.trim() !== "" || restaurant !== "All";
-
+ 
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
       {/* Heading */}
@@ -353,7 +496,7 @@ export default function OwnerOrdersPage({
             Accept new orders, track what&apos;s cooking, and hand meals to couriers.
           </p>
         </div>
-
+ 
         {multiRestaurant && (
           <div>
             <label htmlFor="restaurant-filter" className="sr-only">
@@ -375,9 +518,27 @@ export default function OwnerOrdersPage({
           </div>
         )}
       </header>
-
+ 
       {/* Alerts */}
       <div className="mt-5 space-y-3" aria-live="polite">
+        {failed && orders === null && (
+          <div role="alert" className="flex items-start gap-3 rounded-xl bg-[#fdeee6] p-4">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+            <div className="flex-1">
+              <p className="text-[12px] font-bold">We couldn&apos;t load your orders</p>
+              <p className="mt-1 text-[11px] text-neutral-600">Check your connection and try again.</p>
+            </div>
+            <Button variant="outline" className={compact} onClick={() => setAttempt((a) => a + 1)}>
+              Try again
+            </Button>
+          </div>
+        )}
+        {failed && orders !== null && (
+          <div role="status" className="flex items-center gap-3 rounded-xl bg-[#fdf0c9] p-3 text-[11px] font-semibold text-[#8a6100]">
+            <AlertCircle size={14} aria-hidden className="shrink-0" />
+            We couldn&apos;t refresh just now. Showing the last orders we loaded.
+          </div>
+        )}
         {actionError && (
           <div role="alert" className="flex items-center justify-between gap-3 rounded-xl bg-[#fdeee6] p-3">
             <p className="text-[12px] font-semibold text-[#d4472f]">{actionError}</p>
@@ -392,7 +553,7 @@ export default function OwnerOrdersPage({
           </div>
         )}
       </div>
-
+ 
       {/* Loading */}
       {orders === null && !failed && (
         <div aria-busy="true" aria-label="Loading orders" className="mt-6 space-y-6">
@@ -408,7 +569,7 @@ export default function OwnerOrdersPage({
           </div>
         </div>
       )}
-
+ 
       {orders !== null && (
         <main className="mt-6 space-y-6">
           {/* Stats */}
@@ -428,7 +589,7 @@ export default function OwnerOrdersPage({
               </div>
             ))}
           </div>
-
+ 
           {/* Filters */}
           <section className={`${panel} space-y-4`}>
             <div className="relative">
@@ -449,7 +610,7 @@ export default function OwnerOrdersPage({
                 className="w-full rounded-xl border border-neutral-200 bg-white py-3 pl-11 pr-4 text-[13px] placeholder:text-neutral-400 focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57]"
               />
             </div>
-
+ 
             <div
               role="group"
               aria-label="Filter by status"
@@ -482,7 +643,7 @@ export default function OwnerOrdersPage({
               })}
             </div>
           </section>
-
+ 
           {/* Orders */}
           {visible.length > 0 ? (
             <ul className="grid gap-4 sm:gap-5 xl:grid-cols-2 2xl:grid-cols-3">
@@ -519,3 +680,4 @@ export default function OwnerOrdersPage({
     </div>
   );
 }
+ 

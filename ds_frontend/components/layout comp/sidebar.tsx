@@ -45,7 +45,7 @@ const restaurant_owner: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Restaurants", href: "/dashboard/owner/Myrestaurant", icon: <Store className="h-5 w-5" /> },
   { label: "Orders", href: "/dashboard/owner/order", icon: <ClipboardList className="h-5 w-5" /> },
-  { label: "Profile", href: "/dashboard/owner/profile", icon: <User className="h-5 w-5" /> },
+  { label: "Profile", href: "/dashboard/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const admin: NavItem[] = [
