@@ -99,8 +99,8 @@ export default function Header({
               My orders
             </Link>
             <span aria-hidden="true">·</span>
-            <Link href="/account" className="hover:text-[#237a57]">
-              {userName}
+            <Link href="/dashboard/profile" className="hover:text-[#237a57]">
+              {user?.username}
             </Link>
           </nav>
 

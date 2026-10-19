@@ -32,7 +32,7 @@ const customer: NavItem[] = [
   { label: "Restaurants", href: "/restaurants", icon: <Store className="h-5 w-5" /> },
   { label: "My Orders", href: "/dashboard/customer/orders", icon: <ShoppingBag className="h-5 w-5" /> },
   { label: "Cart", href: "/cart", icon: <ShoppingCart className="h-5 w-5" /> },
-  { label: "Profile", href: "/dashboard/customer/profile", icon: <User className="h-5 w-5" /> },
+  { label: "Profile", href: "/dashboard/profile", icon: <User className="h-5 w-5" /> },
 ];
 
 const delivery: NavItem[] = [
@@ -68,21 +68,19 @@ type SidebarProps = {
 
 export default function Sidebar({ open, onClose }: SidebarProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
  
   const user = UserData()
 
    const navItems =
-    user?.role === "restaurant_owner"
-        ? restaurant_owner
-        : user?.role === "delivery"
-        ? delivery
-        : user?.role === "admin"
-        ? admin
-        : customer;
+  user?.role === "restaurant_owner" ? restaurant_owner
+  : user?.role === "delivery" ? delivery
+  : user?.role === "admin" ? admin
+  : customer;
 
-  // Longest matching href wins, so "/dashboard/owner" isn't active on "/dashboard/owner/orders".
-  const activeHref = navItems
-    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+const activeHref = [...navItems] // copy, so the menu order isn't changed
+  .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))
+  .sort((a, b) => b.href.length - a.href.length)[0]?.href;
 
   // Esc to close, lock page scroll, and move focus into the drawer while it's open.
   useEffect(() => {
