@@ -91,6 +91,7 @@ export default function RestaurantShopCard({ item }: Props) {
   const hours = `${hhmm(opening_time)} – ${hhmm(closing_time)}`;
  
   return (
+    <Link href={`/restaurantlist/${item.id}`}>
     <article className="group overflow-hidden rounded-3xl border border-neutral-200 bg-white transition-all duration-200 hover:shadow-lg motion-safe:hover:-translate-y-1">
       {/* cover (striped brown if the photo is missing or fails to load) */}
       <div
@@ -236,6 +237,7 @@ export default function RestaurantShopCard({ item }: Props) {
         </div>
       </div>
     </article>
+    </Link>
   );
 }
  
