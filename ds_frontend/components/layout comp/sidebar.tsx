@@ -29,7 +29,7 @@ type NavItem = { label: string; href: string; icon: ReactNode };
 
 const customer: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
-  { label: "Restaurants", href: "/restaurants", icon: <Store className="h-5 w-5" /> },
+  { label: "Restaurants", href: "/restaurantlist", icon: <Store className="h-5 w-5" /> },
   { label: "My Orders", href: "/dashboard/customer/orders", icon: <ShoppingBag className="h-5 w-5" /> },
   { label: "Cart", href: "/cart", icon: <ShoppingCart className="h-5 w-5" /> },
   { label: "Profile", href: "/dashboard/profile", icon: <User className="h-5 w-5" /> },
