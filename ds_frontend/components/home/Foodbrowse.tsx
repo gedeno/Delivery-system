@@ -184,7 +184,7 @@ export default function FoodBrowse() {
           <SectionHeader
             title="Dishes worth staying in for"
             linkLabel="View all"
-            href="/dishes"
+            href="/menulist"
           />
           {menus.length ? (
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
