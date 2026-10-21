@@ -3,8 +3,9 @@
 // components/Sidebar.tsx  — slide-in drawer, opened from the Header
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+
 import {
   ArrowUpRight,
   ClipboardList,
@@ -66,7 +67,7 @@ type SidebarProps = {
   onClose: () => void;
 };
 
-export default function Sidebar({ open, onClose }: SidebarProps) {
+function Sidebar({ open, onClose }: SidebarProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
  
@@ -168,5 +169,12 @@ const activeHref = [...navItems] // copy, so the menu order isn't changed
         </div>
       </aside>
     </>
+  );
+}
+export default function Sidebarpage(props: SidebarProps) {
+  return (
+    <Suspense fallback={null}>
+      <Sidebar {...props} />
+    </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
  
 // components/FoodOrderPage.tsx
-import { useState, useSyncExternalStore, type FormEvent } from "react";
+import { Suspense, useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import {
   AlertCircle,
@@ -21,7 +21,7 @@ import Input from "@/components/Ui/Input";
 import Button from "@/components/Ui/Button";
 import { MenuData } from "@/app/lib/Menudata";
 import { RestaurantData } from "@/app/lib/restaurantdata";
-import { Restaurant } from "@/app/lib/types";
+import { Menu, Restaurant } from "@/app/lib/types";
 import { useParams } from "next/navigation";
  
 /* ---------- where things link (change to your routes) ---------- */
@@ -53,23 +53,14 @@ const PAYMENTS = [
  
 /* ---------- types ---------- */
  
-interface Food {
-  id: number | string;
-  Item_name: string;
-  Category?: unknown;
-  price: number | string;
-  image?: string;
-  description?: string;
-  restaurants?: unknown; // a name, an id, or a restaurant object
-  vegan?: boolean;
-}
+
  
 
  
 export interface OrderPayload {
   item_id: number | string;
   item_name: string;
-  restaurant: string;
+  
   quantity: number;
   size: string;
   addons: string[];
@@ -166,12 +157,24 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
 }
  
 /* ---------- main component ---------- */
- 
-export default function FoodOrderPage({ onPlaceOrder }: Props) {
+ function FoodOrderComponent({ onPlaceOrder }: Props) {
   const params = useParams()
   const id = Number(params.id)
-  const menus = (MenuData() || []) as Food[];
-  const kitchens = (RestaurantData() || []) as Restaurant[];
+
+  
+  const menus = (MenuData() || []) as Menu[];
+  const currentmenu = menus.find((m) => (m.id) === id);
+ 
+
+  const more = menus.filter((menuss) => menuss?.restaurants.id === currentmenu?.restaurants.id)
+  
+  
+  
+  
+
+
+
+
  
   const [qty, setQty] = useState(1);
   const [size, setSize] = useState(SIZES[0].id);
@@ -189,10 +192,9 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
   
   
  
-  const item = menus.find((m) => String(m.id) === String(id));
- 
+  
   /* ----- dish not found ----- */
-  if (!item) {
+  if (!currentmenu) {
     return (
       <div className="grid min-h-[70vh] place-items-center bg-[#faf8f4] px-4 text-[#1b2b24]">
         <section className="max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center">
@@ -213,30 +215,16 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
   }
  
   /* ----- derived data ----- */
-  const rawKitchen = item.restaurants;
-  const kitchen:Restaurant | undefined =
-    rawKitchen && typeof rawKitchen === "object"
-      ? (rawKitchen as Restaurant)
-      : kitchens.find((k) => String(k.id) === String(rawKitchen) || k.Res_name === labelOf(rawKitchen));
-  const kitchenName = kitchen?.Res_name ?? labelOf(rawKitchen);
+  const rawKitchen = currentmenu.restaurants;
+  
+  const open = nowMin < 0 ? null : isOpenAt(nowMin, currentmenu?.restaurants.opening_time, currentmenu?.restaurants?.closing_time);
+  const stars = Number(currentmenu?.restaurants?.rating);
  
-  const nameOfKitchen = (m: Food) => {
-    const r = m.restaurants;
-    if (r && typeof r === "object") return labelOf(r);
-    return kitchens.find((k) => String(k.id) === String(r))?.Res_name ?? labelOf(r);
-  };
-  const more = menus
-    .filter((m) => String(m.id) !== String(id) && kitchenName && nameOfKitchen(m) === kitchenName)
-    .slice(0, 4);
- 
-  const open = nowMin < 0 ? null : isOpenAt(nowMin, kitchen?.opening_time, kitchen?.closing_time);
-  const stars = Number(kitchen?.rating);
- 
-  const name = labelOf(item.Item_name);
-  const category = labelOf(item.Category);
+  const name = labelOf(currentmenu.Item_name);
+  const category = labelOf(currentmenu.Category);
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[0];
   const chosenAddons = ADDONS.filter((a) => addons.includes(a.id));
-  const unit = priceNum(item.price) + sizeOpt.extra + chosenAddons.reduce((s, a) => s + a.price, 0);
+  const unit = priceNum(currentmenu.price) + sizeOpt.extra + chosenAddons.reduce((s, a) => s + a.price, 0);
   const subtotal = unit * qty;
   const total = subtotal + DELIVERY_FEE + SERVICE_FEE + tip;
  
@@ -258,9 +246,9 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
     if (Object.keys(errors).length > 0) return;
  
     const payload: OrderPayload = {
-      item_id: item!.id,
+      item_id: currentmenu!.id,
       item_name: name,
-      restaurant: kitchenName,
+      
       quantity: qty,
       size: sizeOpt.label,
       addons: chosenAddons.map((a) => a.label),
@@ -294,10 +282,10 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
       <span aria-hidden className={`absolute inset-0 grid place-items-center font-black text-white/60 ${letterCls}`}>
         {name.charAt(0).toUpperCase()}
       </span>
-      {item.image && (
+      {currentmenu?.image && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={item.image}
+          src={currentmenu?.image}
           alt=""
           onError={(e) => {
             e.currentTarget.style.display = "none";
@@ -321,7 +309,7 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
           </div>
           <h1 className="mt-6 text-[26px] font-bold tracking-tight sm:text-[32px]">Order placed!</h1>
           <p className="mt-2 text-[13px] text-neutral-500">
-            {kitchenName || "The kitchen"} is getting your {name.toLowerCase()} ready.
+            {currentmenu?.restaurants.Res_name || "The kitchen"} is getting your {name.toLowerCase()} ready.
           </p>
  
           <dl className="mt-6 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left">
@@ -382,7 +370,9 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
           )}
           <ChevronRight size={12} aria-hidden />
           <span className="truncate text-[#1b2b24]" aria-current="page">
-            {name}
+            {currentmenu?.Item_name}
+            
+            
           </span>
         </nav>
  
@@ -404,11 +394,7 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
                       {category}
                     </span>
                   )}
-                  {item.vegan && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-[#237a57] shadow-sm">
-                      <Leaf size={12} aria-hidden /> Vegan
-                    </span>
-                  )}
+                  
                 </div>
               </div>
  
@@ -416,27 +402,28 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <h1 className="text-[26px] font-bold leading-tight tracking-tight sm:text-[34px]">{name}</h1>
                   <p className="font-mono text-[22px] font-semibold text-[#237a57] sm:text-[26px]">
-                    {money(priceNum(item.price))}
+                    {money(priceNum(currentmenu.price))}
                   </p>
                 </div>
-                {item.description && (
-                  <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-neutral-600">{item.description}</p>
+                {currentmenu.description && (
+                  <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-neutral-600">{currentmenu.description}</p>
                 )}
  
-                {kitchenName && (
+                {currentmenu.restaurants.Res_name && (
                   <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-[#faf8f4] p-3">
                     <span
                       aria-hidden
                       className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#8a5a1f] text-[15px] font-bold text-white"
                     >
-                      {initials(kitchenName)}
+                      {initials(currentmenu.restaurants.Res_name)}
+                      
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-bold">{kitchenName}</p>
+                      <p className="truncate text-[13px] font-bold">{currentmenu?.restaurants?.Res_name}</p>
                       <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500">
-                        {kitchen?.address && (
+                        {currentmenu?.restaurants?.address && (
                           <span className="flex items-center gap-1">
-                            <MapPin size={12} aria-hidden /> {kitchen.address}
+                            <MapPin size={12} aria-hidden /> {currentmenu.restaurants.address}
                           </span>
                         )}
                         {Number.isFinite(stars) && (
@@ -457,10 +444,10 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
                           {open ? "Open now" : "Closed now"}
                         </span>
                       )}
-                      {kitchen?.phone && (
+                      {currentmenu?.restaurants.phone && (
                         <a
-                          href={`tel:${kitchen.phone.replace(/[^\d+]/g, "")}`}
-                          aria-label={`Call ${kitchenName}`}
+                          href={`tel:${currentmenu?.restaurants.phone.replace(/[^\d+]/g, "")}`}
+                          aria-label={`Call ${currentmenu?.restaurants.Res_name}`}
                           className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:border-[#237a57] hover:text-[#237a57]"
                         >
                           <Phone size={14} aria-hidden />
@@ -473,7 +460,7 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
                   <p className="mt-3 flex items-start gap-2 rounded-xl bg-[#fdf0c9] p-3 text-[12px] text-[#8a6100]">
                     <Clock size={14} aria-hidden className="mt-0.5 shrink-0" />
                     This kitchen is closed right now. You can still order, and it will be prepared when it opens
-                    {kitchen?.opening_time ? ` at ${hhmm(kitchen.opening_time)}` : ""}.
+                    {currentmenu.restaurants?.opening_time ? ` at ${hhmm(currentmenu.restaurants.opening_time)}` : ""}.
                   </p>
                 )}
               </div>
@@ -615,8 +602,8 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
  
             {/* more from this kitchen */}
             {more.length > 0 && (
-              <section aria-label={`More from ${kitchenName}`}>
-                <h2 className="text-[15px] font-bold">More from {kitchenName}</h2>
+              <section aria-label={`More from ${currentmenu?.restaurants.Res_name}`}>
+                <h2 className="text-[15px] font-bold">More from {currentmenu?.restaurants.Res_name}</h2>
                 <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {more.map((m) => (
                     <Link
@@ -667,7 +654,7 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
               <div className="mt-4 flex items-center gap-3">
                 {imageBlock("size-16 shrink-0 rounded-xl", "text-[26px]")}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] font-bold">{name}</p>
+                  <p className="truncate text-[14px] font-bold">{currentmenu?.Item_name}</p>
                   <p className="mt-0.5 truncate text-[11px] text-neutral-500">
                     {sizeOpt.label}
                     {chosenAddons.length > 0 && ` · ${chosenAddons.map((a) => a.label).join(", ")}`}
@@ -797,3 +784,11 @@ export default function FoodOrderPage({ onPlaceOrder }: Props) {
   );
 }
  
+
+export default function FoodOrderPage(props: Props) {
+  return (
+    <Suspense fallback={<div>Loading menu...</div>}>
+      <FoodOrderComponent {...props} />
+    </Suspense>
+  );
+}
