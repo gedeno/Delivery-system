@@ -11,14 +11,14 @@ interface MenuProp{
   variant: string
 }
 
-export default function FoodCard({item,variant }:MenuProp ) {
+export default function FoodCard({item }:MenuProp ) {
   const menus =  MenuData
   const Vegan = "better food"
 
 
   return(
-    <Link href={`/${item.id}`}>
-           <article className="group relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-2 transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-lg motion-safe:hover:-translate-y-1 sm:p-2.5">
+
+      <article className="group relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-2 transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-lg motion-safe:hover:-translate-y-1 sm:p-2.5">
       {/* image */}
       <div className="relative aspect-[1.52/1] w-full overflow-hidden rounded-xl bg-gradient-to-br from-orange-200 to-orange-300">
         <span
@@ -53,7 +53,7 @@ export default function FoodCard({item,variant }:MenuProp ) {
         <h3 className="text-[15px] font-bold leading-snug text-[#1b2b24] transition-colors group-hover:text-[#237a57] sm:text-[17px] lg:text-[18px]">
           {/* the link covers the whole card; the button below sits above it */}
           <Link
-            href={`/${item.id}`}
+            href={`/menulist/${item.id}`}
             className="line-clamp-2 outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:ring-2 focus-visible:after:ring-[#237a57]/50"
           >
             {item.Item_name}
@@ -78,7 +78,7 @@ export default function FoodCard({item,variant }:MenuProp ) {
       </div>
     </article>
       
-    </Link>
+
 
   )
   
