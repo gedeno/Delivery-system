@@ -1,3 +1,5 @@
+from datetime import timedelta, timezone
+
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import Orders,OrderItem,Payments,Reviews
@@ -24,9 +26,11 @@ class OrderViwSet(ModelViewSet):
         quantity = self.request.data.get("quantity")
         deliver_person = User.objects.filter(role = "delivery").first()
         with transaction.atomic():
+            estimated_time = timezone.now() + timedelta(minutes=30)
             Create_order = serializer.save(
                 customer= self.request.user ,
                 restaurants_id = restaurant ,
+                estimated_delivery_time = estimated_time,
                 delivery = deliver_person )
             OrderItem.objects.create(
                 order = Create_order ,

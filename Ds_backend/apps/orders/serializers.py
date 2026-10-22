@@ -10,8 +10,8 @@ class Orderserializer(ModelSerializer):
 
     class Meta:
         model = Orders
-        fields = ["id","customer","restaurants","status","total_amount","restaurant", "orderItems"]
-        read_only_fields = ["id", "customer","restaurants","status" ,"restaurant","orderItems"]
+        fields = ["id","customer","restaurants","status","total_amount","restaurant", "orderItems" , "delivery_address","ordered_at","updated_at","estimated_delivery_time","delivered_at"]
+        read_only_fields = ["id", "customer","restaurants","status" ,"restaurant","orderItems", "ordered_at","estimated_delivery_time"]
     def get_restaurant(self,obj):
         restaurants = obj.restaurants
         return Restaurantserializer(restaurants).data

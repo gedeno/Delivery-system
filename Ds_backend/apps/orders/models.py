@@ -4,11 +4,16 @@ from apps.restaurants.models import Restaurants , Menu_item
 # Create your models here.
 
 class Orders(models.Model):
-    customer = models.ForeignKey(User, on_delete=models.CASCADE , related_name='customers')
-    delivery = models.ForeignKey(User,on_delete=models.CASCADE ,default=1 , related_name='delivery')
-    restaurants = models.ForeignKey(Restaurants, on_delete=models.CASCADE )
-    status = models.CharField(max_length=200 , default="ordering")
-    total_amount =  models.DecimalField(max_digits=10 , decimal_places=2)
+    customer = models.ForeignKey(User,on_delete=models.CASCADE,related_name="customer_orders")
+    delivery = models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True,related_name="delivery_orders")
+    restaurants = models.ForeignKey(Restaurants,on_delete=models.CASCADE,related_name="orders")
+    status = models.CharField(max_length=30, default="pending")
+    total_amount = models.DecimalField(  max_digits=10, decimal_places=2)
+    delivery_address = models.TextField()
+    ordered_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    estimated_delivery_time = models.DateTimeField(null=True,blank=True)
+    delivered_at = models.DateTimeField( null=True, blank=True)
     def __str__(self):
         return self.status
 
