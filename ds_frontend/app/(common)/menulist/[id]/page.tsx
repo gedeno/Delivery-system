@@ -23,6 +23,7 @@ import { MenuData } from "@/app/lib/Menudata";
 import { RestaurantData } from "@/app/lib/restaurantdata";
 import { Menu, Restaurant } from "@/app/lib/types";
 import { useParams } from "next/navigation";
+import api from "@/app/lib/api";
  
 /* ---------- where things link (change to your routes) ---------- */
  
@@ -158,25 +159,8 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
  
 /* ---------- main component ---------- */
  function FoodOrderComponent({ onPlaceOrder }: Props) {
-  const params = useParams()
-  const id = Number(params.id)
 
   
-  const menus = (MenuData() || []) as Menu[];
-  const currentmenu = menus.find((m) => (m.id) === id);
- 
-
-  const more = menus.filter((menuss) => menuss?.restaurants.id === currentmenu?.restaurants.id)
-  
-  
-  
-  
-
-
-
-
- 
-  const [qty, setQty] = useState(1);
   const [size, setSize] = useState(SIZES[0].id);
   const [addons, setAddons] = useState<string[]>([]);
   const [instructions, setInstructions] = useState("");
@@ -188,6 +172,63 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
   const [failed, setFailed] = useState(false);
   const [orderNo, setOrderNo] = useState<string | null>(null);
  
+
+
+  const params = useParams()
+  const id = Number(params.id)
+
+  
+  const menus = (MenuData() || []) as Menu[];
+  const currentmenu = menus.find((m) => (m.id) === id);
+ 
+
+  const more = menus.filter((menuss) => menuss?.restaurants.id === currentmenu?.restaurants.id)
+  
+  const [quantity ,setquantity ] = useState(1)
+
+    const discount=()=>{
+            if(quantity>1){
+                setquantity(quantity-1)
+            }
+            
+        }
+         const count=()=>{
+            setquantity(quantity+1)
+        }
+     
+
+        
+      
+        const menu_price = currentmenu?.price
+        const ResId = currentmenu?.restaurants.id
+        const DeliverFee = 2.3
+        const TotalDeliveryfee = quantity*0.75+DeliverFee
+        const service_fee = 0.97
+        const subtotals = quantity * (currentmenu?.price ?? 1)
+        const Total = quantity * (currentmenu?.price ?? 1) + TotalDeliveryfee + service_fee
+
+        const submithandler = () =>{
+            if (!menu_price)return
+            api.post(`/orders/order/?restaurant_id=${ResId}&menu_id=${id}`,
+                {total_amount:Total,quantity:quantity})
+            .then((res) =>{
+                console.log(res.data)
+                
+            }).catch((error)=>{
+                console.log(error)
+                setFailed(true)
+            })
+    
+        }
+  
+  
+  
+
+
+
+
+ 
+  
   const nowMin = useSyncExternalStore(subscribeToClock, clockNow, clockServer);
   
   
@@ -215,7 +256,7 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
   }
  
   /* ----- derived data ----- */
-  const rawKitchen = currentmenu.restaurants;
+
   
   const open = nowMin < 0 ? null : isOpenAt(nowMin, currentmenu?.restaurants.opening_time, currentmenu?.restaurants?.closing_time);
   const stars = Number(currentmenu?.restaurants?.rating);
@@ -225,9 +266,8 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
   const sizeOpt = SIZES.find((s) => s.id === size) ?? SIZES[0];
   const chosenAddons = ADDONS.filter((a) => addons.includes(a.id));
   const unit = priceNum(currentmenu.price) + sizeOpt.extra + chosenAddons.reduce((s, a) => s + a.price, 0);
-  const subtotal = unit * qty;
-  const total = subtotal + DELIVERY_FEE + SERVICE_FEE + tip;
- 
+  
+
   const errors: { name?: string; phone?: string; address?: string } = {};
   if (contact.name.trim().length < 2) errors.name = "Enter your name.";
   if (contact.phone.replace(/\D/g, "").length < 10) errors.phone = "Enter a valid phone number.";
@@ -240,42 +280,7 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
     setContact((c) => ({ ...c, [key]: e.target.value }));
   };
  
-  async function placeOrder(e: FormEvent) {
-    e.preventDefault();
-    setSubmitted(true);
-    if (Object.keys(errors).length > 0) return;
- 
-    const payload: OrderPayload = {
-      item_id: currentmenu!.id,
-      item_name: name,
-      
-      quantity: qty,
-      size: sizeOpt.label,
-      addons: chosenAddons.map((a) => a.label),
-      instructions: instructions.trim(),
-      customer_name: contact.name.trim(),
-      phone: contact.phone.trim(),
-      address: contact.address.trim(),
-      payment,
-      tip,
-      subtotal,
-      delivery_fee: DELIVERY_FEE,
-      service_fee: SERVICE_FEE,
-      total,
-    };
- 
-    setSaving(true);
-    setFailed(false);
-    try {
-      const result = await onPlaceOrder?.(payload);
-      setOrderNo(typeof result === "string" ? result : `#BB-${Math.floor(1000 + Math.random() * 9000)}`);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch {
-      setFailed(true);
-    } finally {
-      setSaving(false);
-    }
-  }
+  
  
   const imageBlock = (cls: string, letterCls: string) => (
     <div className={`relative overflow-hidden bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3] ${cls}`}>
@@ -326,16 +331,16 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
           <div className="mt-5 space-y-2 text-left text-[13px]">
             <div className="flex justify-between gap-3">
               <span>
-                <span className="font-mono font-semibold">{qty}×</span> {name} · {sizeOpt.label}
+                <span className="font-mono font-semibold">{quantity}×</span> {name} · {sizeOpt.label}
               </span>
-              <span className="font-mono">{money(subtotal)}</span>
+              <span className="font-mono">{money(subtotals)}</span>
             </div>
             {chosenAddons.length > 0 && (
               <p className="text-[11px] text-neutral-500">+ {chosenAddons.map((a) => a.label).join(", ")}</p>
             )}
             <div className="flex justify-between border-t border-neutral-100 pt-3 text-[15px] font-bold">
               <span>Total</span>
-              <span className="font-mono">{money(total)}</span>
+              <span className="font-mono">{money(Total)}</span>
             </div>
             <p className="text-[11px] text-neutral-500">
               Paying with {PAYMENTS.find((p) => p.id === payment)?.label.toLowerCase()} · delivering to {contact.address.trim()}
@@ -378,7 +383,7 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
  
         <form
           id="order-form"
-          onSubmit={placeOrder}
+    
           noValidate
           className="mt-5 grid items-start gap-6 lg:grid-cols-[1fr_380px]"
         >
@@ -667,20 +672,20 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => setQty((q) => Math.max(1, q - 1))}
-                    disabled={qty <= 1}
+                    onClick={discount}
+                    disabled={quantity <= 1}
                     aria-label="Decrease quantity"
                     className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white transition-colors hover:border-[#237a57] hover:text-[#237a57] disabled:opacity-40 disabled:hover:border-neutral-200 disabled:hover:text-inherit"
                   >
                     <Minus size={14} aria-hidden />
                   </button>
                   <span aria-live="polite" className="w-9 text-center font-mono text-[15px] font-semibold">
-                    {qty}
+                    {quantity}
                   </span>
                   <button
                     type="button"
-                    onClick={() => setQty((q) => Math.min(20, q + 1))}
-                    disabled={qty >= 20}
+                    onClick={count}
+                  
                     aria-label="Increase quantity"
                     className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white transition-colors hover:border-[#237a57] hover:text-[#237a57] disabled:opacity-40 disabled:hover:border-neutral-200 disabled:hover:text-inherit"
                   >
@@ -712,9 +717,9 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
  
               <dl className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-[13px]">
                 {[
-                  [`Subtotal (${qty} ${qty === 1 ? "item" : "items"})`, subtotal],
-                  ["Delivery", DELIVERY_FEE],
-                  ["Service fee", SERVICE_FEE],
+                  [`Subtotal (${quantity} ${quantity === 1 ? "item" : "items"})`, subtotals],
+                  ["Delivery", TotalDeliveryfee],
+                  ["Service fee", service_fee],
                   ...(tip > 0 ? [["Courier tip", tip] as [string, number]] : []),
                 ].map(([label, value]) => (
                   <div key={label as string} className="flex justify-between gap-3 text-neutral-600">
@@ -724,7 +729,7 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
                 ))}
                 <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[16px] font-bold text-[#1b2b24]">
                   <dt>Total</dt>
-                  <dd className="font-mono">{money(total)}</dd>
+                  <dd className="font-mono">{money(Total)}</dd>
                 </div>
               </dl>
  
@@ -751,8 +756,8 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
                 )}
               </div>
  
-              <Button type="submit" disabled={saving} className="mt-4 hidden w-full justify-center lg:inline-flex">
-                {saving ? "Placing order…" : `Place order · ${money(total)}`}
+              <Button onClick={submithandler} className="mt-4 hidden w-full justify-center lg:inline-flex">
+                {saving ? "Placing order…" : `Place order · ${money(Total)}`}
               </Button>
             </section>
  
@@ -768,7 +773,7 @@ function Mark({ on, round }: { on: boolean; round?: boolean }) {
         <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
           <div>
             <p className="text-[11px] text-neutral-500">Total</p>
-            <p className="font-mono text-[18px] font-bold">{money(total)}</p>
+            <p className="font-mono text-[18px] font-bold">{money(Total)}</p>
           </div>
           <button
             type="submit"
