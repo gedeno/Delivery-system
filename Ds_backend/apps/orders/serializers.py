@@ -11,7 +11,7 @@ class Orderserializer(ModelSerializer):
     class Meta:
         model = Orders
         fields = ["id","customer","restaurants","status","total_amount","restaurant", "orderItems"]
-        read_only_fields = ["id", "customer","restaurants","status","total_amount" ,"restaurant","orderItems"]
+        read_only_fields = ["id", "customer","restaurants","status" ,"restaurant","orderItems"]
     def get_restaurant(self,obj):
         restaurants = obj.restaurants
         return Restaurantserializer(restaurants).data
