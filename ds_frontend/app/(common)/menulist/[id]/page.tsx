@@ -41,6 +41,7 @@ const ETA = "20–30 min";
 export interface OrderPayload {
   total_amount: number;
   delivery_address: string;
+  quantity: number;
 }
 
 /* ---------- helpers ---------- */
@@ -168,17 +169,18 @@ function FoodOrderComponent() {
     const payload: OrderPayload = {
       total_amount: Number(total.toFixed(2)),
       delivery_address: deliveryAddress.trim(),
+      quantity: quantity,
+      
     };
 
     setSaving(true);
     api
-      .post(`/orders/order/?restaurant_id=${restaurant.id}&menu_id=${id}`, payload)
+      .post(`/orders/order/?restaurant_id=${restaurant.id}&menu_id=${id}`, payload )
       .then((res) => {
         setOrderNo(String(res.data?.id ?? ""));
       })
       .catch((error) => {
         console.log(error);
-        setFailed(true);
       })
       .finally(() => setSaving(false));
   };
@@ -500,14 +502,7 @@ function FoodOrderComponent() {
                     <p className="text-[12px] font-semibold text-[#d4472f]">{addressError}</p>
                   </div>
                 )}
-                {failed && (
-                  <div role="alert" className="mt-4 flex gap-3 rounded-xl bg-[#fdeee6] p-3">
-                    <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
-                    <p className="text-[12px] font-semibold text-[#d4472f]">
-                      We couldn’t place your order. Check your connection and try again.
-                    </p>
-                  </div>
-                )}
+                
               </div>
 
               <Button

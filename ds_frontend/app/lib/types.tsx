@@ -68,3 +68,27 @@ export interface User {
   role: string;
   phone:string;
 }
+
+export interface OrderItem {
+    id:number;
+    order:Orders;
+    menuitem:Menu;
+    quantity:number;
+}
+
+
+export interface Orders {
+    id:number;
+    customer:User;
+    restaurants:Restaurant;
+    status:string;
+    total_amount:number;
+    restaurant:Restaurant;
+    orderItems:OrderItem;
+    delivery_address:string;
+    ordered_at:Date;
+    updated_at:Date;
+    estimated_delivery_time:Date;
+    delivered_at:Date;
+
+}

@@ -1,5 +1,5 @@
-from datetime import timedelta, timezone
-
+from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import render
 from rest_framework.response import Response
 from .models import Orders,OrderItem,Payments,Reviews
