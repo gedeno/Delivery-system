@@ -42,7 +42,7 @@ const delivery: NavItem[] = [
   { label: "Profile", href: "/dashboard/delivery/profile", icon: <User className="h-5 w-5" /> },
 ];
 
-const restaurant_owner: NavItem[] = [
+const owner: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Restaurants", href: "/dashboard/owner/Myrestaurant", icon: <Store className="h-5 w-5" /> },
   { label: "Orders", href: "/dashboard/owner/order", icon: <ClipboardList className="h-5 w-5" /> },
@@ -74,7 +74,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
   const user = UserData()
 
    const navItems =
-  user?.role === "restaurant_owner" ? restaurant_owner
+  user?.role === "owner" ? owner
   : user?.role === "delivery" ? delivery
   : user?.role === "admin" ? admin
   : customer;

@@ -1,24 +1,45 @@
 from decimal import Decimal
+from io import BytesIO
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
+from django.db import transaction
+from django.core.files.storage import default_storage
+from django.contrib.auth.hashers import make_password
+from PIL import Image, ImageDraw
 
 from apps.accounts.models import User
-from apps.orders.models import Orders, OrderItem, Payments, Reviews
+from apps.orders.models import OrderItem, Orders, Payments, Reviews
 from apps.restaurants.models import Cart, CartItem, Menu_item, Restaurants
 
 
 class Command(BaseCommand):
-    help = "Seed the database with sample delivery-system data."
+    help = "Replace the database contents with sample delivery-system data."
+    sample_count = 21
 
     def create_image(self, filename):
+        image = Image.new("RGB", (160, 120), (226, 113, 76))
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((12, 12, 148, 108), fill=(243, 190, 105))
+        draw.ellipse((38, 29, 122, 101), fill=(82, 132, 91))
+        draw.ellipse((62, 43, 112, 91), fill=(202, 76, 55))
+        buffer = BytesIO()
+        image.save(buffer, format="PNG")
         return SimpleUploadedFile(
             name=f"{filename}.png",
-            content=b"fake-image-content-for-seeding",
+            content=buffer.getvalue(),
             content_type="image/png",
         )
 
+    def clear_generated_images(self):
+        directories, filenames = default_storage.listdir("photo")
+        for filename in filenames:
+            if filename.startswith(("sample-dish-", "sample-restaurant-")):
+                default_storage.delete(f"photo/{filename}")
+
+    @transaction.atomic
     def handle(self, *args, **options):
+        self.clear_generated_images()
         Reviews.objects.all().delete()
         Payments.objects.all().delete()
         OrderItem.objects.all().delete()
@@ -29,185 +50,123 @@ class Command(BaseCommand):
         Restaurants.objects.all().delete()
         User.objects.filter(is_superuser=False).delete()
 
-        owner_1 = User.objects.create_user(
-            username="owner_saffron",
-            email="owner_saffron@example.com",
-            password="password123",
-            first_name="Amelia",
-            last_name="Kariuki",
-            phone="+254712345678",
-            role="owner",
-            Delivery_status="available",
-            is_verified=True,
+        owners = []
+        customers = []
+        delivery_users = []
+        for index in range(1, self.sample_count + 1):
+            owners.append(
+                User.objects.create_user(
+                    username=f"sample_owner_{index:02}",
+                    email=f"owner{index:02}@example.com",
+                    password=None,
+                    first_name=f"Owner{index}",
+                    last_name="Sample",
+                    phone=f"+254700{index:06}",
+                    role="owner",
+                    Delivery_status="available",
+                    is_verified=True,
+                )
+            )
+            customers.append(
+                User.objects.create_user(
+                    username=f"sample_customer_{index:02}",
+                    email=f"customer{index:02}@example.com",
+                    password=None,
+                    first_name=f"Customer{index}",
+                    last_name="Sample",
+                    phone=f"+254710{index:06}",
+                    role="customer",
+                    Delivery_status="active",
+                    is_verified=True,
+                )
+            )
+            delivery_users.append(
+                User.objects.create_user(
+                    username=f"sample_delivery_{index:02}",
+                    email=f"delivery{index:02}@example.com",
+                    password=None,
+                    first_name=f"Delivery{index}",
+                    last_name="Sample",
+                    phone=f"+254720{index:06}",
+                    role="delivery",
+                    Delivery_status="online",
+                    is_verified=True,
+                )
+            )
+
+        User.objects.filter(is_superuser=False).update(
+            password=make_password("password123")
         )
 
-        owner_2 = User.objects.create_user(
-            username="owner_bamboo",
-            email="owner_bamboo@example.com",
-            password="password123",
-            first_name="Daniel",
-            last_name="Njoroge",
-            phone="+254733456789",
-            role="owner",
-            Delivery_status="available",
-            is_verified=True,
-        )
+        restaurants = [
+            Restaurants.objects.create(
+                owner=owners[index - 1],
+                Res_name=f"Sample Restaurant {index:02}",
+                is_appruved=True,
+                image=self.create_image(f"sample-restaurant-{index:02}"),
+                address=f"{index} Sample Street, Nairobi",
+                description=f"Freshly prepared sample meals from restaurant {index}.",
+                phone=f"+254700{index:06}",
+                email=f"restaurant{index:02}@example.com",
+                opening_time="09:00",
+                closing_time="22:00",
+                cuisine_type=("African", "Indian", "Healthy")[index % 3],
+                map_logitude=36.8065 + index / 10000,
+                map_latiude=-1.2864 - index / 10000,
+                rating=4.0 + (index % 10) / 10,
+            )
+            for index in range(1, self.sample_count + 1)
+        ]
 
-        customer_1 = User.objects.create_user(
-            username="customer_maya",
-            email="maya@example.com",
-            password="password123",
-            first_name="Maya",
-            last_name="Wanjiru",
-            phone="+254754321987",
-            role="customer",
-            Delivery_status="active",
-            is_verified=True,
-        )
+        menu_items = [
+            Menu_item.objects.create(
+                restaurant=restaurants[index - 1],
+                Item_name=f"Sample Dish {index:02}",
+                price=Decimal("350.00") + Decimal(index * 25),
+                image=self.create_image(f"sample-dish-{index:02}"),
+                description=f"A freshly prepared sample menu item number {index}.",
+                Category=("Main", "Healthy", "Wraps")[index % 3],
+                is_available=True,
+            )
+            for index in range(1, self.sample_count + 1)
+        ]
 
-        customer_2 = User.objects.create_user(
-            username="customer_james",
-            email="james@example.com",
-            password="password123",
-            first_name="James",
-            last_name="Otieno",
-            phone="+254766123456",
-            role="customer",
-            Delivery_status="active",
-            is_verified=True,
-        )
+        for index in range(self.sample_count):
+            cart = Cart.objects.create(user=customers[index])
+            CartItem.objects.create(
+                cart=cart,
+                menu_item=menu_items[index],
+                quantity=(index % 3) + 1,
+            )
 
-        delivery_1 = User.objects.create_user(
-            username="delivery_brian",
-            email="brian@example.com",
-            password="password123",
-            first_name="Brian",
-            last_name="Muli",
-            phone="+254700111222",
-            role="delivery",
-            Delivery_status="online",
-            is_verified=True,
-        )
-
-        delivery_2 = User.objects.create_user(
-            username="delivery_nancy",
-            email="nancy@example.com",
-            password="password123",
-            first_name="Nancy",
-            last_name="Achieng",
-            phone="+254720333444",
-            role="delivery",
-            Delivery_status="online",
-            is_verified=True,
-        )
-
-        restaurant_1 = Restaurants.objects.create(
-            owner=owner_1,
-            Res_name="Saffron Bowl",
-            is_appruved=True,
-            image=self.create_image("saffron-bowl"),
-            address="Westlands, Nairobi",
-            description="Fresh Indian and African fusion meals with generous portions.",
-            phone="+254712345678",
-            email="hello@saffronbowl.com",
-            opening_time="09:00",
-            closing_time="22:00",
-            cuisine_type="Indian",
-            map_logitude=36.8065,
-            map_latiude=-1.2864,
-            rating=4.7,
-        )
-
-        restaurant_2 = Restaurants.objects.create(
-            owner=owner_2,
-            Res_name="Bamboo Garden",
-            is_appruved=True,
-            image=self.create_image("bamboo-garden"),
-            address="Kilimani, Nairobi",
-            description="Healthy bowls, grilled chicken, and vegan-friendly options.",
-            phone="+254733456789",
-            email="hello@bamboogarden.com",
-            opening_time="10:00",
-            closing_time="21:30",
-            cuisine_type="Healthy",
-            map_logitude=36.7790,
-            map_latiude=-1.2905,
-            rating=4.5,
-        )
-
-        item_1 = Menu_item.objects.create(
-            restaurant=restaurant_1,
-            Item_name="Chicken Biryani",
-            price=Decimal("650.00"),
-            image=self.create_image("chicken-biryani"),
-            description="Spiced basmati rice with marinated chicken and vegetables.",
-            Category="Main",
-            is_available=True,
-        )
-
-        item_2 = Menu_item.objects.create(
-            restaurant=restaurant_1,
-            Item_name="Beef Pilau",
-            price=Decimal("590.00"),
-            image=self.create_image("beef-pilau"),
-            description="Well-seasoned beef pilau with crispy onions and carrots.",
-            Category="Main",
-            is_available=True,
-        )
-
-        item_3 = Menu_item.objects.create(
-            restaurant=restaurant_2,
-            Item_name="Salmon Power Bowl",
-            price=Decimal("880.00"),
-            image=self.create_image("salmon-power-bowl"),
-            description="Grilled salmon, greens, quinoa, and avocado.",
-            Category="Healthy",
-            is_available=True,
-        )
-
-        item_4 = Menu_item.objects.create(
-            restaurant=restaurant_2,
-            Item_name="Avocado Chicken Wrap",
-            price=Decimal("520.00"),
-            image=self.create_image("avocado-chicken-wrap"),
-            description="Crispy chicken with avocado, greens, and chili sauce.",
-            Category="Wraps",
-            is_available=True,
-        )
-
-        cart_1 = Cart.objects.create(user=customer_1)
-        CartItem.objects.create(cart=cart_1, menu_item=item_1, quantity=2)
-        CartItem.objects.create(cart=cart_1, menu_item=item_3, quantity=1)
-
-        cart_2 = Cart.objects.create(user=customer_2)
-        CartItem.objects.create(cart=cart_2, menu_item=item_4, quantity=1)
-
-        order_1 = Orders.objects.create(
-            customer=customer_1,
-            delivery=delivery_1,
-            restaurants=restaurant_1,
-            status="paid",
-            total_amount=Decimal("1290.00"),
-        )
-        OrderItem.objects.create(order=order_1, menuitem=item_1, quantity=2)
-        OrderItem.objects.create(order=order_1, menuitem=item_2, quantity=1)
-        Payments.objects.create(order=order_1, amount=Decimal("1290.00"), status="paid")
-        Reviews.objects.create(order=order_1, rating=Decimal("4.8"))
-
-        order_2 = Orders.objects.create(
-            customer=customer_2,
-            delivery=delivery_2,
-            restaurants=restaurant_2,
-            status="delivered",
-            total_amount=Decimal("880.00"),
-        )
-        OrderItem.objects.create(order=order_2, menuitem=item_3, quantity=1)
-        Payments.objects.create(order=order_2, amount=Decimal("880.00"), status="paid")
-        Reviews.objects.create(order=order_2, rating=Decimal("4.5"))
+            amount = menu_items[index].price * (index % 3 + 1)
+            order = Orders.objects.create(
+                customer=customers[index],
+                delivery=delivery_users[index],
+                restaurants=restaurants[index],
+                status=("paid", "delivered", "pending")[index % 3],
+                total_amount=amount,
+                delivery_address=f"{index + 1} Sample Road, Nairobi",
+            )
+            OrderItem.objects.create(
+                order=order,
+                menuitem=menu_items[index],
+                quantity=(index % 3) + 1,
+            )
+            Payments.objects.create(
+                order=order,
+                amount=amount,
+                status="paid",
+            )
+            Reviews.objects.create(
+                order=order,
+                rating=Decimal("4.0") + Decimal(index % 10) / Decimal("10"),
+            )
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Seed data created successfully: 2 owners, 2 customers, 2 deliveries, "
-                "2 restaurants, 4 menu items, 2 carts, 2 orders."
+                "Seed data created: 21 restaurants, 21 menu items, 21 carts, "
+                "21 cart items, 21 orders, 21 order items, 21 payments, "
+                "21 reviews, and 63 users."
             )
         )

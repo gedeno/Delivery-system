@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 const ROLE_OPTIONS = [
   { value: "customer", label: "Customer" },
   { value: "delivery", label: "Delivery Person" },
-  { value: "restaurant_owner", label: "Restaurant Owner" },
+  { value: "owner", label: "Restaurant Owner" },
 ];
 
 
