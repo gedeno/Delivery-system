@@ -92,3 +92,15 @@ export interface Orders {
     delivered_at:Date;
 
 }
+export interface CartItem {
+    id: number;
+    menu_item: Menu;
+    cart: Cart;
+    quantity: number;
+}
+
+export interface Cart {
+    id: number;
+    user: number;
+    items?: CartItem[];
+}
