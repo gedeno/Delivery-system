@@ -11,7 +11,7 @@ import api from "@/app/lib/api";
 import { MenuData } from "@/app/lib/Menudata";
 import type { Cart, CartItem, Menu } from "@/app/lib/types";
 import CartItemCard, { CartStyles, foodHref, money, priceNum } from "@/components/Ui/CartCard";
-import CartData from "@/app/lib/CardData";
+import CartData from "@/app/lib/CartData";
 
 /* ---------- routes, APIs, fees ---------- */
 
