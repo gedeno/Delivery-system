@@ -1,30 +1,27 @@
 "use client";
 
-// components/Dashboard.tsx  (UI only: sample data, no logic)
-import type { ReactNode } from "react";
+// components/Dashboard.tsx  (UI only)
+import type { ComponentType, ReactNode } from "react";
 import Button from "@/components/Ui/Button";
-import type { User } from "@/app/lib/types";
+import type { Orders } from "@/app/lib/types";
 import { UserData } from "../lib/Userdata";
- 
+import Orderfetch from "../lib/orders";
+
 type Role = "user" | "owner" | "delivery_person" | "admin";
- 
-/* ---------- sample data (replace with real Orders / Menu / CartItem data) ---------- */
- 
-const orders = [
-  { id: "#BB-1049", customer: "Taylor Reed", restaurant: "Maple Kitchen", total: 34.2, status: "New", time: "12:31 PM" },
-  { id: "#BB-1048", customer: "Alex Morgan", restaurant: "Maple Kitchen", total: 40.84, status: "On the way", time: "12:08 PM" },
-  { id: "#EP-2210", customer: "Morgan Bell", restaurant: "Little Ember Pizza", total: 38.9, status: "Preparing", time: "12:30 PM" },
-  { id: "#BB-1044", customer: "Casey Kim", restaurant: "Maple Kitchen", total: 12.4, status: "Delivered", time: "11:42 AM" },
-];
- 
-const week = [540, 602, 590, 710, 685, 760, 480];
-const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
- 
-/* ---------- small UI pieces ---------- */
- 
-const money = (n: number) => `$${n.toFixed(2)}`;
+type ViewProps = { name?: string; orders: Orders[] };
+
+/* ---------- helpers ---------- */
+
+const money = (n: number) => `$${Number(n).toFixed(2)}`;
 const compact = "!px-3 !py-2 !text-[12px]";
- 
+
+const timeOf = (d: Date | string) => {
+  const date = new Date(d);
+  return Number.isNaN(date.getTime())
+    ? ""
+    : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
+
 const tone: Record<string, string> = {
   New: "bg-[#fdeee4] text-[#d4472f]",
   Preparing: "bg-amber-50 text-amber-700",
@@ -32,71 +29,119 @@ const tone: Record<string, string> = {
   Delivered: "bg-[#e3f1ea] text-[#237a57]",
   Available: "bg-[#e3f1ea] text-[#237a57]",
 };
- 
+
+/* ---------- small UI pieces ---------- */
+
 const Chip = ({ text }: { text: string }) => (
   <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${tone[text] ?? "bg-neutral-100 text-neutral-600"}`}>
     {text}
   </span>
 );
- 
+
 const Panel = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
     <h2 className="text-[15px] font-bold">{title}</h2>
     <div className="mt-4">{children}</div>
   </section>
 );
- 
+
 type RowItem = { title: string; sub: string; end: ReactNode };
- 
-const Rows = ({ items }: { items: RowItem[] }) => (
-  <ul className="space-y-3">
-    {items.map((i) => (
-      <li key={i.title} className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 p-3">
-        <div className="min-w-0">
-          <p className="truncate text-[12px] font-bold">{i.title}</p>
-          <p className="mt-1 truncate text-[11px] text-neutral-500">{i.sub}</p>
-        </div>
-        {i.end}
-      </li>
-    ))}
-  </ul>
-);
- 
-/** order -> row. Pass `end` to replace the default status + total (e.g. an action button). */
-const orderRows = (list: typeof orders, action?: string): RowItem[] =>
+
+const Rows = ({ items }: { items: RowItem[] }) =>
+  items.length ? (
+    <ul className="space-y-3">
+      {items.map((i) => (
+        <li key={i.title} className="flex items-center justify-between gap-3 rounded-2xl border border-neutral-200 p-3">
+          <div className="min-w-0">
+            <p className="truncate text-[12px] font-bold">{i.title}</p>
+            <p className="mt-1 truncate text-[11px] text-neutral-500">{i.sub}</p>
+          </div>
+          {i.end}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="rounded-2xl bg-[#e6f0ea] p-4 text-[12px] text-neutral-600">Nothing here yet.</p>
+  );
+
+/** order -> row. Pass `action` to show a button instead of status + total. */
+const orderRows = (list: Orders[], action?: string): RowItem[] =>
   list.map((o) => ({
-    title: `${o.id} · ${o.restaurant}`,
-    sub: `${o.customer} · ${o.time}`,
+    title: `#${o.id} · ${o.restaurant?.Res_name ?? o.restaurants?.Res_name ?? "Restaurant"}`,
+    sub: `${o.customer?.first_name ?? ""} · ${timeOf(o.ordered_at)}`,
     end: action ? (
       <Button className={compact}>{action}</Button>
     ) : (
       <div className="flex items-center gap-3">
         <Chip text={o.status} />
-        <span className="text-[12px] font-bold">{money(o.total)}</span>
+        <span className="text-[12px] font-bold">{money(o.total_amount)}</span>
       </div>
     ),
   }));
- 
-/* ---------- one view per role ---------- */
- 
-const views: Record<
-  Role,
-  { label: string; badge?: string; stats: [string, string, string][]; main: ReactNode; side: ReactNode }
-> = {
-  user: {
-    label: "Customer",
-    stats: [
-      ["Active orders", "1", "Arriving in ~20 min"],
-      ["Spent this month", "$186.40", "6 orders"],
-      ["In your cart", "2 items", "$26.00"],
-      ["Favorite kitchens", "5", "Saved neighborhood picks"],
-    ],
-    main: (
+
+/* ---------- page shell used by every role view ---------- */
+
+type Stat = [label: string, value: string, hint: string];
+
+type ShellProps = {
+  label: string;
+  name?: string;
+  badge?: string;
+  stats: Stat[];
+  children: ReactNode; // the two columns: main + side
+};
+
+function Shell({ label, name, badge, stats, children }: ShellProps) {
+  return (
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 pb-10 pt-6 text-[#1b2b24] sm:px-8 lg:px-10">
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">{label}</p>
+          <h1 className="mt-2 text-[28px] font-bold tracking-tight sm:text-[32px]">Hi, {name}</h1>
+        </div>
+        {badge && (
+          <span className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-[12px] font-semibold">
+            {badge}
+            <span className="size-2 rounded-full bg-[#237a57]" />
+          </span>
+        )}
+      </header>
+
+      <main className="mt-6 space-y-6">
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
+          {stats.map(([l, value, hint]) => (
+            <div key={l} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
+              <p className="text-[11px] text-neutral-500">{l}</p>
+              <p className="mt-2 text-[24px] font-bold tracking-tight">{value}</p>
+              <p className="mt-1 text-[10.5px] text-neutral-500">{hint}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-[1.3fr_1fr]">{children}</div>
+      </main>
+    </div>
+  );
+}
+
+/* ---------- one component per role ---------- */
+
+function CustomerView({ name, orders }: ViewProps) {
+  return (
+    <Shell
+      label="Customer"
+      name={name}
+      stats={[
+        ["Active orders", "1", "Arriving in ~20 min"],
+        ["Spent this month", "$186.40", "6 orders"],
+        ["In your cart", "2 items", "$26.00"],
+        ["Favorite kitchens", "5", "Saved neighborhood picks"],
+      ]}
+    >
       <Panel title="Recent orders">
         <Rows items={orderRows(orders)} />
       </Panel>
-    ),
-    side: (
+
       <Panel title="Your cart">
         <Rows
           items={[
@@ -106,19 +151,26 @@ const views: Record<
         />
         <Button fullWidth className="mt-4">Go to checkout</Button>
       </Panel>
-    ),
-  },
- 
-  owner: {
-    label: "Restaurant owner",
-    badge: "Open for orders",
-    stats: [
-      ["Revenue today", "$87.44", "4 orders"],
-      ["Active orders", "3", "1 waiting to be accepted"],
-      ["Avg. order value", "$29.15", "Excludes canceled"],
-      ["Rating", "★ 4.9", "240+ reviews"],
-    ],
-    main: (
+    </Shell>
+  );
+}
+
+const week = [540, 602, 590, 710, 685, 760, 480];
+const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function OwnerView({ name, orders }: ViewProps) {
+  return (
+    <Shell
+      label="Restaurant owner"
+      name={name}
+      badge="Open for orders"
+      stats={[
+        ["Revenue today", "$87.44", "4 orders"],
+        ["Active orders", "3", "1 waiting to be accepted"],
+        ["Avg. order value", "$29.15", "Excludes canceled"],
+        ["Rating", "★ 4.9", "240+ reviews"],
+      ]}
+    >
       <Panel title="Revenue this week">
         <div className="flex h-44 items-end gap-3 border-b border-neutral-200">
           {week.map((v, i) => (
@@ -131,8 +183,7 @@ const views: Record<
           ))}
         </div>
       </Panel>
-    ),
-    side: (
+
       <div className="space-y-6">
         <Panel title="Needs attention">
           <Rows items={orderRows(orders.slice(0, 1), "Accept")} />
@@ -146,19 +197,23 @@ const views: Record<
           />
         </Panel>
       </div>
-    ),
-  },
- 
-  delivery_person: {
-    label: "Delivery partner",
-    badge: "Online",
-    stats: [
-      ["Deliveries today", "14", "3 this hour"],
-      ["Earnings today", "$96.50", "Tips included"],
-      ["Active delivery", "1", "Pickup in 4 min"],
-      ["Rating", "★ 4.9", "120 reviews"],
-    ],
-    main: (
+    </Shell>
+  );
+}
+
+function DeliveryView({ name, orders }: ViewProps) {
+  return (
+    <Shell
+      label="Delivery partner"
+      name={name}
+      badge="Online"
+      stats={[
+        ["Deliveries today", "14", "3 this hour"],
+        ["Earnings today", "$96.50", "Tips included"],
+        ["Active delivery", "1", "Pickup in 4 min"],
+        ["Rating", "★ 4.9", "120 reviews"],
+      ]}
+    >
       <Panel title="Current delivery">
         <div className="rounded-2xl bg-[#e6f0ea] p-5">
           <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">Pick up → Drop off</p>
@@ -170,28 +225,30 @@ const views: Record<
           </div>
         </div>
       </Panel>
-    ),
-    side: (
+
       <Panel title="Ready for pickup">
         <Rows items={orderRows(orders.slice(1, 3), "Accept")} />
       </Panel>
-    ),
-  },
- 
-  admin: {
-    label: "Admin",
-    stats: [
-      ["Total users", "1,472", "+38 this week"],
-      ["Restaurants", "86", "5 pending approval"],
-      ["Orders today", "312", "24 active"],
-      ["Platform revenue", "$8,940", "Today"],
-    ],
-    main: (
+    </Shell>
+  );
+}
+
+function AdminView({ name, orders }: ViewProps) {
+  return (
+    <Shell
+      label="Admin"
+      name={name}
+      stats={[
+        ["Total users", "1,472", "+38 this week"],
+        ["Restaurants", "86", "5 pending approval"],
+        ["Orders today", "312", "24 active"],
+        ["Platform revenue", "$8,940", "Today"],
+      ]}
+    >
       <Panel title="Recent orders">
         <Rows items={orderRows(orders)} />
       </Panel>
-    ),
-    side: (
+
       <div className="space-y-6">
         <Panel title="Users by role">
           <Rows
@@ -206,48 +263,24 @@ const views: Record<
           <Rows items={[{ title: "Noodle House", sub: "Ramen · Asian", end: <Button className={compact}>Approve</Button> }]} />
         </Panel>
       </div>
-    ),
-  },
-};
- 
-/* ---------- main component ---------- */
- 
-export default function Dashboard() {
-  const user = UserData();
-  const role: Role = user && user.role in views ? (user.role as Role) : "user";
-  const view = views[role];
-  return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 pb-10 pt-6 text-[#1b2b24] sm:px-8 lg:px-10">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">{view.label}</p>
-          <h1 className="mt-2 text-[28px] font-bold tracking-tight sm:text-[32px]">Hi, {user?.first_name}</h1>
-        </div>
-        {view.badge && (
-          <span className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-2.5 text-[12px] font-semibold">
-            {view.badge}
-            <span className="size-2 rounded-full bg-[#237a57]" />
-          </span>
-        )}
-      </header>
- 
-      <main className="mt-6 space-y-6">
-        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
-          {view.stats.map(([label, value, hint]) => (
-            <div key={label} className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm">
-              <p className="text-[11px] text-neutral-500">{label}</p>
-              <p className="mt-2 text-[24px] font-bold tracking-tight">{value}</p>
-              <p className="mt-1 text-[10.5px] text-neutral-500">{hint}</p>
-            </div>
-          ))}
-        </div>
- 
-        <div className="grid gap-6 xl:grid-cols-[1.3fr_1fr]">
-          {view.main}
-          {view.side}
-        </div>
-      </main>
-    </div>
+    </Shell>
   );
 }
- 
+
+/* ---------- main component ---------- */
+
+const views: Record<Role, ComponentType<ViewProps>> = {
+  user: CustomerView,
+  owner: OwnerView,
+  delivery_person: DeliveryView,
+  admin: AdminView,
+};
+
+export default function Dashboard() {
+  const user = UserData();
+  const orders = Orderfetch() || []; // hooks run here, inside the component
+  const role: Role = user && user.role in views ? (user.role as Role) : "user";
+  const View = views[role];
+
+  return <View name={user?.first_name} orders={orders} />;
+}
