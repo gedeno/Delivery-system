@@ -5,16 +5,32 @@ import Button from "./Button";
 import { Menu } from "@/app/lib/types";
 import { MenuData } from "@/app/lib/Menudata";
 import { Plus } from "lucide-react";
+import api from "@/app/lib/api";
+import { useState } from "react";
 
 interface MenuProp{
   item:Menu
   variant: string
 }
 
+
 export default function FoodCard({item }:MenuProp ) {
   const menus =  MenuData
   const Vegan = "better food"
+  const [inCart, setInCart] = useState(item.incart);
 
+
+  
+  const toggleCart = () =>{
+        api.post(`/restaurants/cart-item/toggle_cart/?menu_id=${item.id}`, {"quantity": 1})
+        .then((res) =>{
+            console.log(res.data)
+            setInCart(!inCart)
+        }).catch((error)=>{
+            console.log(error)
+        })
+
+    }
 
   return(
 
@@ -70,10 +86,11 @@ export default function FoodCard({item }:MenuProp ) {
 
         <Button
           variant="outline"
+          onClick={toggleCart}
           
           className="relative z-10 mt-3 w-full justify-center gap-1.5 transition-colors group-hover:border-[#237a57] group-hover:text-[#237a57] sm:mt-4"
         >
-          Add to cart <Plus size={14} aria-hidden />
+       <Plus className ="text-sm" size={20}/>{ inCart ? "Remove" : "Add to cart"} 
         </Button>
       </div>
     </article>
