@@ -6,6 +6,7 @@ import Button from "@/components/Ui/Button";
 import type { Orders } from "@/app/lib/types";
 import { UserData } from "../lib/Userdata";
 import Orderfetch from "../lib/orders";
+import CartData from "../lib/CartData";
 
 type Role = "user" | "owner" | "delivery_person" | "admin";
 type ViewProps = { name?: string; orders: Orders[] };
@@ -127,14 +128,17 @@ function Shell({ label, name, badge, stats, children }: ShellProps) {
 /* ---------- one component per role ---------- */
 
 function CustomerView({ name, orders }: ViewProps) {
+  const orderss = Orderfetch() || []
+  const carts = CartData() || []
+
   return (
     <Shell
       label="Customer"
       name={name}
       stats={[
-        ["Active orders", "1", "Arriving in ~20 min"],
-        ["Spent this month", "$186.40", "6 orders"],
-        ["In your cart", "2 items", "$26.00"],
+        ["Active orders", `${orderss?.length} orders`, "Arriving in ~20 min"],
+        ["Spent this month", `$ ${orderss?.length}`, `${orderss?.length} orders`],
+        ["In your cart", `${carts.length} items` , `${carts.length} items`],
         ["Favorite kitchens", "5", "Saved neighborhood picks"],
       ]}
     >
