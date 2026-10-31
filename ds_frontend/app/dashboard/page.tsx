@@ -1,7 +1,7 @@
 "use client";
 
 // components/Dashboard.tsx  (UI only)
-import type { ComponentType, ReactNode } from "react";
+import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import Button from "@/components/Ui/Button";
 import type { Orders } from "@/app/lib/types";
 import { UserData } from "../lib/Userdata";
@@ -130,14 +130,18 @@ function Shell({ label, name, badge, stats, children }: ShellProps) {
 function CustomerView({ name, orders }: ViewProps) {
   const orderss = Orderfetch() || []
   const carts = CartData() || []
-
+ 
+  const amout = orderss.reduce(
+  (total, order) => total + Number(order.total_amount || 0),
+  0
+);
   return (
     <Shell
       label="Customer"
       name={name}
       stats={[
         ["Active orders", `${orderss?.length} orders`, "Arriving in ~20 min"],
-        ["Spent this month", `$ ${orderss?.length}`, `${orderss?.length} orders`],
+        ["Spent this month", `$ ${amout}`, `${orderss?.length} orders`],
         ["In your cart", `${carts.length} items` , `${carts.length} items`],
         ["Favorite kitchens", "5", "Saved neighborhood picks"],
       ]}
@@ -283,6 +287,7 @@ const views: Record<Role, ComponentType<ViewProps>> = {
 export default function Dashboard() {
   const user = UserData();
   const orders = Orderfetch() || []; // hooks run here, inside the component
+  
   const role: Role = user && user.role in views ? (user.role as Role) : "user";
   const View = views[role];
 
