@@ -17,7 +17,6 @@ type HeaderProps = {
 export default function Header({
   addressLabel = "Home",
   address = "128 Maple Street",
-  userName = "Alex Morgan",
 }: HeaderProps) {
   const user = UserData()
 
