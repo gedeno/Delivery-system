@@ -231,6 +231,7 @@ export default function OwnerProfilePage({
       setSigningOut(false);
     }
   }
+  const Inti = `${users?.first_name?.[0] ?? ""}${users?.last_name?.[0] ?? ""}`;
  
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
@@ -251,10 +252,10 @@ export default function OwnerProfilePage({
               aria-hidden
               className="mx-auto grid size-20 place-items-center rounded-2xl bg-[#8a5a1f] text-[26px] font-bold text-white shadow-sm"
             >
-              {initials(saved.full_name) || "?"}
+              {Inti}
             </div>
-            <h2 className="mt-4 truncate text-[18px] font-bold">{saved.full_name}</h2>
-            <p className="mt-1 truncate text-[12px] text-neutral-500">{saved.email}</p>
+            <h2 className="mt-4 truncate text-[18px] font-bold">{`${users?.first_name} ${users?.last_name} `}</h2>
+            <p className="mt-1 truncate text-[12px] text-neutral-500">{users?.email}</p>
             <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#e3f1ea] px-3 py-1.5 text-[11px] font-semibold text-[#237a57]">
               <span className="size-1.5 rounded-full bg-[#237a57]" />
              {users?.role}
