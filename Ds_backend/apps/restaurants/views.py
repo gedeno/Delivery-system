@@ -1,4 +1,6 @@
 from typing import ClassVar
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
@@ -34,18 +36,34 @@ class Restaurants_ower_fetch(ModelViewSet):
 class CreateMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
     serializer_class = Menu_itemserializer
-    permission_classes: ClassVar = [AllowAny]
+    permission_classes: ClassVar = [IsAuthenticated]
+
     def perform_create(self, serializer):
         restaurant_id = self.request.query_params.get('restaurant_id')
-        restaurant = Restaurants.objects.get(id = restaurant_id )
+        restaurant = get_object_or_404(
+            Restaurants,
+            id=restaurant_id,
+            owner=self.request.user,
+        )
         serializer.save(restaurant=restaurant)
         print(serializer.data)
-        return super().perform_create(serializer)
+        
     def get_queryset(self):
+        queryset = Menu_item.objects.filter(restaurant__owner=self.request.user)
         restaurant_id = self.request.query_params.get('restaurant_id')
         if restaurant_id:
-            return Menu_item.objects.filter(restaurant_id = restaurant_id)
-        return Menu_item.objects.all()
+            queryset = queryset.filter(restaurant_id=restaurant_id)
+        return queryset
+    
+    def destroy(self, request, *args, **kwargs):
+        menu_item = self.get_object()
+        menu_item.delete()
+        return Response(
+            {"message": "Menu item deleted successfully"},
+            status=status.HTTP_200_OK
+        )
+
+
 class FetchMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
     serializer_class = Menu_itemserializer
