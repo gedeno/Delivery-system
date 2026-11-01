@@ -50,6 +50,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     control = (
       <select
         id={fieldId}
+        value={rest.value ?? ""}
         name={rest.name}
         required={rest.required}
         disabled={rest.disabled}
@@ -94,13 +95,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     /* ---- text, email, tel, password ... ---- */
     control = (
       <input
-        {...rest}
-        ref={ref}
-        id={fieldId}
-        onChange={onChange}
-        aria-describedby={describedBy}
-        aria-invalid={error ? true : undefined}
-        className={`${fieldBase} ${stateClass}`}
+         {...rest}
+      ref={ref}
+      id={fieldId}
+      value={rest.value ?? ""}
+      onChange={onChange}
+      aria-describedby={describedBy}
+      aria-invalid={error ? true : undefined}
+      className={`${fieldBase} ${stateClass}`}
       />
     );
   }

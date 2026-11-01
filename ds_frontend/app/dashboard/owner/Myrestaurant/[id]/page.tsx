@@ -350,6 +350,10 @@ export default function AddMenuItemPage({
 export  function MyMenuItemsList() { 
   const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
   const heading = "text-[15px] font-bold text-[#1b2b24]";
+
+
+  const params = useParams<{ id: string }>();
+  const id = Number(params.id);
   
   const [restaurant, setRestaurant] = useState("All");
   const menus = MenuData()
@@ -462,7 +466,7 @@ export  function MyMenuItemsList() {
                 )}
  
                 <Link
-                  href="/"
+                  href={`/dashboard/owner/Myrestaurant/${item.restaurants.id}/${item.id}`}
                   className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-[12px] font-semibold text-[#1b2b24] transition-colors hover:border-[#237a57] hover:text-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 sm:mt-auto sm:pt-2"
                 >
                   <Pencil size={13} aria-hidden /> Edit item
