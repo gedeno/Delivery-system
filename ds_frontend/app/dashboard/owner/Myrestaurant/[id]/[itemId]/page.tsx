@@ -121,13 +121,13 @@ function MenuItemEditcomp() {
           <h2 className="text-[15px] font-bold">Item details</h2>
 
           <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
-            <Input className="col-span-2" label="Item name" value={current_menu?.Item_name} name="Item_name" placeholder="Harvest chicken bowl" />
+            <Input onChange={inputhandler} className="col-span-2" label="Item name" value={current_menu?.Item_name} name="Item_name" placeholder="Harvest chicken bowl" />
             <Input
               className="col-span-2 sm:col-span-1"
               label="Price (USD)"
               name="price"
               type="number"
-             
+              onChange={inputhandler}
               value={current_menu?.price}
             />
             <Input
@@ -135,6 +135,7 @@ function MenuItemEditcomp() {
               label="Category"
               name="Category"
               value={current_menu?.Category}
+              onChange={inputhandler}
             />
             <label htmlFor="">Image</label><br />
               <input type="file" name="image" onChange={filehandler} 
@@ -144,6 +145,7 @@ function MenuItemEditcomp() {
               className="col-span-2"
               label="Description"
               name="description"
+              onChange={inputhandler}
               value={current_menu?.description}
               placeholder="What makes this dish special?"
             />
