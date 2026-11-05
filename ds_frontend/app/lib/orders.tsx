@@ -10,7 +10,7 @@ import { Orders } from "./types"
 
 
 export default function Orderfetch (){
-    const [orders, setorders] = useState<Orders[] | null>([])
+    const [orders, setorders] = useState<Orders[]|null>([])
     useEffect(()=>{
         api.get('orders/cartorder/')
         .then((res)=>{
