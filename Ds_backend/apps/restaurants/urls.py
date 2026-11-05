@@ -10,8 +10,8 @@ router.register('restaurant_fetch',views.FetchRestaurant , basename='restaurant_
 router.register('menu', views.CreateMenu, basename='menu')
 router.register('fetchmenu',views.FetchMenu , basename="fetchmenu")
 router.register('cart',views.CartViewSet,basename='cart')
-router.register("cart-item", views.CartItemViewSet, basename="cart-item")
-
+router.register("cart-item", views.CartItemViewSet, basename="cart-item"), 
+router.register("menu-edit", views.MenuEditDestroy, basename="menu-edit")
 urlpatterns = [
     path('', include(router.urls)),
     path("cart-items/", views.CartViewSet.as_view({"get":"list"}))

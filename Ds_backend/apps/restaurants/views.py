@@ -54,15 +54,29 @@ class CreateMenu(ModelViewSet):
         if restaurant_id:
             queryset = queryset.filter(restaurant_id=restaurant_id)
         return queryset
-    
-    def destroy(self, request, *args, **kwargs):
-        menu_item = self.get_object()
-        menu_item.delete()
-        return Response(
-            {"message": "Menu item deleted successfully"},
-            status=status.HTTP_200_OK
+
+class MenuEditDestroy(ModelViewSet):
+    queryset = Menu_item.objects.all()
+    serializer_class = Menu_itemserializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return get_object_or_404(
+            Menu_item,
+            id=self.request.query_params.get('menu_id')
         )
 
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
+
+    def destroy(self, request, *args, **kwargs):
+        menu = self.get_object()
+        menu.delete()
+        return Response({
+        "message": "Item removed from cart"
+            })
+
+ 
 
 class FetchMenu(ModelViewSet):
     queryset = Menu_item.objects.all()
