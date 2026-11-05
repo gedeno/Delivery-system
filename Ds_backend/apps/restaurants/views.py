@@ -60,12 +60,6 @@ class MenuEditDestroy(ModelViewSet):
     serializer_class = Menu_itemserializer
     permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        return get_object_or_404(
-            Menu_item,
-            id=self.request.query_params.get('menu_id')
-        )
-
     def perform_create(self, serializer):
         return super().perform_create(serializer)
 
