@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
 import api from "@/app/lib/api";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useParams } from "next/dist/client/components/navigation";
 import { RestaurantData } from "@/app/lib/restaurantdata";
 import { MenuData } from "@/app/lib/Menudata";
@@ -77,9 +77,11 @@ function MenuItemEditcomp() {
           if (formdata.image) {
               FD.append("image", formdata.image);
           }
-          api.post(`/restaurants/menu/?restaurant_id=${id}`,FD)
+          
+          api.patch(`/restaurants/menu-edit/${current_menu?.id}/`, FD)
           .then((res)=>{
               console.log(res.data)
+              router.push(`/dashboard/owner/Myrestaurant/${id}`);
              
           }).catch((error) => {
                   console.log("STATUS:", error.response?.status);
@@ -93,7 +95,7 @@ function MenuItemEditcomp() {
       setIsDeleting(true);
       setDeleteError(null);
       try {
-        await api.delete(`/restaurants/menu/${current_menu.id}/?restaurant_id=${id}`);
+        await api.delete(`/restaurants/menu-edit/${current_menu.id}/`);
         router.push(`/dashboard/owner/Myrestaurant/${id}`);
       } catch (error) {
         console.error("Failed to delete menu item:", error);
@@ -101,6 +103,17 @@ function MenuItemEditcomp() {
         setIsDeleting(false);
       }
     };
+  useEffect(() => {
+    if (current_menu) {
+      setformdata({
+        Item_name: current_menu.Item_name ?? "",
+        price: String(current_menu.price ?? ""),
+        image: null,
+        description: current_menu.description ?? "",
+        Category: current_menu.Category ?? "",
+      });
+    }
+  }, [current_menu]);
 
   
 
@@ -117,24 +130,27 @@ function MenuItemEditcomp() {
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_380px]">
         {/* Form */}
-        <form className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
+        <form onSubmit={submitform} className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm">
           <h2 className="text-[15px] font-bold">Item details</h2>
 
           <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
-            <Input onChange={inputhandler} className="col-span-2" label="Item name" value={current_menu?.Item_name} name="Item_name" placeholder="Harvest chicken bowl" />
+            <Input onChange={inputhandler} 
+                className="col-span-2" label="Item name" 
+                value={formdata?.Item_name} name="Item_name" 
+                placeholder="Harvest chicken bowl" />
             <Input
               className="col-span-2 sm:col-span-1"
               label="Price (USD)"
               name="price"
               type="number"
               onChange={inputhandler}
-              value={current_menu?.price}
+              value={formdata?.price}
             />
             <Input
               className="col-span-2 sm:col-span-1"
               label="Category"
               name="Category"
-              value={current_menu?.Category}
+              value={formdata?.Category}
               onChange={inputhandler}
             />
             <label htmlFor="">Image</label><br />
@@ -146,7 +162,7 @@ function MenuItemEditcomp() {
               label="Description"
               name="description"
               onChange={inputhandler}
-              value={current_menu?.description}
+              value={formdata?.description}
               placeholder="What makes this dish special?"
             />
           </div>
@@ -158,7 +174,7 @@ function MenuItemEditcomp() {
               variant="outline"
               className="ml-auto text-[#d4472f]!"
               onClick={DeleteItem}
-              disabled={!current_menu || isDeleting}
+              disabled={!formdata || isDeleting}
             >
               {isDeleting ? "Deleting..." : "Delete item"}
             </Button>

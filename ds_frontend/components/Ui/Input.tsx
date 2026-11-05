@@ -98,7 +98,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
          {...rest}
       ref={ref}
       id={fieldId}
-      value={rest.value ?? ""}
+      
       onChange={onChange}
       aria-describedby={describedBy}
       aria-invalid={error ? true : undefined}
