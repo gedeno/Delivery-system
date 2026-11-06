@@ -22,11 +22,11 @@ type InputProps = {
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "className">;
 
 const fieldBase =
-  "w-full rounded-xl border bg-white px-4 py-3 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1";
+  "w-full rounded-xl border bg-white px-4 py-3 text-[13px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-1 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:[color-scheme:dark]";
 const fieldOk =
-  "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57]";
+  "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57] dark:border-neutral-700 dark:focus:border-emerald-400 dark:focus:ring-emerald-400";
 const fieldError =
-  "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]";
+  "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f] dark:border-[#ff8a73] dark:focus:border-[#ff8a73] dark:focus:ring-[#ff8a73]";
 
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { label, hint, error, options, className = "", id, onChange, ...rest },
@@ -71,10 +71,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     control = (
       <label
         htmlFor={fieldId}
-        className={`${fieldBase} ${stateClass} flex cursor-pointer items-center gap-2 text-neutral-500 focus-within:border-[#237a57] focus-within:ring-1 focus-within:ring-[#237a57]`}
+        className={`${fieldBase} ${stateClass} flex cursor-pointer items-center gap-2 text-neutral-500 focus-within:border-[#237a57] focus-within:ring-1 focus-within:ring-[#237a57] dark:text-neutral-400 dark:focus-within:border-emerald-400 dark:focus-within:ring-emerald-400`}
       >
         <span aria-hidden="true">↥</span>
-        <span className={fileName ? "text-neutral-900" : ""}>
+        <span className={fileName ? "text-neutral-900 dark:text-neutral-100" : ""}>
           {fileName || rest.placeholder || "Upload file"}
         </span>
         <input
@@ -111,7 +111,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <div className={className}>
       <label
         htmlFor={fieldId}
-        className="mb-2 block text-[11px] font-bold text-[#1b2b24]"
+        className="mb-2 block text-[11px] font-bold text-[#1b2b24] dark:text-neutral-200"
       >
         {label}
       </label>
@@ -119,12 +119,19 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {control}
 
       {error && (
-        <p id={errorId} role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+        <p
+          id={errorId}
+          role="alert"
+          className="mt-2 text-[11px] text-[#d4472f] dark:text-[#ff8a73]"
+        >
           {error}
         </p>
       )}
       {hint && (
-        <p id={hintId} className="mt-2 text-[10.5px] text-neutral-500">
+        <p
+          id={hintId}
+          className="mt-2 text-[10.5px] text-neutral-500 dark:text-neutral-400"
+        >
           {hint}
         </p>
       )}

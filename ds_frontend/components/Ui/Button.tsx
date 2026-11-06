@@ -14,13 +14,14 @@ type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children">;
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xl px-[18px] py-3 text-[13px] font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4472f]";
+  "inline-flex items-center justify-center gap-2 rounded-xl px-[18px] py-3 text-[13px] font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d4472f] dark:focus-visible:outline-[#ff8a73]";
 
 const variants: Record<Variant, string> = {
   primary: "bg-[#d4472f] text-white hover:bg-[#bf3d27]",
-  light: "bg-white text-[#1b2b24] shadow-sm hover:bg-neutral-50",
+  light:
+    "bg-white text-[#1b2b24] shadow-sm hover:bg-neutral-50 dark:bg-neutral-800 dark:text-neutral-100 dark:shadow-none dark:hover:bg-neutral-700",
   outline:
-    "border border-neutral-200 bg-white text-[#1b2b24] hover:border-neutral-300 hover:bg-neutral-50",
+    "border border-neutral-200 bg-white text-[#1b2b24] hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:hover:border-neutral-600 dark:hover:bg-neutral-800",
 };
 
 export default function Button({
@@ -44,7 +45,7 @@ export default function Button({
   }
 
   return (
-    <button type="button" className={classes} {...rest}>
+    <button type="button" className={`${classes} items-center justify-center`} {...rest}>
       {children}
     </button>
   );
