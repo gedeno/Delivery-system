@@ -36,12 +36,12 @@ function SectionHeader({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="text-[22px] font-bold tracking-tight text-[#1b2b24]">
+      <h2 className="text-[22px] font-bold tracking-tight text-[#1b2b24] dark:text-white">
         {title}
       </h2>
       <Link
         href={href}
-        className="text-[12px] font-semibold text-[#d4472f] hover:underline"
+        className="text-[12px] font-semibold text-[#d4472f] hover:underline dark:text-[#ff8a73]"
       >
         {linkLabel} →
       </Link>
@@ -69,21 +69,25 @@ function PromoCard({
     <div
       className={`rounded-2xl border p-8 ${
         peach
-          ? "border-[#f6dccd] bg-[#fff0e6]"
-          : "border-[#d8e8da] bg-[#e8f1e8]"
+          ? "border-[#f6dccd] bg-[#fff0e6] dark:border-[#d4472f]/30 dark:bg-[#d4472f]/10"
+          : "border-[#d8e8da] bg-[#e8f1e8] dark:border-emerald-400/20 dark:bg-emerald-400/10"
       }`}
     >
       <p
         className={`text-[10px] font-bold uppercase tracking-wide ${
-          peach ? "text-[#d4472f]" : "text-[#237a57]"
+          peach
+            ? "text-[#d4472f] dark:text-[#ff8a73]"
+            : "text-[#237a57] dark:text-emerald-400"
         }`}
       >
         {eyebrow}
       </p>
-      <h3 className="mt-5 text-[26px] font-bold tracking-tight text-[#1b2b24]">
+      <h3 className="mt-5 text-[26px] font-bold tracking-tight text-[#1b2b24] dark:text-white">
         {title}
       </h3>
-      <p className="mt-3 text-[13px] text-neutral-500">{text}</p>
+      <p className="mt-3 text-[13px] text-neutral-500 dark:text-neutral-400">
+        {text}
+      </p>
       <Button
         href={href}
         variant={peach ? "primary" : "light"}
@@ -101,7 +105,7 @@ export default function FoodBrowse() {
   const restaurants = RestaurantData()||[]
 
   return (
-    <section className="bg-[#faf8f3] w-full">
+    <section className="w-full bg-[#faf8f3] transition-colors dark:bg-neutral-950">
       <div className="mx-auto space-y-12 px-6 py-10">
         {/* Follow your craving */}
         <div>
@@ -126,8 +130,8 @@ export default function FoodBrowse() {
                   onClick={() => setActive(c.id)}
                   className={`flex items-center gap-1.5 text-[12px] transition ${
                     selected
-                      ? "font-semibold text-[#d4472f] underline underline-offset-4"
-                      : "text-neutral-600 hover:text-neutral-900"
+                      ? "font-semibold text-[#d4472f] underline underline-offset-4 dark:text-[#ff8a73]"
+                      : "text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                   }`}
                 >
                   {c.emoji && <span aria-hidden="true">{c.emoji}</span>}
@@ -153,7 +157,7 @@ export default function FoodBrowse() {
             </div>
           ) : (
             
-            <p className="mt-6 text-[14px] text-neutral-500 w-full">
+            <p className="mt-6 w-full text-[14px] text-neutral-500 dark:text-neutral-400">
               No kitchens in this category yet. Try another cuisine. {restaurants.length}
             </p>
           )}
@@ -193,7 +197,7 @@ export default function FoodBrowse() {
               ))}
             </div>
           ) : (
-            <p className="mt-6 text-[14px] max-w- text-neutral-500">
+            <p className="mt-6 text-[14px] max-w- text-neutral-500 dark:text-neutral-400">
               No dishes in this category yet. Try another cuisine.
             </p>
           )}

@@ -97,13 +97,13 @@ const activeHref = [...navItems] // copy, so the menu order isn't changed
     };
   }, [open, onClose]);
 
-  return (
+    return (
     <>
       {/* backdrop */}
       <div
         aria-hidden="true"
         onClick={onClose}
-        className={`fixed inset-0 z-[60] bg-black/40 transition-opacity duration-200 ${
+        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-[2px] transition-opacity duration-200 dark:bg-black/60 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
@@ -115,24 +115,26 @@ const activeHref = [...navItems] // copy, so the menu order isn't changed
         aria-modal="true"
         aria-label="Menu"
         aria-hidden={!open}
-        className={`fixed inset-y-0 left-0 z-[70] flex w-72 max-w-[85vw] flex-col gap-2 overflow-y-auto bg-white p-4 shadow-xl transition-[transform,visibility] duration-200 ease-out ${
+        className={`fixed inset-y-0 left-0 z-[70] flex w-72 max-w-[85vw] flex-col gap-2 overflow-y-auto border-r border-neutral-200 bg-white p-4 shadow-xl transition-[transform,visibility] duration-200 ease-out dark:border-neutral-800 dark:bg-neutral-950 ${
           open ? "visible translate-x-0" : "invisible -translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between">
-          <p className="px-2 py-3 text-[20px] font-bold tracking-tight text-[#297451]">Basil &amp; Block.</p>
+          <p className="px-2 py-3 text-[20px] font-bold tracking-tight text-[#297451] dark:text-emerald-400">
+            Basil &amp; Block.
+          </p>
           <button
             ref={closeRef}
             type="button"
             onClick={onClose}
             aria-label="Close menu"
-            className="rounded-xl p-2 text-neutral-700 hover:bg-black/5"
+            className="rounded-xl p-2 text-neutral-700 hover:bg-black/5 dark:text-neutral-300 dark:hover:bg-white/10"
           >
             <X className="h-5 w-5" aria-hidden />
           </button>
         </div>
 
-        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-500">
+        <p className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
           {user?.role}
         </p>
 
@@ -146,7 +148,9 @@ const activeHref = [...navItems] // copy, so the menu order isn't changed
                 onClick={onClose}
                 aria-current={on ? "page" : undefined}
                 className={`flex min-h-12 items-center gap-3 rounded-xl px-3 text-[13px] font-medium transition-colors ${
-                  on ? "bg-[#fbe6e1] text-[#d4472f]" : "text-[#1b2b24] hover:bg-black/5"
+                  on
+                    ? "bg-[#fbe6e1] text-[#d4472f] dark:bg-[#d4472f]/15 dark:text-[#ff8a73]"
+                    : "text-[#1b2b24] hover:bg-black/5 dark:text-neutral-200 dark:hover:bg-white/10"
                 }`}
               >
                 <span aria-hidden>{item.icon}</span>
@@ -156,13 +160,17 @@ const activeHref = [...navItems] // copy, so the menu order isn't changed
           })}
         </nav>
 
-        <div className="mt-auto rounded-2xl bg-[#e6f0ea] p-4">
-          <p className="text-[13px] font-bold">Good food. Good neighbors.</p>
-          <p className="mt-2 text-[11px] text-neutral-600">Need a hand? Our local support team is here.</p>
+        <div className="mt-auto rounded-2xl bg-[#e6f0ea] p-4 dark:bg-emerald-400/10">
+          <p className="text-[13px] font-bold text-neutral-900 dark:text-neutral-100">
+            Good food. Good neighbors.
+          </p>
+          <p className="mt-2 text-[11px] text-neutral-600 dark:text-neutral-400">
+            Need a hand? Our local support team is here.
+          </p>
           <Link
             href="/support"
             onClick={onClose}
-            className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#297451]"
+            className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#297451] dark:text-emerald-400"
           >
             Contact support <ArrowUpRight size={12} aria-hidden />
           </Link>

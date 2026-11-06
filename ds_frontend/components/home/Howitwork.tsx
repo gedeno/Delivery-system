@@ -80,9 +80,9 @@ export default function HowItWorks({
   return (
     <div className="w-full">
       {/* Three steps */}
-      <section className="bg-white">
+      <section className="bg-white transition-colors dark:bg-neutral-950">
         <div className="w-full px-6 py-10 md:px-17.5">
-          <h2 className="text-[30px] font-bold tracking-tight text-[#1b2b24] md:text-[32px]">
+          <h2 className="text-[30px] font-bold tracking-tight text-[#1b2b24] md:text-[32px] dark:text-white">
             A better meal is three steps away.
           </h2>
 
@@ -90,13 +90,15 @@ export default function HowItWorks({
             {steps.map((step) => (
               <li
                 key={step.title}
-                className="rounded-2xl border border-neutral-200 bg-[#faf8f3] p-4.5"
+                className="rounded-2xl border border-neutral-200 bg-[#faf8f3] p-4.5 dark:border-neutral-800 dark:bg-neutral-900"
               >
-                <span className="text-[#237a57]">{step.icon}</span>
-                <h3 className="mt-5 text-[17px] font-bold text-[#1b2b24]">
+                <span className="text-[#237a57] dark:text-emerald-400">
+                  {step.icon}
+                </span>
+                <h3 className="mt-5 text-[17px] font-bold text-[#1b2b24] dark:text-white">
                   {step.title}
                 </h3>
-                <p className="mt-3 max-w-75 text-[12.5px] leading-relaxed text-neutral-500">
+                <p className="mt-3 max-w-75 text-[12.5px] leading-relaxed text-neutral-500 dark:text-neutral-400">
                   {step.text}
                 </p>
               </li>
@@ -106,14 +108,14 @@ export default function HowItWorks({
       </section>
 
       {/* Neighborhood testimonial */}
-      <section className="bg-[#f8f6f0]">
+      <section className="bg-[#f8f6f0] transition-colors dark:bg-neutral-900/60">
         <div className="grid w-full items-center gap-10 px-6 py-9 md:px-17.5 lg:grid-cols-[minmax(0,420px)_1fr] lg:gap-[30px]">
-          <div className="relative aspect-[1.63/1] w-full overflow-hidden rounded-2xl bg-[#efe8d8]">
+          <div className="relative aspect-[1.63/1] w-full overflow-hidden rounded-2xl bg-[#efe8d8] dark:bg-neutral-800">
             {imageFailed ? (
               <div
                 role="img"
                 aria-label={imageAlt}
-                className="flex h-full w-full items-center justify-center px-4 text-center text-[13px] font-medium text-neutral-500"
+                className="flex h-full w-full items-center justify-center px-4 text-center text-[13px] font-medium text-neutral-500 dark:text-neutral-400"
               >
                 {imageAlt}
               </div>
@@ -130,26 +132,26 @@ export default function HowItWorks({
           </div>
 
           <div>
-            <span className="inline-block rounded-full bg-[#e3efe4] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#237a57]">
+            <span className="inline-block rounded-full bg-[#e3efe4] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
               Rooted in the neighborhood
             </span>
 
-            <h2 className="mt-5 text-[30px] font-bold leading-[1.15] tracking-tight text-[#1b2b24] md:text-[32px]">
+            <h2 className="mt-5 text-[30px] font-bold leading-[1.15] tracking-tight text-[#1b2b24] md:text-[32px] dark:text-white">
               Small kitchens.
               <br />
               Big neighborhood love.
             </h2>
 
             <figure>
-              <blockquote className="mt-6 max-w-[540px] text-[16px] leading-relaxed text-neutral-800">
+              <blockquote className="mt-6 max-w-[540px] text-[16px] leading-relaxed text-neutral-800 dark:text-neutral-200">
                 &ldquo;{quote}&rdquo;
               </blockquote>
-              <figcaption className="mt-5 text-[12px] font-bold text-[#237a57]">
+              <figcaption className="mt-5 text-[12px] font-bold text-[#237a57] dark:text-emerald-400">
                 {author}
               </figcaption>
             </figure>
 
-            <p className="mt-6 text-[12px] text-neutral-500">
+            <p className="mt-6 text-[12px] text-neutral-500 dark:text-neutral-400">
               Fair delivery. Thoughtful packaging. Real people behind every
               meal.
             </p>
