@@ -36,11 +36,8 @@ export default function Loginform(){
         
     } 
 
-
-
-
     return(
-        <form onSubmit={submithandler} className="mt-5">
+        <form onSubmit={submithandler} className="space-y-4">
                 <Input
                 onChange={inputhandler}
                   label="username"
@@ -52,7 +49,6 @@ export default function Loginform(){
 
                 <Input
                 onChange={inputhandler}
-                  className="mt-4"
                   label="Password"
                   name="password"
                   type="password"
@@ -60,23 +56,23 @@ export default function Loginform(){
                   placeholder="••••••••••••"
                 />
 
-                <div className="mt-4 flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-[11.5px] text-neutral-700">
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-[11.5px] text-neutral-700 dark:text-neutral-300">
                    
                   </label>
                   <Link
                     href="/"
-                    className="text-[11.5px] font-semibold text-[#d4472f] hover:underline"
+                    className="text-[11.5px] font-semibold text-[#d4472f] transition hover:underline dark:text-[#ff8a73]"
                   >
                     Forgot password?
                   </Link>
                 </div>
 
-                <Button type="submit" fullWidth className="mt-4">
+                <Button type="submit" fullWidth className="mt-2 py-3.5 shadow-[0_10px_24px_-10px_rgba(212,71,47,0.8)] hover:-translate-y-0.5 active:translate-y-0">
                   Sign in
                 </Button>
 
-                <p className="mt-4 text-[10.5px] text-neutral-500">
+                <p className="text-[10.5px] leading-relaxed text-neutral-500 dark:text-neutral-400">
                   Admin accounts require an organization invitation and two-step
                   verification.
                 </p>

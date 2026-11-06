@@ -11,9 +11,13 @@ const ROLE_OPTIONS = [
   { value: "delivery", label: "Delivery Person" },
   { value: "owner", label: "Restaurant Owner" },
 ];
+type SingupformProps = {
+  onSuccess?: () => void;
+};
 
 
-export default function Singupform(){
+
+export default function Singupform({ onSuccess }: SingupformProps){
     const [formdata, setformdata] = useState({
         first_name: "",
         last_name: "",
@@ -44,41 +48,46 @@ export default function Singupform(){
             api.post('/users/user/',data)
             .then((res)=>{
                 console.log(res.data)
-                route.push('/login')
+                if (onSuccess) onSuccess();   // CHANGED: switch the tab when used on the auth page
+                else route.push('/login');    // fallback when used on its own
             }).catch((error)=>{
                 console.log(error)
             })
         }
         }
     return(
-         <form onSubmit={Submithandler} className="space-y-0">
-                  <h3 className="text-[16px] font-bold text-[#1b2b24]">Create your account</h3>
-                    <div >
-                      <div
-                      className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
+         <form onSubmit={Submithandler} className="space-y-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <Input name="first_name" onChange={inputhandler} label="First name"/>
                         <Input name="last_name" onChange={inputhandler} label="Last name"/>
-                      </div>
-                      <Input label="username" name="username"  onChange={inputhandler}></Input>
-                      <label htmlFor="" className=" text-black font-extrabold text-xs">Role</label>
-                      <select name="role" onChange={inputhandler} id=""
-                      className= "w-full my-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500/20">
+                    </div>
+
+                    <Input label="username" name="username"  onChange={inputhandler}></Input>
+
+                    <div>
+                      <label htmlFor="role" className="mb-2 block text-[11px] font-bold text-[#1b2b24] dark:text-neutral-200">Role</label>
+                      <select name="role" onChange={inputhandler} id="role"
+                      className= "w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 text-[13px] text-neutral-900 focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57] dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:[color-scheme:dark] dark:focus:border-emerald-400 dark:focus:ring-emerald-400">
                         {
                             ROLE_OPTIONS.map((options) =>(
                                 <option key={options.label} value={options.value}
-                                className="">{options.label}</option>
+                                className="dark:bg-neutral-900">{options.label}</option>
                             ) )
                         }
                       </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                       <Input name="phone" onChange={inputhandler} label="Phone number"/>
                       <Input name = "email" onChange={inputhandler} label="Email"/>
-                      <div
-                      className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <Input name="password" type="password" onChange={inputhandler} label="Password"/>
                           <Input type="password" name="confirmPassword" onChange={inputhandler} label="confirmed Password"/>
-                      </div>
                     </div>
-                  <Button type="submit" fullWidth className="mt-5">
+
+                  <Button type="submit" fullWidth className="mt-2 py-3.5 shadow-[0_10px_24px_-10px_rgba(212,71,47,0.8)] hover:-translate-y-0.5 active:translate-y-0">
                      create account
                   </Button>
                 </form>
