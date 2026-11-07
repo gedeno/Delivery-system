@@ -90,3 +90,10 @@ class OwnerOrderfetch(ModelViewSet):
     def get_queryset(self):
         return Orders.objects.filter(restaurants__owner = self.request.user)
 
+class DeliveryOrderfetch(ModelViewSet):
+    queryset = Orders.objects.all()
+    serializer_class =Orderserializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        return Orders.objects.filter(delivery = self.request.user)
+
