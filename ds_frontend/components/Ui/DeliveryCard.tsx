@@ -3,7 +3,8 @@ import type { CSSProperties, ReactNode } from "react";
 import { Check, Clock, MapPin, Navigation, Package, Store } from "lucide-react";
 import Button from "@/components/Ui/Button";
 import type { Menu, Orders, Restaurant, User } from "@/app/lib/types";
-import RouteStop from "./RouteStop";
+import RouteStop from "./RouteShop";
+
 
 // The fields this card shows, taken from your interfaces. Dates are pre-formatted strings.
 export type DeliveryOrder = Pick<Orders, "id" | "status" | "total_amount" | "delivery_address"> & {
