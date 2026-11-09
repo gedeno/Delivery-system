@@ -2,9 +2,10 @@
 import Link from "next/link";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
-import FormSection from "@/components/restaurant/FormSection";
+
 
 import type { Restaurant } from "@/app/lib/types";
+import RestaurantPreview, { FormSection } from "@/components/Ui/restauranteditcomponent";
 
 /* ---------- sample data (replace with your restaurant) ---------- */
 
