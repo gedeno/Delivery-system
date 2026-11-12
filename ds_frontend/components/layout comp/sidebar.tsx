@@ -50,7 +50,7 @@ const owner: NavItem[] = [
 ];
 
 const admin: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard/admin", icon: <LayoutDashboard className="h-5 w-5" /> },
+  { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "Users", href: "/dashboard/admin/users", icon: <Users className="h-5 w-5" /> },
   { label: "Restaurants", href: "/dashboard/admin/restaurants", icon: <Store className="h-5 w-5" /> },
   { label: "Menu Items", href: "/dashboard/admin/menu-items", icon: <UtensilsCrossed className="h-5 w-5" /> },
@@ -72,12 +72,15 @@ function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
  
   const user = UserData()
+  const is_superuser = user?.is_superuser
 
-   const navItems =
-  user?.role === "owner" ? owner
+   const navItems = is_superuser? admin
+  :user?.role === "owner" ? owner
   : user?.role === "delivery" ? delivery
-  : user?.role === "admin" ? admin
   : customer;
+  
+
+   
 
 const activeHref = [...navItems] // copy, so the menu order isn't changed
   .filter((i) => pathname === i.href || pathname.startsWith(i.href + "/"))

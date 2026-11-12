@@ -7,6 +7,8 @@ export interface RegisterData{
      role:string;
      phone:string;
      Delivery_status:string;
+     is_superuser :boolean;
+
 }
 export interface LoginData{
     username:string;
@@ -67,6 +69,8 @@ export interface User {
   email: string;
   role: string;
   phone:string;
+  is_superuser :boolean
+
 }
 
 export interface OrderItem {

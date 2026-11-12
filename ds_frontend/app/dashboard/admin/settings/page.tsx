@@ -10,6 +10,7 @@ import SettingsSection from "@/components/Ui/admincomps/settingssection";
 
 const me: User = {
   id: 6,
+  is_superuser : true,
   first_name: "Robin",
   last_name: "Patel",
   username: "robinp",
