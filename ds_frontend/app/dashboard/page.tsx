@@ -4,9 +4,10 @@
 import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import Button from "@/components/Ui/Button";
 import type { Orders } from "@/app/lib/types";
-import { UserData } from "../lib/Userdata";
+import { AllUserdata, UserData } from "../lib/Userdata";
 import Orderfetch from "../lib/orders";
 import CartData from "../lib/CartData";
+import { RestaurantData } from "../lib/restaurantdata";
 
 type Role = "user" | "owner" | "delivery_person" | "admin";
 type ViewProps = { name?: string; orders: Orders[] };
@@ -288,14 +289,18 @@ function DeliveryView({ name, orders }: ViewProps) {
 }
 
 function AdminView({ name, orders }: ViewProps) {
+  const users = AllUserdata()||[]
+  const restaurant = RestaurantData()||[]
+  
+
   return (
     <Shell
       label="Admin"
       name={name}
       stats={[
-        ["Total users", "1,472", "+38 this week"],
-        ["Restaurants", "86", "5 pending approval"],
-        ["Orders today", "312", "24 active"],
+        ["Total users", `${users.length}`, "+38 this week"],
+        ["Restaurants", `${restaurant.length}`, "5 pending approval"],
+        ["Orders today",`${orders.length}`, "24 active"],
         ["Platform revenue", "$8,940", "Today"],
       ]}
     >
@@ -321,21 +326,21 @@ function AdminView({ name, orders }: ViewProps) {
   );
 }
 
-/* ---------- main component ---------- */
 
-const views: Record<Role, ComponentType<ViewProps>> = {
-  user: CustomerView,
-  owner: OwnerView,
-  delivery_person: DeliveryView,
-  admin: AdminView,
-};
+/* ---------- main component ---------- */
 
 export default function Dashboard() {
   const user = UserData();
   const orders = Orderfetch() || []; // hooks run here, inside the component
+  const is_superuser = user?.is_superuser;
 
-  const role: Role = user && user.role in views ? (user.role as Role) : "user";
-  const View = views[role];
+  const View = is_superuser
+    ? AdminView
+    : user?.role === "owner"
+    ? OwnerView
+    : user?.role === "delivery"
+    ? DeliveryView
+    : CustomerView;
 
   return <View name={user?.first_name} orders={orders} />;
 }

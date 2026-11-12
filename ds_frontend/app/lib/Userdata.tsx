@@ -1,7 +1,7 @@
 import { useState , useEffect } from "react";
 import {jwtDecode } from "jwt-decode"
 import api from "./api";
-import { User } from "./types";
+import { RegisterData, User } from "./types";
 
 
 interface TokenPayload {
@@ -30,4 +30,17 @@ export function UserData(){
         },[])
         return user
         
+}
+export function AllUserdata(){
+    const [users, setusers] = useState<RegisterData[]>([])
+    useEffect(()=>{
+        api.get("/users/userfetch/")
+        .then((res)=>{
+            setusers(res.data)
+        })
+        .catch((error)=>{
+            console.log(error)
+        });
+    },[])
+    return users
 }

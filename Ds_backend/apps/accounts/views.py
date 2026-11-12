@@ -21,3 +21,8 @@ class Createuser(ModelViewSet):
         return Response({
             "role": request.user.role
         })
+
+class AllUserFetch(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = Userserializer
+    permission_classes = [AllowAny]
