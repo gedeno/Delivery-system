@@ -3,6 +3,8 @@
 import { Pencil, Trash2 } from "lucide-react";
 import Button from "@/components/Ui/Button";
 import type { RegisterData, User } from "@/app/lib/types";
+import api from "@/app/lib/api";
+import { useRouter } from "next/router";
 
 export type UserRowData = Pick<User, "id" | "first_name" | "last_name" | "username" | "email" | "role" | "phone"> & {
   Delivery_status?: string; // couriers only (from your RegisterData)
@@ -27,6 +29,11 @@ const deleteHover = "hover:!border-[#d4472f] hover:!text-[#d4472f] dark:hover:!b
 export default function UserRow({ u }: { u: RegisterData }) {
   const role = roles[u.role] ?? { label: u.role, chip: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300" };
   const online = u.Delivery_status === "Online";
+  
+  const Delete = () =>{
+    api.delete(`/users/edituser/${u.id}/`)
+
+  }
 
   return (
     <li
@@ -63,7 +70,7 @@ export default function UserRow({ u }: { u: RegisterData }) {
       {/* actions */}
       <div className="flex gap-2">
         <Button variant="outline" className={`${btn} ${outlineDark} ${editHover}`}><Pencil size={13} aria-hidden /> Edit</Button>
-        <Button variant="outline" className={`${btn} ${outlineDark} ${deleteHover}`}>
+        <Button variant="outline" className={`${btn} ${outlineDark} ${deleteHover}`} onClick={Delete}>
           <Trash2 size={13} aria-hidden />
           <span className="sr-only">Remove {u.first_name}</span>
         </Button>

@@ -5,7 +5,8 @@ from . import views
 
 router = DefaultRouter()
 router.register( "user",views.Createuser, basename='user')
-router.register( "userfetch",views.AllUserFetch, basename='userfetch')
+router.register( "userfetch",views.AllUserFetch, basename='userfetch'),
+router.register( "edituser",views.EditUsers, basename='edituser')
 urlpatterns =[
     path('',include(router.urls))
 ]

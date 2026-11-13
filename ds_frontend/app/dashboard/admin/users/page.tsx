@@ -15,11 +15,15 @@ const pageHover = "hover:!border-[#237a57] hover:!text-[#237a57] dark:hover:!bor
 
 export default function AdminUsersPage() {
   const allusers = AllUserdata()||[]
-  const pills = [`All ${allusers.length}`, "Customers 1,240", "Owners 86", "Couriers 142", "Admins 4"];
+  const constomerss = allusers.filter(user=> user.role === "customer").length
+  const owners = allusers.filter(user => user.role==="owner").length
+
+
+  const pills = [`All ${allusers.length}`, `Customers ${constomerss}`,`Owners ${owners}`, "Couriers 142", "Admins 4"];
   const stats = [
   { label: "Total users", value: `${allusers.length}`, hint: "+38 this week" },
-  { label: "Customers", value: "1,240", hint: "Neighbors ordering food" },
-  { label: "Restaurant owners", value: "86", hint: "5 pending approval" },
+  { label: "Customers", value: `${constomerss}`, hint: "Neighbors ordering food" },
+  { label: "Restaurant owners", value: `${owners}`, hint: "5 pending approval" },
   { label: "Couriers", value: "142", hint: "23 online now" },
 ];
   

@@ -26,3 +26,11 @@ class AllUserFetch(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = Userserializer
     permission_classes = [AllowAny]
+
+class EditUsers(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = Userserializer
+    permission_classes = [AllowAny]
+    def destroy(self, request, *args, **kwargs):
+        user = User.objects.filter(id = self.request.query_params.get("user_id"))
+        return super().destroy(request, *args, **kwargs)
