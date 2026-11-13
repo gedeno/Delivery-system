@@ -30,27 +30,28 @@ const stats = [
 ];
 
 const pills = ["All 312", "New 6", "Preparing 11", "On the way 13", "Delivered 276", "Canceled 6"];
-const panel = "rounded-3xl border border-neutral-200 bg-white shadow-sm";
+const panel = "rounded-3xl border border-neutral-200 bg-white shadow-sm transition-colors dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
+const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 
 export default function AdminOrdersPage() {
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">Admin workspace</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">Admin workspace</p>
           <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">Orders</h1>
-          <p className="mt-2 text-[13px] text-neutral-500">Every order across all restaurants, in one place.</p>
+          <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">Every order across all restaurants, in one place.</p>
         </div>
-        <Button variant="outline"><Download size={14} aria-hidden /> Export</Button>
+        <Button variant="outline" className={outlineDark}><Download size={14} aria-hidden /> Export</Button>
       </header>
 
       <main className="mt-6 space-y-6">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {stats.map(([label, value, hint]) => (
             <div key={label} className={`${panel} p-5`}>
-              <p className="text-[11px] text-neutral-500">{label}</p>
+              <p className="text-[11px] text-neutral-500 dark:text-neutral-400">{label}</p>
               <p className="mt-2 font-mono text-[22px] font-semibold sm:text-[26px]">{value}</p>
-              <p className="mt-1 text-[10.5px] text-neutral-500">{hint}</p>
+              <p className="mt-1 text-[10.5px] text-neutral-500 dark:text-neutral-400">{hint}</p>
             </div>
           ))}
         </div>
@@ -59,7 +60,7 @@ export default function AdminOrdersPage() {
           <Input label="Search orders" name="search" type="search" placeholder="Search by order number, customer, restaurant or address" />
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
             {pills.map((p, i) => (
-              <span key={p} className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${i === 0 ? "bg-[#e3f1ea] text-[#237a57]" : "bg-neutral-100 text-neutral-500"}`}>
+              <span key={p} className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${i === 0 ? "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
                 {p}
               </span>
             ))}
@@ -67,7 +68,7 @@ export default function AdminOrdersPage() {
         </section>
 
         <section className={`${panel} overflow-hidden`}>
-          <div className={`hidden gap-3 border-b border-l-4 border-b-neutral-100 border-l-transparent bg-[#faf8f4] px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-neutral-500 lg:grid ${orderCols}`}>
+          <div className={`hidden gap-3 border-b border-l-4 border-b-neutral-100 border-l-transparent bg-[#faf8f4] px-4 py-3 text-[10px] font-bold uppercase tracking-wide text-neutral-500 lg:grid dark:border-b-neutral-800 dark:bg-neutral-950/60 dark:text-neutral-400 ${orderCols}`}>
             <span>Order</span>
             <span>Customer</span>
             <span>Restaurant</span>
@@ -76,17 +77,17 @@ export default function AdminOrdersPage() {
             <span>Actions</span>
           </div>
 
-          <ul className="divide-y divide-neutral-100">
+          <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
             {orders.map((x) => (
               <OrderRow key={x.id} o={x} />
             ))}
           </ul>
 
-          <div className="flex items-center justify-between gap-3 border-t border-neutral-100 px-4 py-3">
-            <p className="text-[12px] text-neutral-500">Showing 1–6 of 312</p>
+          <div className="flex items-center justify-between gap-3 border-t border-neutral-100 px-4 py-3 dark:border-neutral-800">
+            <p className="text-[12px] text-neutral-500 dark:text-neutral-400">Showing 1–6 of 312</p>
             <div className="flex gap-2">
-              <Button variant="outline" className="!px-3 !py-2 !text-[12px]" disabled>Previous</Button>
-              <Button variant="outline" className="!px-3 !py-2 !text-[12px]">Next</Button>
+              <Button variant="outline" className={`!px-3 !py-2 !text-[12px] ${outlineDark}`} disabled>Previous</Button>
+              <Button variant="outline" className={`!px-3 !py-2 !text-[12px] ${outlineDark}`}>Next</Button>
             </div>
           </div>
         </section>

@@ -21,14 +21,15 @@ const me: User = {
 
 const nav = [["profile", "Profile"], ["security", "Security"], ["platform", "Platform"], ["notifications", "Notifications"]];
 const half = "col-span-2 sm:col-span-1";
+const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 
 export default function AdminSettingsPage() {
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header>
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">Admin workspace</p>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">Admin workspace</p>
         <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">Settings</h1>
-        <p className="mt-2 text-[13px] text-neutral-500">Manage your account and how the platform runs.</p>
+        <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">Manage your account and how the platform runs.</p>
       </header>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[220px_1fr]">
@@ -36,7 +37,7 @@ export default function AdminSettingsPage() {
           <ul className="space-y-1">
             {nav.map(([id, label], i) => (
               <li key={id}>
-                <a href={`#${id}`} className={`block rounded-xl px-4 py-2.5 text-[13px] font-semibold transition ${i === 0 ? "bg-[#e3f1ea] text-[#237a57]" : "text-neutral-500 hover:bg-white hover:text-[#1b2b24]"}`}>
+                <a href={`#${id}`} className={`block rounded-xl px-4 py-2.5 text-[13px] font-semibold transition ${i === 0 ? "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400" : "text-neutral-500 hover:bg-white hover:text-[#1b2b24] dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"}`}>
                   {label}
                 </a>
               </li>
@@ -47,12 +48,12 @@ export default function AdminSettingsPage() {
         <form className="max-w-3xl space-y-6">
           <SettingsSection id="profile" title="Profile" hint="This is how you appear to other admins.">
             <div className="col-span-2 flex items-center gap-4">
-              <span aria-hidden className="grid size-14 place-items-center rounded-full bg-gradient-to-br from-[#237a57] to-[#1b3b2f] text-[18px] font-bold text-white shadow-md ring-2 ring-white">
+              <span aria-hidden className="grid size-14 place-items-center rounded-full bg-gradient-to-br from-[#237a57] to-[#1b3b2f] text-[18px] font-bold text-white shadow-md ring-2 ring-white dark:ring-neutral-900">
                 {me.first_name[0]}{me.last_name[0]}
               </span>
               <div>
                 <p className="text-[14px] font-semibold">{me.first_name} {me.last_name}</p>
-                <span className="mt-1 inline-block rounded-full bg-[#fbe6e1] px-2.5 py-0.5 text-[10px] font-bold text-[#d4472f]">Admin</span>
+                <span className="mt-1 inline-block rounded-full bg-[#fbe6e1] px-2.5 py-0.5 text-[10px] font-bold text-[#d4472f] dark:bg-red-400/10 dark:text-red-300">Admin</span>
               </div>
             </div>
             <Input className={half} label="First name" name="first_name" defaultValue={me.first_name} />
@@ -87,7 +88,7 @@ export default function AdminSettingsPage() {
 
           <div className="flex flex-wrap gap-3">
             <Button type="submit">Save changes</Button>
-            <Button variant="outline">Discard</Button>
+            <Button variant="outline" className={outlineDark}>Discard</Button>
           </div>
         </form>
       </div>
