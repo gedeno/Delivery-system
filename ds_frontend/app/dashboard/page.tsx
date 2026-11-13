@@ -5,7 +5,7 @@ import { useEffect, useState, type ComponentType, type ReactNode } from "react";
 import Button from "@/components/Ui/Button";
 import type { Orders } from "@/app/lib/types";
 import { AllUserdata, UserData } from "../lib/Userdata";
-import Orderfetch from "../lib/orders";
+import Orderfetch, { AdminOrderfetch } from "../lib/orders";
 import CartData from "../lib/CartData";
 import { RestaurantData } from "../lib/restaurantdata";
 
@@ -291,7 +291,9 @@ function DeliveryView({ name, orders }: ViewProps) {
 function AdminView({ name, orders }: ViewProps) {
   const users = AllUserdata()||[]
   const restaurant = RestaurantData()||[]
-  
+  const constomers = users.filter(user => user.role==="customer").length
+  const owners = users.filter(user => user.role==="owner").length
+  const delivery = users.filter(user => user.role==="delivery").length
 
   return (
     <Shell
@@ -312,9 +314,9 @@ function AdminView({ name, orders }: ViewProps) {
         <Panel title="Users by role">
           <Rows
             items={[
-              { title: "Customers", sub: "role: user", end: <b className="text-[13px]">1,240</b> },
-              { title: "Restaurant owners", sub: "role: owner", end: <b className="text-[13px]">86</b> },
-              { title: "Delivery partners", sub: "role: delivery_person", end: <b className="text-[13px]">142</b> },
+              { title: "Customers", sub: "role: user", end: <b className="text-[13px]">{constomers}</b> },
+              { title: "Restaurant owners", sub: "role: owner", end: <b className="text-[13px]">{owners}</b> },
+              { title: "Delivery partners", sub: "role: delivery_person", end: <b className="text-[13px]">{delivery}</b> },
             ]}
           />
         </Panel>
@@ -331,7 +333,7 @@ function AdminView({ name, orders }: ViewProps) {
 
 export default function Dashboard() {
   const user = UserData();
-  const orders = Orderfetch() || []; // hooks run here, inside the component
+  const orders = AdminOrderfetch() || []; // hooks run here, inside the component
   const is_superuser = user?.is_superuser;
 
   const View = is_superuser
