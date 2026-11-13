@@ -1,8 +1,10 @@
+"use client"
 // app/dashboard/admin/restaurants/page.tsx  (UI only: static sample data, no logic)
 import { Plus } from "lucide-react";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
 import RestaurantCard, { RestaurantCardData } from "@/components/Ui/admincomps/restaurant";
+import { RestaurantData } from "@/app/lib/restaurantdata";
 
 /* ---------- sample data (replace with your restaurants) ---------- */
 
@@ -12,27 +14,22 @@ const r = (id: number, Res_name: string, cuisine_type: string, status: Restauran
   opening_time: "10:30", closing_time: "21:00",
 });
 
-const restaurants = [
-  r(1, "Maple Kitchen", "Healthy bowls", "Active", "4.9", "128 Oak Avenue, Brooklyn", "(718) 555-0134", "hello@maplekitchen.example"),
-  r(2, "Little Ember Pizza", "Pizza", "Active", "4.8", "14 Harbor Street, Brooklyn", "(718) 555-0190", "ciao@littleember.example"),
-  r(3, "Block Burger", "Burgers", "Active", "4.7", "9 Birch Lane, Brooklyn", "(718) 555-0172", "orders@blockburger.example"),
-  r(4, "Noodle House", "Asian", "Pending", "—", "52 Willow Court, Brooklyn", "(718) 555-0148", "team@noodlehouse.example"),
-  r(5, "Green Table", "Plant-based", "Active", "4.9", "31 Elm Street, Brooklyn", "(718) 555-0161", "hi@greentable.example"),
-  r(6, "Daily Grind", "Coffee & bakery", "Suspended", "4.2", "7 Pine Court, Brooklyn", "(718) 555-0123", "cafe@dailygrind.example"),
-];
 
-const stats = [
-  ["Restaurants", "86", "On the platform"],
-  ["Active", "78", "Taking orders"],
-  ["Pending approval", "5", "Waiting for review"],
-  ["Average rating", "★ 4.8", "Across all kitchens"],
-];
+
+
 
 const pills = ["All 86", "Active 78", "Pending 5", "Suspended 3"];
 const panel = "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-colors dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
 const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 
 export default function AdminRestaurantsPage() {
+  const restaurants = RestaurantData()||[]
+  const stats = [
+  ["Restaurants", `${restaurants.length}`, "On the platform"],
+  ["Active", "78", "Taking orders"],
+  ["Pending approval", "5", "Waiting for review"],
+  ["Average rating", "★ 4.8", "Across all kitchens"],
+];
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header className="flex flex-wrap items-end justify-between gap-4">

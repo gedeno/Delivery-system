@@ -1,7 +1,8 @@
+"use client "
 // components/admin/UserRow.tsx  (UI only)
 import { Pencil, Trash2 } from "lucide-react";
 import Button from "@/components/Ui/Button";
-import type { User } from "@/app/lib/types";
+import type { RegisterData, User } from "@/app/lib/types";
 
 export type UserRowData = Pick<User, "id" | "first_name" | "last_name" | "username" | "email" | "role" | "phone"> & {
   Delivery_status?: string; // couriers only (from your RegisterData)
@@ -23,7 +24,7 @@ const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:
 const editHover = "hover:!border-[#237a57] hover:!text-[#237a57] dark:hover:!border-emerald-400 dark:hover:!text-emerald-400";
 const deleteHover = "hover:!border-[#d4472f] hover:!text-[#d4472f] dark:hover:!border-red-400 dark:hover:!bg-red-400/10 dark:hover:!text-red-300";
 
-export default function UserRow({ u }: { u: UserRowData }) {
+export default function UserRow({ u }: { u: RegisterData }) {
   const role = roles[u.role] ?? { label: u.role, chip: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300" };
   const online = u.Delivery_status === "Online";
 

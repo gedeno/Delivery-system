@@ -1,35 +1,28 @@
+"use client"
 // app/dashboard/admin/users/page.tsx  (UI only: static sample data, no logic)
 import { Plus } from "lucide-react";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
 import UserRow, { userCols, type UserRowData } from "@/components/Ui/admincomps/StatCard";
+import { AllUserdata } from "@/app/lib/Userdata";
 
 
-/* ---------- sample data (replace with your users) ---------- */
 
-const users: UserRowData[] = [
-  { id: 1, first_name: "Alex", last_name: "Morgan", username: "alexm", email: "alex.morgan@example.com", role: "user", phone: "(555) 120-4471" },
-  { id: 2, first_name: "Maya", last_name: "Chen", username: "mayac", email: "maya@maplekitchen.example", role: "owner", phone: "(718) 555-0134" },
-  { id: 3, first_name: "Jordan", last_name: "Lee", username: "jordanl", email: "jordan.lee@example.com", role: "delivery_person", phone: "(555) 201-8890", Delivery_status: "Online" },
-  { id: 4, first_name: "Taylor", last_name: "Reed", username: "taylorr", email: "taylor.reed@example.com", role: "user", phone: "(555) 330-1144" },
-  { id: 5, first_name: "Sam", last_name: "Rivera", username: "samr", email: "sam.rivera@example.com", role: "delivery_person", phone: "(555) 019-6632", Delivery_status: "Offline" },
-  { id: 6, first_name: "Robin", last_name: "Patel", username: "robinp", email: "robin@basilblock.example", role: "admin", phone: "(555) 640-1127" },
-];
-
-const stats = [
-  { label: "Total users", value: "1,472", hint: "+38 this week" },
-  { label: "Customers", value: "1,240", hint: "Neighbors ordering food" },
-  { label: "Restaurant owners", value: "86", hint: "5 pending approval" },
-  { label: "Couriers", value: "142", hint: "23 online now" },
-];
-
-const pills = ["All 1,472", "Customers 1,240", "Owners 86", "Couriers 142", "Admins 4"];
 const panel = "rounded-3xl border border-neutral-200 bg-white shadow-sm transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
 const statHover = "hover:border-[#237a57]/40 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:hover:border-emerald-500/40";
 const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 const pageHover = "hover:!border-[#237a57] hover:!text-[#237a57] dark:hover:!border-emerald-400 dark:hover:!text-emerald-400";
 
 export default function AdminUsersPage() {
+  const allusers = AllUserdata()||[]
+  const pills = [`All ${allusers.length}`, "Customers 1,240", "Owners 86", "Couriers 142", "Admins 4"];
+  const stats = [
+  { label: "Total users", value: `${allusers.length}`, hint: "+38 this week" },
+  { label: "Customers", value: "1,240", hint: "Neighbors ordering food" },
+  { label: "Restaurant owners", value: "86", hint: "5 pending approval" },
+  { label: "Couriers", value: "142", hint: "23 online now" },
+];
+  
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -79,7 +72,7 @@ export default function AdminUsersPage() {
           </div>
 
           <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
-            {users.map((u) => (
+            {allusers.map((u) => (
               <UserRow key={u.id} u={u} />
             ))}
           </ul>

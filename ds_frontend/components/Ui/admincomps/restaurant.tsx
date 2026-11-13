@@ -21,8 +21,7 @@ const btn = "!px-3 !py-2 !text-[12px]";
 const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 const viewHover = "hover:!border-[#237a57] hover:!text-[#237a57] dark:hover:!border-emerald-400 dark:hover:!text-emerald-400";
 
-export default function RestaurantCard({ r }: { r: RestaurantCardData }) {
-  const s = states[r.status];
+export default function RestaurantCard({ r }: { r: Restaurant }) {
   const info: [LucideIcon, string][] = [
     [MapPin, r.address],
     [Clock, `${r.opening_time} – ${r.closing_time}`],
@@ -32,7 +31,7 @@ export default function RestaurantCard({ r }: { r: RestaurantCardData }) {
 
   return (
     <article
-      style={{ "--c": s.rgb } as CSSProperties}
+    
       className="group flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-gradient-to-b from-[rgb(var(--c)/0.08)] to-white text-[#1b2b24] shadow-sm transition-all duration-300 hover:border-[rgb(var(--c))] hover:shadow-[0_22px_44px_-18px_rgb(var(--c)/0.55)] motion-safe:hover:-translate-y-1.5 dark:border-neutral-800 dark:from-[rgb(var(--c)/0.12)] dark:to-neutral-900 dark:text-white dark:shadow-none dark:hover:shadow-[0_22px_44px_-18px_rgb(var(--c)/0.4)]"
     >
       <div className="h-1.5 bg-[rgb(var(--c))] transition-all duration-300 group-hover:h-2" />
@@ -48,10 +47,7 @@ export default function RestaurantCard({ r }: { r: RestaurantCardData }) {
               {r.cuisine_type}
             </span>
           </div>
-          <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold ${s.chip}`}>
-            <span className="size-1.5 rounded-full bg-[rgb(var(--c))]" aria-hidden />
-            {r.status}
-          </span>
+          
         </div>
 
         <p className="line-clamp-2 text-[12px] leading-relaxed text-neutral-500 dark:text-neutral-400">{r.description}</p>
@@ -70,7 +66,6 @@ export default function RestaurantCard({ r }: { r: RestaurantCardData }) {
         <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[12px] font-bold text-[#1b2b24] dark:bg-amber-400/10 dark:text-amber-300">★ {r.rating}</span>
         <div className="flex gap-2">
           <Button variant="outline" className={`${btn} ${outlineDark} ${viewHover}`}><Eye size={13} aria-hidden /> View</Button>
-          <Button variant={s.main ? "primary" : "outline"} className={`${btn} ${s.main ? "" : outlineDark}`}>{s.action}</Button>
         </div>
       </div>
     </article>
