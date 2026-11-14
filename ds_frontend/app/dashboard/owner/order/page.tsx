@@ -6,7 +6,7 @@ import OrderCards from "@/components/Ui/ownerOrdercard";
 import Orderfetch from "@/app/lib/orders";
 
 const statuses = ["New", "Preparing", "On the way", "Delivered", "Canceled"];
-const panel = "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm";
+const panel = "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-300 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
 const money = (n: number) => `$${n.toFixed(2)}`;
 
 export default function OwnerOrdersPage() {
@@ -27,12 +27,12 @@ export default function OwnerOrdersPage() {
 
 
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">Vendor workspace</p>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">Vendor workspace</p>
           <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">Orders</h1>
-          <p className="mt-2 text-[13px] text-neutral-500">Accept new orders, track what&apos;s cooking, and hand meals to couriers.</p>
+          <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">Accept new orders, track what&apos;s cooking, and hand meals to couriers.</p>
         </div>
         <Input className="w-full sm:w-64" label="Restaurant" name="restaurant" options={["All restaurants", "Maple Kitchen", "Little Ember Pizza"]} />
       </header>
@@ -41,9 +41,9 @@ export default function OwnerOrdersPage() {
         <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
           {stats.map(([label, value, hint]) => (
             <div key={label} className={panel}>
-              <p className="text-[11px] text-neutral-500">{label}</p>
+              <p className="text-[11px] text-neutral-500 dark:text-neutral-400">{label}</p>
               <p className="mt-2 font-mono text-[22px] font-semibold sm:text-[26px]">{value}</p>
-              <p className="mt-1 text-[10.5px] text-neutral-500">{hint}</p>
+              <p className="mt-1 text-[10.5px] text-neutral-500 dark:text-neutral-400">{hint}</p>
             </div>
           ))}
         </div>
@@ -52,7 +52,7 @@ export default function OwnerOrdersPage() {
           <Input label="Search orders" name="search" type="search" placeholder="Search by order number, customer or dish" />
           <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
             {["All", ...statuses].map((s, i) => (
-              <span key={s} className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${i === 0 ? "bg-[#e3f1ea] text-[#237a57]" : "bg-neutral-100 text-neutral-500"}`}>
+              <span key={s} className={`shrink-0 rounded-full px-3 py-1.5 text-[12px] font-semibold ${i === 0 ? "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"}`}>
                 {s} <span className="ml-1 font-mono text-[10px]">{s === "All" ? orders.length : count(s)}</span>
               </span>
             ))}
@@ -70,7 +70,7 @@ export default function OwnerOrdersPage() {
         ) : (
           <section className={`${panel} text-center`}>
             <p className="text-[14px] font-bold">No orders yet</p>
-            <p className="mt-2 text-[12px] text-neutral-500">New orders from your neighbors will show up here.</p>
+            <p className="mt-2 text-[12px] text-neutral-500 dark:text-neutral-400">New orders from your neighbors will show up here.</p>
           </section>
         )}
       </main>
