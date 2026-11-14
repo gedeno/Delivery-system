@@ -75,8 +75,8 @@ function validate(f: FormState, restaurantOptions: string[]): Errors {
   return e;
 }
 
-const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
-const heading = "text-[15px] font-bold text-[#1b2b24]";
+const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
+const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
 
 /* ---------- main component ---------- */
 
@@ -176,16 +176,16 @@ export default function AddMenuItemPage({
 
 
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-12 dark:bg-neutral-950 dark:text-white">
       {/* Heading */}
       <header>
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">
           Vendor workspace · Menu &amp; restaurant
         </p>
         <h1 className="mt-2 text-[28px] font-bold tracking-tight sm:text-[32px]">
           Add a menu item
         </h1>
-        <p className="mt-2 text-[13px] text-neutral-500">
+        <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
           New dishes appear to customers as soon as the item is saved.
         </p>
       </header>
@@ -193,24 +193,24 @@ export default function AddMenuItemPage({
       {/* Alerts */}
       <div className="mt-5 space-y-3" aria-live="polite">
         {done && (
-          <div role="status" className="flex gap-3 rounded-xl bg-[#e6f0ea] p-4">
-            <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57]" />
+          <div role="status" className="flex gap-3 rounded-xl bg-[#e6f0ea] p-4 dark:bg-emerald-400/10">
+            <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57] dark:text-emerald-400" />
             <div>
               <p className="text-[12px] font-bold">Changes saved</p>
-              <p className="mt-1 text-[11px] text-neutral-600">
+              <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-300">
                 Your menu is up to date and visible to customers.
               </p>
             </div>
           </div>
         )}
         {submitted && errorCount > 0 && (
-          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
-            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4 dark:bg-red-400/10">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f] dark:text-red-300" />
             <div>
               <p className="text-[12px] font-bold">
                 {errorCount} field{errorCount > 1 ? "s" : ""} need your attention
               </p>
-              <p className="mt-1 text-[11px] text-neutral-600">
+              <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-300">
                 Check the highlighted fields and try again.
               </p>
             </div>
@@ -276,18 +276,18 @@ export default function AddMenuItemPage({
                   aria-invalid={errors.description ? true : undefined}
                   aria-describedby={errors.description ? "description-error" : undefined}
                   placeholder="Roasted chicken, quinoa, avocado, seasonal greens & lemon tahini."
-                  className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1 ${
+                  className={`w-full resize-none rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1 dark:bg-neutral-950 dark:text-white dark:placeholder:text-neutral-500 ${
                     errors.description
-                      ? "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]"
-                      : "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57]"
+                      ? "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f] dark:border-red-400 dark:focus:border-red-400 dark:focus:ring-red-400"
+                      : "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57] dark:border-neutral-700 dark:focus:border-emerald-400 dark:focus:ring-emerald-400"
                   }`}
                 />
                 {errors.description && (
-                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f] dark:text-red-300">
                     {errors.description}
                   </p>
                 )}
-                <p className="mt-2 text-[10.5px] text-neutral-500">
+                <p className="mt-2 text-[10.5px] text-neutral-500 dark:text-neutral-400">
                   {form.description.length}/160 characters
                 </p>
               </div>
@@ -295,13 +295,13 @@ export default function AddMenuItemPage({
              
               <label htmlFor="">Image</label><br />
               <input type="file" name="image" onChange={filehandler} 
-               className=" w-full rounded-xl py-2 border border-gray-500"/>
+               className=" w-full rounded-xl py-2 border border-gray-500 dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-300"/>
             </div>
           </section>
 
           {/* Actions */}
           <div className="flex flex-wrap justify-end gap-3">
-            <Button variant="outline" onClick={reset}>
+            <Button variant="outline" onClick={reset} className="dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800">
               Cancel
             </Button>
             <Button type="submit">
@@ -319,14 +319,14 @@ export default function AddMenuItemPage({
              
             </div>
 
-            <p className="mt-3 text-[10px] text-neutral-500">
+            <p className="mt-3 text-[10px] text-neutral-500 dark:text-neutral-400">
               {current_restaurant?.Res_name}
             </p>
           </section>
 
-          <section className="rounded-2xl bg-[#e6f0ea] p-5">
+          <section className="rounded-2xl bg-[#e6f0ea] p-5 dark:bg-emerald-400/10">
             <h3 className="text-[14px] font-bold">Good food. Good neighbors.</h3>
-            <p className="mt-2 text-[11px] text-neutral-600">
+            <p className="mt-2 text-[11px] text-neutral-600 dark:text-neutral-300">
               Need a hand with your menu? Our local support team is here.
             </p>
             <Button variant="light" href="/support" className="mt-3">
@@ -348,8 +348,8 @@ export default function AddMenuItemPage({
 
  
 export  function MyMenuItemsList() { 
-  const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm";
-  const heading = "text-[15px] font-bold text-[#1b2b24]";
+  const panel = "rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none";
+  const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
 
 
   const params = useParams<{ id: string }>();
@@ -369,10 +369,10 @@ export  function MyMenuItemsList() {
   if (menus === null) {
     return (
       <section className={`${panel} mt-6`} aria-busy="true" aria-label="Loading your menu">
-        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100" />
+        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
         <div className="mt-4 grid gap-4 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="h-56 animate-pulse rounded-2xl bg-neutral-100" />
+            <div key={i} className="h-56 animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" />
           ))}
         </div>
       </section>
@@ -386,7 +386,7 @@ export  function MyMenuItemsList() {
     <section className={`${panel} mt-6`}>
       <div>
         <h2 className={heading}>Your menu items</h2>
-        <p className="mt-2 text-[11px] text-neutral-500">
+        <p className="mt-2 text-[11px] text-neutral-500 dark:text-neutral-400">
           {menus.length} {menus.length === 1 ? "item" : "items"} added so far.
         </p>
       </div>
@@ -403,7 +403,9 @@ export  function MyMenuItemsList() {
                 aria-pressed={on}
                 onClick={() => setRestaurant(name)}
                 className={`rounded-full px-3 py-1.5 text-[11px] font-semibold transition-colors ${
-                  on ? "bg-[#e3f1ea] text-[#237a57]" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200"
+                  on
+                    ? "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400"
+                    : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
                 }`}
               >
                 {name}
@@ -416,12 +418,12 @@ export  function MyMenuItemsList() {
       <ul className="mt-5 grid gap-4 min-[480px]:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
         {menus.map((item) => (
           <li key={item.id}>
-            <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-lg motion-safe:hover:-translate-y-1">
+            <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-lg motion-safe:hover:-translate-y-1 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-emerald-400/60 dark:hover:shadow-none">
               {/* image (falls back to the item's first letter) */}
-              <div className="relative aspect-[1.52/1] w-full overflow-hidden bg-gradient-to-br from-orange-200 to-orange-300">
+              <div className="relative aspect-[1.52/1] w-full overflow-hidden bg-gradient-to-br from-orange-200 to-orange-300 dark:from-neutral-800 dark:to-neutral-900">
                 <span
                   aria-hidden
-                  className="absolute inset-0 grid place-items-center text-[40px] font-bold text-white/60"
+                  className="absolute inset-0 grid place-items-center text-[40px] font-bold text-white/60 dark:text-white/20"
                 >
                   {item.Item_name?.charAt(0).toUpperCase()}
                 </span>
@@ -438,7 +440,7 @@ export  function MyMenuItemsList() {
                   />
                 )}
                 {item.Category && (
-                  <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-neutral-700 shadow-sm sm:text-[11px]">
+                  <span className="absolute left-2 top-2 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold text-neutral-700 shadow-sm sm:text-[11px] dark:bg-neutral-950/90 dark:text-neutral-200">
                     {item.Category}
                   </span>
                 )}
@@ -447,27 +449,27 @@ export  function MyMenuItemsList() {
               {/* details */}
               <div className="flex flex-1 flex-col p-3 sm:p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="line-clamp-2 text-[14px] font-bold leading-snug text-[#1b2b24] sm:text-[15px]">
+                  <h3 className="line-clamp-2 text-[14px] font-bold leading-snug text-[#1b2b24] sm:text-[15px] dark:text-white">
                     {item.Item_name}
                   </h3>
-                  <p className="shrink-0 text-[13px] font-semibold text-[#237a57]">{item.price}</p>
+                  <p className="shrink-0 text-[13px] font-semibold text-[#237a57] dark:text-emerald-400">{item.price}</p>
                 </div>
  
                 {item.restaurants && (
-                  <p className="mt-1 truncate text-[11px] text-neutral-500">
+                  <p className="mt-1 truncate text-[11px] text-neutral-500 dark:text-neutral-400">
                     {typeof item.restaurants === "string" ? item.restaurants : item.restaurants.Res_name}
                   </p>
                 )}
  
                 {item.description && (
-                  <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-neutral-500 sm:text-[12px]">
+                  <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-neutral-500 sm:text-[12px] dark:text-neutral-400">
                     {item.description}
                   </p>
                 )}
  
                 <Link
                   href={`/dashboard/owner/Myrestaurant/${item.restaurants.id}/${item.id}`}
-                  className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-[12px] font-semibold text-[#1b2b24] transition-colors hover:border-[#237a57] hover:text-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 sm:mt-auto sm:pt-2"
+                  className="mt-4 inline-flex items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2 text-[12px] font-semibold text-[#1b2b24] transition-colors hover:border-[#237a57] hover:text-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 sm:mt-auto sm:pt-2 dark:border-neutral-700 dark:text-neutral-100 dark:hover:border-emerald-400 dark:hover:text-emerald-400 dark:focus-visible:ring-emerald-400/40"
                 >
                   <Pencil size={13} aria-hidden /> Edit item
                 </Link>
@@ -479,4 +481,3 @@ export  function MyMenuItemsList() {
     </section>
   );
 }
- 
