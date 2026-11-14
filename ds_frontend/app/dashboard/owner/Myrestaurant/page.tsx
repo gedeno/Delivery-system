@@ -98,12 +98,12 @@ function validate(f: Form): Errors {
 }
  
 const panel =
-  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-within:border-[#237a57]/40 sm:p-6";
-const heading = "text-[15px] font-bold text-[#1b2b24]";
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-within:border-[#237a57]/40 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:focus-within:border-emerald-500/40";
+const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
 const fieldBase =
-  "w-full rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1";
-const fieldOk = "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57]";
-const fieldBad = "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f]";
+  "w-full rounded-xl border bg-white px-4 py-3 text-[13px] placeholder:text-neutral-400 focus:outline-none focus:ring-1 dark:bg-neutral-950 dark:text-white dark:placeholder:text-neutral-500";
+const fieldOk = "border-neutral-200 focus:border-[#237a57] focus:ring-[#237a57] dark:border-neutral-700 dark:focus:border-emerald-400 dark:focus:ring-emerald-400";
+const fieldBad = "border-[#d4472f] focus:border-[#d4472f] focus:ring-[#d4472f] dark:border-red-400 dark:focus:border-red-400 dark:focus:ring-red-400";
  
 /* ---------- main component ---------- */
  
@@ -212,16 +212,16 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
     inRange(formdata.map_latiude, -90, 90) && inRange(formdata.map_logitude, -180, 180);
  
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-12">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-12 dark:bg-neutral-950 dark:text-white">
       {/* Heading */}
       <header>
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">
           Vendor workspace
         </p>
         <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">
           Add your restaurant
         </h1>
-        <p className="mt-2 text-[13px] text-neutral-500">
+        <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
           Tell your neighbors who you are. We review every new kitchen within 2 business days.
         </p>
       </header>
@@ -229,33 +229,33 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
       {/* Alerts */}
       <div className="mt-5 space-y-3" aria-live="polite">
         {done && (
-          <div role="status" className="flex gap-3 rounded-xl bg-[#e6f0ea] p-4">
-            <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57]" />
+          <div role="status" className="flex gap-3 rounded-xl bg-[#e6f0ea] p-4 dark:bg-emerald-400/10">
+            <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57] dark:text-emerald-400" />
             <div>
               <p className="text-[12px] font-bold">Restaurant submitted</p>
-              <p className="mt-1 text-[11px] text-neutral-600">
+              <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-300">
                 Status: Pending approval. We&apos;ll email you once it&apos;s live.
               </p>
             </div>
           </div>
         )}
         {failed && (
-          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
-            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4 dark:bg-red-400/10">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f] dark:text-red-300" />
             <div>
               <p className="text-[12px] font-bold">We couldn&apos;t save your restaurant</p>
-              <p className="mt-1 text-[11px] text-neutral-600">Check your connection and try again.</p>
+              <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-300">Check your connection and try again.</p>
             </div>
           </div>
         )}
         {submitted && errorCount > 0 && (
-          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4">
-            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+          <div role="alert" className="flex gap-3 rounded-xl bg-[#fdeee6] p-4 dark:bg-red-400/10">
+            <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f] dark:text-red-300" />
             <div>
               <p className="text-[12px] font-bold">
                 {errorCount} field{errorCount > 1 ? "s" : ""} need your attention
               </p>
-              <p className="mt-1 text-[11px] text-neutral-600">
+              <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-300">
                 Check the highlighted fields and try again.
               </p>
             </div>
@@ -302,7 +302,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   ))}
                 </select>
                 {errors.cuisine_type && (
-                  <p id="cuisine_type-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                  <p id="cuisine_type-error" role="alert" className="mt-2 text-[11px] text-[#d4472f] dark:text-red-300">
                     {errors.cuisine_type}
                   </p>
                 )}
@@ -324,11 +324,11 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   className={`${fieldBase} resize-none ${errors.description ? fieldBad : fieldOk}`}
                 />
                 {errors.description && (
-                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f]">
+                  <p id="description-error" role="alert" className="mt-2 text-[11px] text-[#d4472f] dark:text-red-300">
                     {errors.description}
                   </p>
                 )}
-                <p className="mt-2 text-[10.5px] text-neutral-500">
+                <p className="mt-2 text-[10.5px] text-neutral-500 dark:text-neutral-400">
                   {formdata.description.length}/160 characters
                 </p>
               </div>
@@ -337,7 +337,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
               <label htmlFor="">Image</label><br />
               <input type="file"
               name="image"
-              className="border rounded-xl py-2 w-full"
+              className="border rounded-xl py-2 w-full dark:border-neutral-700 dark:bg-neutral-950 dark:text-neutral-300"
               onChange={filechangehandler}
                />
             </div>
@@ -395,7 +395,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                     error={errors.map_logitude}
                   />
                 </div>
-                <p className="mt-2 text-[10.5px] text-neutral-500">
+                <p className="mt-2 text-[10.5px] text-neutral-500 dark:text-neutral-400">
                   In Google Maps, right-click your place and tap the two numbers to copy them.
                 </p>
                 {coordsValid && (
@@ -403,7 +403,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                     href={`https://www.google.com/maps?q=${Number(formdata.map_latiude)},${Number(formdata.map_logitude)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] hover:underline"
+                    className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#237a57] hover:underline dark:text-emerald-400"
                   >
                     Check this spot on the map <ArrowUpRight size={12} aria-hidden />
                   </a>
@@ -436,7 +436,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
  
           {/* Actions */}
           <div className="flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap sm:justify-end">
-            <Button type="button" variant="outline" className="w-full sm:w-auto">
+            <Button type="button" variant="outline" className="w-full sm:w-auto dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800">
               Reset
             </Button>
             <Button type="submit" className="w-full sm:w-auto">
@@ -450,12 +450,12 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
           <section className={panel}>
             <div className="flex items-center justify-between gap-3">
               <h2 className={heading}>Live preview</h2>
-              <span className="rounded-full bg-[#fdf0c9] px-3 py-1 text-[11px] font-semibold text-[#8a6100]">
+              <span className="rounded-full bg-[#fdf0c9] px-3 py-1 text-[11px] font-semibold text-[#8a6100] dark:bg-amber-400/10 dark:text-amber-300">
                 {done ? "Pending approval" : "Draft"}
               </span>
             </div>
  
-            <div className="group mt-4 overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:shadow-md motion-safe:hover:-translate-y-0.5">
+            <div className="group mt-4 overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:shadow-none">
               <div
                 className="relative aspect-[2/1] w-full overflow-hidden bg-[#9a6b35]"
                 style={{
@@ -476,7 +476,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   />
                 )}
                 {hasCuisine && (
-                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm">
+                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm dark:bg-neutral-950/90 dark:text-neutral-200">
                     {formdata.cuisine_type}
                   </span>
                 )}
@@ -485,7 +485,7 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
               <div className="space-y-2 p-4">
                 <p
                   className={`truncate text-[16px] font-bold ${
-                    formdata.Res_name ? "text-[#1b2b24]" : "text-neutral-300"
+                    formdata.Res_name ? "text-[#1b2b24] dark:text-white" : "text-neutral-300 dark:text-neutral-600"
                   }`}
                 >
                   {formdata.Res_name || "Your restaurant name"}
@@ -493,22 +493,22 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
  
                 <p
                   className={`line-clamp-2 text-[12px] leading-relaxed ${
-                    formdata.description.trim() ? "text-neutral-600" : "text-neutral-300"
+                    formdata.description.trim() ? "text-neutral-600 dark:text-neutral-300" : "text-neutral-300 dark:text-neutral-600"
                   }`}
                 >
                   {formdata.description.trim() || "A short description of your kitchen."}
                 </p>
  
-                <div className="space-y-2 pt-1 text-[12px] text-neutral-500">
+                <div className="space-y-2 pt-1 text-[12px] text-neutral-500 dark:text-neutral-400">
                   <p className="flex items-start gap-1.5">
                     <MapPin size={14} aria-hidden className="mt-0.5 shrink-0" />
-                    <span className={formdata.address.trim() ? "" : "text-neutral-300"}>
+                    <span className={formdata.address.trim() ? "" : "text-neutral-300 dark:text-neutral-600"}>
                       {formdata.address.trim() || "Street address"}
                     </span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Clock size={14} aria-hidden className="shrink-0" />
-                    <span className={formdata.opening_time && formdata.closing_time ? "" : "text-neutral-300"}>
+                    <span className={formdata.opening_time && formdata.closing_time ? "" : "text-neutral-300 dark:text-neutral-600"}>
                       {formdata.opening_time && formdata.closing_time
                         ? `${formdata.opening_time} – ${formdata.closing_time}`
                         : "Opening hours"}
@@ -516,13 +516,13 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Phone size={14} aria-hidden className="shrink-0" />
-                    <span className={formdata.phone.trim() ? "" : "text-neutral-300"}>
+                    <span className={formdata.phone.trim() ? "" : "text-neutral-300 dark:text-neutral-600"}>
                       {formdata.phone.trim() || "Phone number"}
                     </span>
                   </p>
                   <p className="flex items-center gap-1.5">
                     <Mail size={14} aria-hidden className="shrink-0" />
-                    <span className={`truncate ${formdata.email.trim() ? "" : "text-neutral-300"}`}>
+                    <span className={`truncate ${formdata.email.trim() ? "" : "text-neutral-300 dark:text-neutral-600"}`}>
                       {formdata.email.trim() || "Email"}
                     </span>
                   </p>
@@ -530,14 +530,14 @@ export default function AddRestaurantPage({ onSubmit }: Props) {
               </div>
             </div>
  
-            <p className="mt-3 text-[10px] text-neutral-500">
+            <p className="mt-3 text-[10px] text-neutral-500 dark:text-neutral-400">
               A quick look at how your details will appear to customers.
             </p>
           </section>
  
-          <section className="rounded-2xl bg-[#e6f0ea] p-5">
+          <section className="rounded-2xl bg-[#e6f0ea] p-5 dark:bg-emerald-400/10">
             <h3 className="text-[14px] font-bold">Good food. Good neighbors.</h3>
-            <p className="mt-2 text-[11px] text-neutral-600">
+            <p className="mt-2 text-[11px] text-neutral-600 dark:text-neutral-300">
               Need a hand setting up? Our local support team is here.
             </p>
             <Button variant="light" href="/support" className="mt-3">
@@ -565,9 +565,9 @@ export type MyRestaurant = {
 
 
 const statusTone: Record<string, string> = {
-  approved: "bg-[#e3f1ea] text-[#237a57]",
-  pending: "bg-[#fdf0c9] text-[#8a6100]",
-  rejected: "bg-[#fbe6e1] text-[#d4472f]",
+  approved: "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400",
+  pending: "bg-[#fdf0c9] text-[#8a6100] dark:bg-amber-400/10 dark:text-amber-300",
+  rejected: "bg-[#fbe6e1] text-[#d4472f] dark:bg-red-400/10 dark:text-red-300",
 };
 const statusLabel: Record<string, string> = {
   approved: "Live",
@@ -590,10 +590,10 @@ export  function MyRestaurantsList() {
   if (restaurant === null) {
     return (
       <section className={`${panel} mt-6`} aria-busy="true" aria-label="Loading your restaurants">
-        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100" />
+        <div className="h-4 w-40 animate-pulse rounded bg-neutral-100 dark:bg-neutral-800" />
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-2xl bg-neutral-100" />
+            <div key={i} className="h-20 animate-pulse rounded-2xl bg-neutral-100 dark:bg-neutral-800" />
           ))}
         </div>
       </section>
@@ -608,11 +608,11 @@ export  function MyRestaurantsList() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className={heading}>Your restaurants</h2>
-          <p className="mt-2 text-[11px] text-neutral-500">
+          <p className="mt-2 text-[11px] text-neutral-500 dark:text-neutral-400">
             You have {restaurant.length} {restaurant.length === 1 ? "restaurant" : "restaurants"}.
           </p>
         </div>
-        <Link href="/dashboard/owner/MyRestaurants" className="text-[11px] font-semibold text-[#237a57]">
+        <Link href="/dashboard/owner/MyRestaurants" className="text-[11px] font-semibold text-[#237a57] dark:text-emerald-400">
           Manage restaurants
         </Link>
       </div>
@@ -624,13 +624,13 @@ export  function MyRestaurantsList() {
              <li key={item.id}>
               <Link
                     href={`/dashboard/owner/Myrestaurant/${item.id}`}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57] hover:shadow-lg focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-1"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57] hover:shadow-lg focus-visible:border-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 motion-safe:hover:-translate-y-1 dark:border-neutral-800 dark:bg-neutral-950 dark:hover:border-emerald-400 dark:hover:shadow-none dark:focus-visible:border-emerald-400 dark:focus-visible:ring-emerald-400/40"
                   >
                     {/* cover image (falls back to the restaurant's first letter) */}
-                    <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#e6f0ea] to-[#fdf0c9]">
+                    <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-[#e6f0ea] to-[#fdf0c9] dark:from-neutral-800 dark:to-neutral-900">
                       <span
                         aria-hidden
-                        className="absolute inset-0 grid place-items-center text-[48px] font-bold text-[#237a57]/30"
+                        className="absolute inset-0 grid place-items-center text-[48px] font-bold text-[#237a57]/30 dark:text-emerald-400/30"
                       >
                         {item.Res_name?.charAt(0).toUpperCase()}
                       </span>
@@ -650,8 +650,8 @@ export  function MyRestaurantsList() {
 
                       {status && (
                         <span
-                          className={`absolute left-3 top-3 inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-white/70 ${
-                            statusTone[key] ?? "bg-neutral-100 text-neutral-500"
+                          className={`absolute left-3 top-3 inline-flex whitespace-nowrap rounded-full px-3 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-white/70 dark:ring-neutral-900/70 ${
+                            statusTone[key] ?? "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
                           }`}
                         >
                           {statusLabel[key] ?? status}
@@ -662,24 +662,24 @@ export  function MyRestaurantsList() {
                     {/* details */}
                     <div className="flex flex-1 flex-col p-4">
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-[15px] font-bold leading-snug transition-colors group-hover:text-[#237a57]">
+                        <p className="text-[15px] font-bold leading-snug transition-colors group-hover:text-[#237a57] dark:group-hover:text-emerald-400">
                           {item.Res_name}
                         </p>
                         {cuisine && (
-                          <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-semibold text-neutral-600">
+                          <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                             {cuisine}
                           </span>
                         )}
                       </div>
 
                       {item.address && (
-                        <p className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-500">
+                        <p className="mt-2 flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
                           <MapPin size={12} aria-hidden className="shrink-0" />
                           {item.address}
                         </p>
                       )}
 
-                      <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-[11px] font-semibold text-[#237a57]">
+                      <div className="mt-auto flex items-center justify-between border-t border-neutral-100 pt-3 text-[11px] font-semibold text-[#237a57] dark:border-neutral-800 dark:text-emerald-400">
                         <span>Manage restaurant</span>
                         <ArrowUpRight
                           size={14}
