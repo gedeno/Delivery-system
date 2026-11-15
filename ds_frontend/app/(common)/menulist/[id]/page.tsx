@@ -96,8 +96,10 @@ const initials = (name: string) =>
     .join("");
 
 const panel =
-  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-6";
-const heading = "text-[15px] font-bold text-[#1b2b24]";
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-md sm:p-6 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:hover:border-emerald-500/30 dark:hover:shadow-[0_18px_40px_-20px_rgba(52,211,153,0.25)]";
+const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
+const stepBtn =
+  "grid size-9 place-items-center rounded-full border border-neutral-200 bg-white transition-all hover:border-[#237a57] hover:bg-[#e3f1ea] hover:text-[#237a57] active:scale-90 disabled:opacity-40 disabled:hover:border-neutral-200 disabled:hover:bg-white disabled:hover:text-inherit dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:border-emerald-400 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-400 dark:disabled:hover:border-neutral-700 dark:disabled:hover:bg-neutral-800";
 
 /* ---------- main component ---------- */
 
@@ -124,16 +126,16 @@ function FoodOrderComponent() {
   /* ----- dish not found ----- */
   if (!currentmenu) {
     return (
-      <div className="grid min-h-[70vh] place-items-center bg-[#faf8f4] px-4 text-[#1b2b24]">
-        <section className="max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center">
-          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57]">
+      <div className="grid min-h-[70vh] place-items-center bg-[#faf8f4] px-4 text-[#1b2b24] transition-colors dark:bg-neutral-950 dark:text-white">
+        <section className="max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center transition-colors hover:border-[#237a57]/50 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-emerald-400/50">
+          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
             <UtensilsCrossed size={24} aria-hidden />
           </span>
           <p className="mt-4 text-[16px] font-bold">We couldn’t find that dish</p>
-          <p className="mt-2 text-[13px] text-neutral-500">It may have been removed from the menu.</p>
+          <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">It may have been removed from the menu.</p>
           <Link
             href={LIST_HREF}
-            className="mt-5 inline-flex rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#1b6a49]"
+            className="mt-5 inline-flex rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1b6a49] dark:bg-emerald-500 dark:text-neutral-950 dark:hover:bg-emerald-400"
           >
             Browse all food
           </Link>
@@ -186,8 +188,8 @@ function FoodOrderComponent() {
   };
 
   const imageBlock = (cls: string, letterCls: string) => (
-    <div className={`relative overflow-hidden bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3] ${cls}`}>
-      <span aria-hidden className={`absolute inset-0 grid place-items-center font-black text-white/60 ${letterCls}`}>
+    <div className={`relative overflow-hidden bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3] dark:from-neutral-800 dark:to-neutral-950 ${cls}`}>
+      <span aria-hidden className={`absolute inset-0 grid place-items-center font-black text-white/60 dark:text-white/20 ${letterCls}`}>
         {name.charAt(0).toUpperCase()}
       </span>
       {currentmenu.image && (
@@ -198,7 +200,7 @@ function FoodOrderComponent() {
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none"
         />
       )}
     </div>
@@ -207,27 +209,27 @@ function FoodOrderComponent() {
   /* ----- success screen ----- */
   if (orderNo !== null) {
     return (
-      <div className="min-h-screen bg-[#faf8f4] px-4 py-10 text-[#1b2b24] sm:px-8">
+      <div className="min-h-screen bg-[#faf8f4] px-4 py-10 text-[#1b2b24] transition-colors sm:px-8 dark:bg-neutral-950 dark:text-white">
         <section className={`${panel} mx-auto max-w-xl text-center`}>
           <div className="relative mx-auto grid size-20 place-items-center">
-            <span aria-hidden className="absolute inset-0 rounded-full bg-[#237a57]/25 motion-safe:animate-ping" />
-            <span className="relative grid size-20 place-items-center rounded-full bg-[#237a57] text-white shadow-lg">
+            <span aria-hidden className="absolute inset-0 rounded-full bg-[#237a57]/25 motion-safe:animate-ping dark:bg-emerald-400/25" />
+            <span className="relative grid size-20 place-items-center rounded-full bg-[#237a57] text-white shadow-lg dark:bg-emerald-500 dark:shadow-[0_0_40px_-8px_rgba(52,211,153,0.6)]">
               <Check size={36} strokeWidth={3} aria-hidden />
             </span>
           </div>
           <h1 className="mt-6 text-[26px] font-bold tracking-tight sm:text-[32px]">Order placed!</h1>
-          <p className="mt-2 text-[13px] text-neutral-500">
+          <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
             {restaurant.Res_name || "The kitchen"} is getting your {name.toLowerCase()} ready.
           </p>
 
-          <dl className="mt-6 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left">
+          <dl className="mt-6 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left dark:divide-neutral-800 dark:bg-neutral-950">
             <div className="px-4">
               <dd className="font-mono text-[17px] font-semibold">#{orderNo}</dd>
-              <dt className="mt-0.5 text-[11px] text-neutral-500">Order number</dt>
+              <dt className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">Order number</dt>
             </div>
             <div className="px-4">
               <dd className="font-mono text-[17px] font-semibold">{ETA}</dd>
-              <dt className="mt-0.5 text-[11px] text-neutral-500">Estimated arrival</dt>
+              <dt className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">Estimated arrival</dt>
             </div>
           </dl>
 
@@ -238,16 +240,16 @@ function FoodOrderComponent() {
               </span>
               <span className="font-mono">{money(subtotal)}</span>
             </div>
-            <div className="flex justify-between border-t border-neutral-100 pt-3 text-[15px] font-bold">
+            <div className="flex justify-between border-t border-neutral-100 pt-3 text-[15px] font-bold dark:border-neutral-800">
               <span>Total</span>
-              <span className="font-mono">{money(total)}</span>
+              <span className="font-mono text-[#237a57] dark:text-emerald-400">{money(total)}</span>
             </div>
-            <p className="text-[11px] text-neutral-500">Delivering to {deliveryAddress.trim()}</p>
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400">Delivering to {deliveryAddress.trim()}</p>
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button href={TRACK_HREF}>Track my order</Button>
-            <Button variant="outline" href={LIST_HREF}>
+            <Button variant="outline" href={LIST_HREF} className="dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800">
               Order more food
             </Button>
           </div>
@@ -258,11 +260,11 @@ function FoodOrderComponent() {
 
   /* ----- order page ----- */
   return (
-    <div className="min-h-screen bg-[#faf8f4] text-[#1b2b24]">
+    <div className="min-h-screen bg-[#faf8f4] text-[#1b2b24] transition-colors dark:bg-neutral-950 dark:text-white">
       <div className="mx-auto max-w-[1280px] px-4 pb-32 pt-6 sm:px-8 lg:px-12 lg:pb-16">
         {/* breadcrumb */}
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-[12px] text-neutral-500">
-          <Link href={LIST_HREF} className="font-semibold text-[#237a57] hover:underline">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-[12px] text-neutral-500 dark:text-neutral-400">
+          <Link href={LIST_HREF} className="font-semibold text-[#237a57] hover:underline dark:text-emerald-400">
             Food
           </Link>
           {category && (
@@ -272,7 +274,7 @@ function FoodOrderComponent() {
             </>
           )}
           <ChevronRight size={12} aria-hidden />
-          <span className="truncate text-[#1b2b24]" aria-current="page">
+          <span className="truncate text-[#1b2b24] dark:text-white" aria-current="page">
             {name}
           </span>
         </nav>
@@ -291,7 +293,7 @@ function FoodOrderComponent() {
                 {imageBlock("aspect-[16/10] w-full", "text-[96px]")}
                 <div className="absolute left-3 top-3 flex flex-wrap gap-2">
                   {category && (
-                    <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm">
+                    <span className="rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-neutral-700 shadow-sm dark:bg-neutral-950/90 dark:text-neutral-200">
                       {category}
                     </span>
                   )}
@@ -301,18 +303,18 @@ function FoodOrderComponent() {
               <div className="px-2 pb-2 pt-5 sm:px-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <h1 className="text-[26px] font-bold leading-tight tracking-tight sm:text-[34px]">{name}</h1>
-                  <p className="font-mono text-[22px] font-semibold text-[#237a57] sm:text-[26px]">
+                  <p className="font-mono text-[22px] font-semibold text-[#237a57] sm:text-[26px] dark:text-emerald-400">
                     {money(unitPrice)}
                   </p>
                 </div>
                 {currentmenu.description && (
-                  <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-neutral-600">
+                  <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-neutral-600 dark:text-neutral-300">
                     {currentmenu.description}
                   </p>
                 )}
 
                 {restaurant.Res_name && (
-                  <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-[#faf8f4] p-3">
+                  <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-[#faf8f4] p-3 transition-colors hover:bg-[#f3efe4] dark:bg-neutral-950 dark:hover:bg-neutral-950/60">
                     <span
                       aria-hidden
                       className="grid size-12 shrink-0 place-items-center rounded-xl bg-[#8a5a1f] text-[15px] font-bold text-white"
@@ -321,7 +323,7 @@ function FoodOrderComponent() {
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[13px] font-bold">{restaurant.Res_name}</p>
-                      <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500">
+                      <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500 dark:text-neutral-400">
                         {restaurant.address && (
                           <span className="flex items-center gap-1">
                             <MapPin size={12} aria-hidden /> {restaurant.address}
@@ -339,10 +341,12 @@ function FoodOrderComponent() {
                       {open !== null && (
                         <span
                           className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-semibold ${
-                            open ? "bg-[#e3f1ea] text-[#237a57]" : "bg-neutral-100 text-neutral-500"
+                            open
+                              ? "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400"
+                              : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
                           }`}
                         >
-                          <span className={`size-1.5 rounded-full ${open ? "bg-[#237a57]" : "bg-neutral-400"}`} />
+                          <span className={`size-1.5 rounded-full ${open ? "bg-[#237a57] dark:bg-emerald-400" : "bg-neutral-400 dark:bg-neutral-500"}`} />
                           {open ? "Open now" : "Closed now"}
                         </span>
                       )}
@@ -350,7 +354,7 @@ function FoodOrderComponent() {
                         <a
                           href={`tel:${restaurant.phone.replace(/[^\d+]/g, "")}`}
                           aria-label={`Call ${restaurant.Res_name}`}
-                          className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-colors hover:border-[#237a57] hover:text-[#237a57]"
+                          className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white text-neutral-700 transition-all hover:border-[#237a57] hover:bg-[#e3f1ea] hover:text-[#237a57] active:scale-90 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-emerald-400 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-400"
                         >
                           <Phone size={14} aria-hidden />
                         </a>
@@ -359,7 +363,7 @@ function FoodOrderComponent() {
                   </div>
                 )}
                 {open === false && (
-                  <p className="mt-3 flex items-start gap-2 rounded-xl bg-[#fdf0c9] p-3 text-[12px] text-[#8a6100]">
+                  <p className="mt-3 flex items-start gap-2 rounded-xl bg-[#fdf0c9] p-3 text-[12px] text-[#8a6100] dark:bg-amber-400/10 dark:text-amber-300">
                     <Clock size={14} aria-hidden className="mt-0.5 shrink-0" />
                     This kitchen is closed right now. You can still order, and it will be prepared when it opens
                     {restaurant.opening_time ? ` at ${hhmm(restaurant.opening_time)}` : ""}.
@@ -396,12 +400,12 @@ function FoodOrderComponent() {
                     <Link
                       key={String(m.id)}
                       href={foodHref(m.id)}
-                      className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-md motion-safe:hover:-translate-y-0.5"
+                      className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-emerald-400/60 dark:hover:shadow-[0_14px_30px_-16px_rgba(52,211,153,0.35)]"
                     >
-                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3]">
+                      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3] dark:from-neutral-800 dark:to-neutral-950">
                         <span
                           aria-hidden
-                          className="absolute inset-0 grid place-items-center text-[40px] font-black text-white/60"
+                          className="absolute inset-0 grid place-items-center text-[40px] font-black text-white/60 dark:text-white/20"
                         >
                           {labelOf(m.Item_name).charAt(0).toUpperCase()}
                         </span>
@@ -419,10 +423,10 @@ function FoodOrderComponent() {
                         )}
                       </div>
                       <div className="p-3">
-                        <p className="line-clamp-1 text-[12px] font-bold group-hover:text-[#237a57]">
+                        <p className="line-clamp-1 text-[12px] font-bold group-hover:text-[#237a57] dark:group-hover:text-emerald-400">
                           {labelOf(m.Item_name)}
                         </p>
-                        <p className="mt-1 font-mono text-[11px] font-semibold text-[#237a57]">
+                        <p className="mt-1 font-mono text-[11px] font-semibold text-[#237a57] dark:text-emerald-400">
                           {money(priceNum(m.price))}
                         </p>
                       </div>
@@ -438,23 +442,23 @@ function FoodOrderComponent() {
             <section className={panel} aria-label="Order summary">
               <h2 className={heading}>Your order</h2>
 
-              <div className="mt-4 flex items-center gap-3">
+              <div className="group mt-4 flex items-center gap-3">
                 {imageBlock("size-16 shrink-0 rounded-xl", "text-[26px]")}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[14px] font-bold">{name}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-neutral-500">{restaurant.Res_name}</p>
+                  <p className="mt-0.5 truncate text-[11px] text-neutral-500 dark:text-neutral-400">{restaurant.Res_name}</p>
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between rounded-2xl bg-[#faf8f4] p-2">
-                <span className="pl-2 text-[12px] font-semibold text-neutral-600">Quantity</span>
+              <div className="mt-4 flex items-center justify-between rounded-2xl bg-[#faf8f4] p-2 dark:bg-neutral-950">
+                <span className="pl-2 text-[12px] font-semibold text-neutral-600 dark:text-neutral-300">Quantity</span>
                 <div className="flex items-center gap-1">
                   <button
                     type="button"
                     onClick={decrease}
                     disabled={quantity <= 1}
                     aria-label="Decrease quantity"
-                    className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white transition-colors hover:border-[#237a57] hover:text-[#237a57] disabled:opacity-40 disabled:hover:border-neutral-200 disabled:hover:text-inherit"
+                    className={stepBtn}
                   >
                     <Minus size={14} aria-hidden />
                   </button>
@@ -465,14 +469,14 @@ function FoodOrderComponent() {
                     type="button"
                     onClick={increase}
                     aria-label="Increase quantity"
-                    className="grid size-9 place-items-center rounded-full border border-neutral-200 bg-white transition-colors hover:border-[#237a57] hover:text-[#237a57]"
+                    className={stepBtn}
                   >
                     <Plus size={14} aria-hidden />
                   </button>
                 </div>
               </div>
 
-              <dl className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-[13px]">
+              <dl className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-[13px] dark:border-neutral-800">
                 {(
                   [
                     [`Subtotal (${quantity} ${quantity === 1 ? "item" : "items"})`, subtotal],
@@ -480,26 +484,26 @@ function FoodOrderComponent() {
                     ["Service fee", SERVICE_FEE],
                   ] as [string, number][]
                 ).map(([label, value]) => (
-                  <div key={label} className="flex justify-between gap-3 text-neutral-600">
+                  <div key={label} className="flex justify-between gap-3 text-neutral-600 dark:text-neutral-300">
                     <dt>{label}</dt>
                     <dd className="font-mono">{money(value)}</dd>
                   </div>
                 ))}
-                <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[16px] font-bold text-[#1b2b24]">
+                <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[16px] font-bold text-[#1b2b24] dark:border-neutral-800 dark:text-white">
                   <dt>Total</dt>
-                  <dd className="font-mono">{money(total)}</dd>
+                  <dd className="font-mono text-[#237a57] dark:text-emerald-400">{money(total)}</dd>
                 </div>
               </dl>
 
-              <p className="mt-3 flex items-center gap-1.5 text-[11px] text-neutral-500">
+              <p className="mt-3 flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
                 <Clock size={12} aria-hidden /> Estimated delivery {ETA}
               </p>
 
               <div aria-live="polite">
                 {submitted && addressError && (
-                  <div role="alert" className="mt-4 flex gap-3 rounded-xl bg-[#fdeee6] p-3">
-                    <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
-                    <p className="text-[12px] font-semibold text-[#d4472f]">{addressError}</p>
+                  <div role="alert" className="mt-4 flex gap-3 rounded-xl bg-[#fdeee6] p-3 dark:bg-red-400/10">
+                    <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f] dark:text-red-300" />
+                    <p className="text-[12px] font-semibold text-[#d4472f] dark:text-red-300">{addressError}</p>
                   </div>
                 )}
                 
@@ -514,25 +518,25 @@ function FoodOrderComponent() {
               </Button>
             </section>
 
-            <p className="flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
-              <CheckCircle2 size={12} aria-hidden className="text-[#237a57]" /> Fresh from a neighborhood kitchen
+            <p className="flex items-center justify-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+              <CheckCircle2 size={12} aria-hidden className="text-[#237a57] dark:text-emerald-400" /> Fresh from a neighborhood kitchen
             </p>
           </aside>
         </form>
       </div>
 
       {/* ---------- mobile order bar ---------- */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 px-4 py-3 backdrop-blur-md lg:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 px-4 py-3 backdrop-blur-md lg:hidden dark:border-neutral-800 dark:bg-neutral-950/90">
         <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
           <div>
-            <p className="text-[11px] text-neutral-500">Total</p>
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400">Total</p>
             <p className="font-mono text-[18px] font-bold">{money(total)}</p>
           </div>
           <button
             type="submit"
             form="order-form"
             disabled={saving}
-            className="flex-1 rounded-full bg-[#d4472f] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(212,71,47,0.6)] transition-colors hover:bg-[#bf3d27] disabled:opacity-60 sm:max-w-[240px]"
+            className="flex-1 rounded-full bg-[#d4472f] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(212,71,47,0.6)] transition-all hover:bg-[#bf3d27] active:scale-95 disabled:opacity-60 sm:max-w-[240px] dark:shadow-[0_10px_30px_-8px_rgba(248,113,113,0.5)] dark:hover:bg-[#e0553d]"
           >
             {saving ? "Placing order…" : "Place order"}
           </button>
@@ -544,7 +548,7 @@ function FoodOrderComponent() {
 
 export default function FoodOrderPage() {
   return (
-    <Suspense fallback={<div>Loading menu...</div>}>
+    <Suspense fallback={<div className="dark:text-neutral-300">Loading menu...</div>}>
       <FoodOrderComponent />
     </Suspense>
   );
