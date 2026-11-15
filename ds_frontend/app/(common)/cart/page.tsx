@@ -39,9 +39,9 @@ const initials = (name: string) =>
     .join("");
 
 const panel =
-  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-6";
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-300 hover:shadow-md sm:p-6 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:hover:border-emerald-500/30 dark:hover:shadow-[0_18px_40px_-20px_rgba(52,211,153,0.25)]";
 const tile =
-  "rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20";
+  "rounded-2xl bg-white/10 px-4 py-3 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/20 dark:bg-white/5 dark:ring-1 dark:ring-white/10 dark:hover:bg-white/10";
 const without = (id: number) => (cur: number[]) => cur.filter((x) => x !== id);
 
 /** Fees and total for one kitchen. Unavailable items are ignored. */
@@ -70,7 +70,7 @@ const EMPTY_TOTALS: Totals = { count: 0, subtotal: 0, delivery: 0, service: 0, t
 const Alert = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
   <div
     role="alert"
-    className={`flex items-center gap-3 rounded-xl bg-[#fdeee6] p-3 text-[12px] font-semibold text-[#d4472f] ${className}`}
+    className={`flex items-center gap-3 rounded-xl bg-[#fdeee6] p-3 text-[12px] font-semibold text-[#d4472f] dark:bg-red-400/10 dark:text-red-300 ${className}`}
   >
     <AlertCircle size={16} aria-hidden className="shrink-0" />
     {children}
@@ -105,13 +105,13 @@ const Pic = ({ src, letter, box, letterCls, imgCls = "" }: {
 );
 
 const SkeletonRow = () => (
-  <div className="flex gap-4 rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm motion-safe:animate-pulse">
-    <span className="size-24 shrink-0 rounded-2xl bg-neutral-200 sm:size-32" />
+  <div className="flex gap-4 rounded-3xl border border-neutral-200 bg-white p-4 shadow-sm motion-safe:animate-pulse dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none">
+    <span className="size-24 shrink-0 rounded-2xl bg-neutral-200 sm:size-32 dark:bg-neutral-800" />
     <div className="flex-1 space-y-3">
-      <div className="h-3 w-1/4 rounded bg-neutral-100" />
-      <div className="h-4 w-2/3 rounded bg-neutral-200" />
-      <div className="h-3 w-1/2 rounded bg-neutral-100" />
-      <div className="h-8 w-28 rounded-full bg-neutral-100" />
+      <div className="h-3 w-1/4 rounded bg-neutral-100 dark:bg-neutral-800" />
+      <div className="h-4 w-2/3 rounded bg-neutral-200 dark:bg-neutral-800" />
+      <div className="h-3 w-1/2 rounded bg-neutral-100 dark:bg-neutral-800" />
+      <div className="h-8 w-28 rounded-full bg-neutral-100 dark:bg-neutral-800" />
     </div>
   </div>
 );
@@ -272,41 +272,41 @@ function CartComponent() {
   /* ----- success screen ----- */
   if (done) {
     return (
-      <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-10 text-[#1b2b24] sm:px-8">
+      <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-10 text-[#1b2b24] transition-colors sm:px-8 dark:bg-neutral-950 dark:text-white">
         <CartStyles />
         <section className={`${panel} cart-in mx-auto max-w-xl text-center`}>
           <div className="relative mx-auto grid size-20 place-items-center">
-            <span aria-hidden className="absolute inset-0 rounded-full bg-[#237a57]/25 motion-safe:animate-ping" />
-            <span className="relative grid size-20 place-items-center rounded-full bg-[#237a57] text-white shadow-lg">
+            <span aria-hidden className="absolute inset-0 rounded-full bg-[#237a57]/25 motion-safe:animate-ping dark:bg-emerald-400/25" />
+            <span className="relative grid size-20 place-items-center rounded-full bg-[#237a57] text-white shadow-lg dark:bg-emerald-500 dark:shadow-[0_0_40px_-8px_rgba(52,211,153,0.6)]">
               <Check size={36} strokeWidth={3} aria-hidden />
             </span>
           </div>
           <h1 className="mt-6 text-[26px] font-bold tracking-tight sm:text-[32px]">Order placed!</h1>
-          <p className="mt-2 text-[13px] text-neutral-500">
+          <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
             {done.ids.length > 1 ? `${done.ids.length} kitchens are` : "Your kitchen is"} getting everything ready.
           </p>
 
-          <dl className="mt-6 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left">
+          <dl className="mt-6 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left dark:divide-neutral-800 dark:bg-neutral-950">
             {[
               [done.ids.map((id) => `#${id}`).join(", ") || "Confirmed", done.ids.length > 1 ? "Order numbers" : "Order number"],
               [ETA, "Estimated arrival"],
             ].map(([value, label]) => (
               <div key={label} className="px-4">
                 <dd className="font-mono text-[17px] font-semibold">{value}</dd>
-                <dt className="mt-0.5 text-[11px] text-neutral-500">{label}</dt>
+                <dt className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">{label}</dt>
               </div>
             ))}
           </dl>
 
-          <p className="mt-5 flex justify-between border-t border-neutral-100 pt-3 text-left text-[15px] font-bold">
+          <p className="mt-5 flex justify-between border-t border-neutral-100 pt-3 text-left text-[15px] font-bold dark:border-neutral-800">
             <span>Total</span>
             <span className="font-mono">{money(done.total)}</span>
           </p>
-          <p className="mt-1 text-left text-[11px] text-neutral-500">Delivering to {address.trim()}</p>
+          <p className="mt-1 text-left text-[11px] text-neutral-500 dark:text-neutral-400">Delivering to {address.trim()}</p>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button href={ORDERS_HREF}>Track my order</Button>
-            <Button variant="outline" href={LIST_HREF}>
+            <Button variant="outline" href={LIST_HREF} className="dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800">
               Order more food
             </Button>
           </div>
@@ -320,19 +320,19 @@ function CartComponent() {
   const itemWord = totals.count === 1 ? "item" : "items";
 
   return (
-    <div className="min-h-screen bg-[#faf8f4] text-[#1b2b24]">
+    <div className="min-h-screen bg-[#faf8f4] text-[#1b2b24] transition-colors dark:bg-neutral-950 dark:text-white">
       <CartStyles />
 
       <div className="mx-auto max-w-full px-4 pb-32 pt-6 sm:px-8 lg:px-12 lg:pb-16">
         {/* ---------- hero ---------- */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#237a57] via-[#1d6849] to-[#164d38] p-6 text-white shadow-lg sm:p-8">
-          <span aria-hidden className="pointer-events-none absolute -right-12 -top-16 size-56 rounded-full bg-white/10 blur-2xl" />
-          <span aria-hidden className="pointer-events-none absolute -bottom-20 left-1/3 size-60 rounded-full bg-[#f2a900]/20 blur-3xl" />
-          <span aria-hidden className="pointer-events-none absolute right-8 top-8 hidden size-24 rounded-full border border-white/15 sm:block" />
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#237a57] via-[#1d6849] to-[#164d38] p-6 text-white shadow-lg sm:p-8 dark:from-emerald-900 dark:via-emerald-950 dark:to-neutral-900 dark:shadow-none dark:ring-1 dark:ring-emerald-400/10">
+          <span aria-hidden className="pointer-events-none absolute -right-12 -top-16 size-56 rounded-full bg-white/10 blur-2xl dark:bg-emerald-400/10" />
+          <span aria-hidden className="pointer-events-none absolute -bottom-20 left-1/3 size-60 rounded-full bg-[#f2a900]/20 blur-3xl dark:bg-amber-400/10" />
+          <span aria-hidden className="pointer-events-none absolute right-8 top-8 hidden size-24 rounded-full border border-white/15 sm:block dark:border-emerald-400/15" />
 
           <div className="relative flex flex-wrap items-end justify-between gap-4">
             <div className="flex items-center gap-4">
-              <span className="grid size-14 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm">
+              <span className="grid size-14 place-items-center rounded-2xl bg-white/15 backdrop-blur-sm dark:bg-white/5 dark:ring-1 dark:ring-white/10">
                 <ShoppingBag size={26} aria-hidden />
               </span>
               <div>
@@ -369,17 +369,17 @@ function CartComponent() {
 
         {/* ---------- empty ---------- */}
         {isEmpty && (
-          <section className="cart-in mx-auto mt-8 max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-14 text-center">
-            <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57]">
+          <section className="cart-in mx-auto mt-8 max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-14 text-center transition-colors hover:border-[#237a57]/50 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-emerald-400/50">
+            <span className="mx-auto grid size-16 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
               <ShoppingBag size={28} aria-hidden />
             </span>
             <p className="mt-4 text-[17px] font-bold">Your cart is empty</p>
-            <p className="mt-2 text-[13px] text-neutral-500">
+            <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
               Add a few dishes from a neighborhood kitchen and they’ll wait for you here.
             </p>
             <Link
               href={LIST_HREF}
-              className="group mt-6 inline-flex items-center gap-2 rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white shadow-md shadow-[#237a57]/25 transition-all hover:-translate-y-0.5 hover:bg-[#1b6a49] active:scale-95"
+              className="group mt-6 inline-flex items-center gap-2 rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white shadow-md shadow-[#237a57]/25 transition-all hover:-translate-y-0.5 hover:bg-[#1b6a49] active:scale-95 dark:bg-emerald-500 dark:text-neutral-950 dark:shadow-emerald-500/20 dark:hover:bg-emerald-400"
             >
               Browse food
               <ArrowRight size={14} aria-hidden className="transition-transform duration-200 group-hover:translate-x-1" />
@@ -397,7 +397,7 @@ function CartComponent() {
                 const stars = Number(r.rating);
                 return (
                   <section key={r.id} aria-label={`Items from ${r.Res_name}`} className="space-y-3">
-                    <div className="group/res flex flex-wrap items-center gap-3 rounded-2xl bg-white p-3 shadow-sm transition-shadow hover:shadow-md">
+                    <div className="group/res flex flex-wrap items-center gap-3 rounded-2xl border border-transparent bg-white p-3 shadow-sm transition-all duration-300 hover:border-[#237a57]/30 hover:shadow-md dark:bg-neutral-900 dark:shadow-none dark:hover:border-emerald-400/40 dark:hover:shadow-[0_12px_30px_-18px_rgba(52,211,153,0.3)]">
                       <Pic
                         src={r.image}
                         letter={initials(r.Res_name)}
@@ -406,8 +406,8 @@ function CartComponent() {
                         imgCls="group-hover/res:scale-110"
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[14px] font-bold">{r.Res_name}</p>
-                        <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500">
+                        <p className="truncate text-[14px] font-bold transition-colors group-hover/res:text-[#237a57] dark:group-hover/res:text-emerald-400">{r.Res_name}</p>
+                        <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500 dark:text-neutral-400">
                           {r.address && (
                             <span className="flex items-center gap-1">
                               <MapPin size={12} aria-hidden /> {r.address}
@@ -420,7 +420,7 @@ function CartComponent() {
                           )}
                         </p>
                       </div>
-                      <p className="font-mono text-[13px] font-semibold text-[#237a57]">{money(groupTotals(g).subtotal)}</p>
+                      <p className="font-mono text-[13px] font-semibold text-[#237a57] dark:text-emerald-400">{money(groupTotals(g).subtotal)}</p>
                     </div>
 
                     {g.lines.map((l, i) => (
@@ -442,7 +442,7 @@ function CartComponent() {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <Link
                   href={LIST_HREF}
-                  className="group inline-flex items-center gap-2 text-[12px] font-semibold text-[#237a57] hover:underline"
+                  className="group inline-flex items-center gap-2 text-[12px] font-semibold text-[#237a57] hover:underline dark:text-emerald-400"
                 >
                   <ArrowRight size={14} aria-hidden className="rotate-180 transition-transform duration-200 group-hover:-translate-x-1" />
                   Continue shopping
@@ -450,7 +450,7 @@ function CartComponent() {
                 <button
                   type="button"
                   onClick={() => items.forEach(removeItem)}
-                  className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-600 transition-all hover:border-[#d4472f] hover:text-[#d4472f] active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-600 transition-all hover:border-[#d4472f] hover:text-[#d4472f] active:scale-95 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-red-400 dark:hover:bg-red-400/10 dark:hover:text-red-300"
                 >
                   <Trash2 size={13} aria-hidden /> Clear cart
                 </button>
@@ -464,18 +464,18 @@ function CartComponent() {
                       <Link
                         key={m.id}
                         href={foodHref(m.id)}
-                        className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-md motion-safe:hover:-translate-y-0.5"
+                        className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-200 hover:border-[#237a57]/60 hover:shadow-md motion-safe:hover:-translate-y-0.5 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-emerald-400/60 dark:hover:shadow-[0_14px_30px_-16px_rgba(52,211,153,0.35)]"
                       >
                         <Pic
                           src={m.image}
                           letter={m.Item_name?.charAt(0).toUpperCase()}
-                          box="aspect-[4/3] bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3]"
-                          letterCls="text-[40px] font-black text-white/60"
+                          box="aspect-[4/3] bg-gradient-to-br from-[#fdf0c9] to-[#f6c9a3] dark:from-neutral-800 dark:to-neutral-900"
+                          letterCls="text-[40px] font-black text-white/60 dark:text-white/20"
                           imgCls="group-hover:scale-105"
                         />
                         <div className="p-3">
-                          <p className="line-clamp-1 text-[12px] font-bold group-hover:text-[#237a57]">{m.Item_name}</p>
-                          <p className="mt-1 font-mono text-[11px] font-semibold text-[#237a57]">{money(priceNum(m.price))}</p>
+                          <p className="line-clamp-1 text-[12px] font-bold group-hover:text-[#237a57] dark:group-hover:text-emerald-400">{m.Item_name}</p>
+                          <p className="mt-1 font-mono text-[11px] font-semibold text-[#237a57] dark:text-emerald-400">{money(priceNum(m.price))}</p>
                         </div>
                       </Link>
                     ))}
@@ -504,7 +504,7 @@ function CartComponent() {
                   />
                 </div>
 
-                <dl className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-[13px]">
+                <dl className="mt-5 space-y-2 border-t border-neutral-100 pt-4 text-[13px] dark:border-neutral-800">
                   {(
                     [
                       [`Subtotal (${totals.count} ${itemWord})`, totals.subtotal],
@@ -512,26 +512,26 @@ function CartComponent() {
                       ["Service fee", totals.service],
                     ] as [string, number][]
                   ).map(([label, value]) => (
-                    <div key={label} className="flex justify-between gap-3 text-neutral-600">
+                    <div key={label} className="flex justify-between gap-3 text-neutral-600 dark:text-neutral-300">
                       <dt>{label}</dt>
                       <dd className="font-mono">{money(value)}</dd>
                     </div>
                   ))}
-                  <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[16px] font-bold">
+                  <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[16px] font-bold dark:border-neutral-800">
                     <dt>Total</dt>
-                    <dd key={totals.total.toFixed(2)} className="cart-pop font-mono">
+                    <dd key={totals.total.toFixed(2)} className="cart-pop font-mono text-[#237a57] dark:text-emerald-400">
                       {money(totals.total)}
                     </dd>
                   </div>
                 </dl>
 
                 {totals.kitchens > 1 && (
-                  <p className="mt-3 rounded-xl bg-[#fdf0c9] p-3 text-[11px] text-[#8a6100]">
+                  <p className="mt-3 rounded-xl bg-[#fdf0c9] p-3 text-[11px] text-[#8a6100] dark:bg-amber-400/10 dark:text-amber-300">
                     Your cart has dishes from {totals.kitchens} kitchens, so we’ll place {totals.kitchens} separate orders.
                   </p>
                 )}
 
-                <p className="mt-3 flex items-center gap-1.5 text-[11px] text-neutral-500">
+                <p className="mt-3 flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
                   <Clock size={12} aria-hidden /> Estimated delivery {ETA}
                 </p>
 
@@ -547,10 +547,10 @@ function CartComponent() {
                 </Button>
               </section>
 
-              <p className="flex items-center justify-center gap-1.5 text-[11px] text-neutral-500">
-                <ShieldCheck size={12} aria-hidden className="text-[#237a57]" /> Pay when it arrives
+              <p className="flex items-center justify-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                <ShieldCheck size={12} aria-hidden className="text-[#237a57] dark:text-emerald-400" /> Pay when it arrives
                 <span aria-hidden>·</span>
-                <CheckCircle2 size={12} aria-hidden className="text-[#237a57]" /> Fresh from neighborhood kitchens
+                <CheckCircle2 size={12} aria-hidden className="text-[#237a57] dark:text-emerald-400" /> Fresh from neighborhood kitchens
               </p>
             </aside>
           </form>
@@ -559,10 +559,10 @@ function CartComponent() {
 
       {/* ---------- mobile checkout bar ---------- */}
       {hasItems && (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 px-4 py-3 backdrop-blur-md lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 px-4 py-3 backdrop-blur-md lg:hidden dark:border-neutral-800 dark:bg-neutral-950/90">
           <div className="mx-auto flex max-w-xl items-center justify-between gap-4">
             <div>
-              <p className="text-[11px] text-neutral-500">
+              <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
                 Total · {totals.count} {itemWord}
               </p>
               <p key={totals.total.toFixed(2)} className="cart-pop font-mono text-[18px] font-bold">
@@ -573,7 +573,7 @@ function CartComponent() {
               type="submit"
               form="cart-form"
               disabled={placing || totals.count === 0}
-              className="flex-1 rounded-full bg-[#d4472f] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(212,71,47,0.6)] transition-all hover:bg-[#bf3d27] active:scale-95 disabled:opacity-60 sm:max-w-[240px]"
+              className="flex-1 rounded-full bg-[#d4472f] px-5 py-3 text-[14px] font-semibold text-white shadow-[0_10px_24px_-8px_rgba(212,71,47,0.6)] transition-all hover:bg-[#bf3d27] active:scale-95 disabled:opacity-60 sm:max-w-[240px] dark:shadow-[0_10px_30px_-8px_rgba(248,113,113,0.5)] dark:hover:bg-[#e0553d]"
             >
               {placing ? "Placing order…" : "Place order"}
             </button>
@@ -586,7 +586,7 @@ function CartComponent() {
 
 export default function CartPage() {
   return (
-    <Suspense fallback={<div>Loading cart...</div>}>
+    <Suspense fallback={<div className="dark:text-neutral-300">Loading cart...</div>}>
       <CartComponent />
     </Suspense>
   );
