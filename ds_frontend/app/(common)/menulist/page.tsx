@@ -54,12 +54,12 @@ const labelOf = (v: unknown): string => {
 };
  
 const tileColors = [
-  "from-[#e3f1ea] to-[#bcd9ca]",
-  "from-[#fdf0c9] to-[#f6dc8a]",
-  "from-[#e6f0ea] to-[#a8d1bc]",
-  "from-[#fde8d6] to-[#f6c9a3]",
-  "from-[#e3ecfa] to-[#bfd3f2]",
-  "from-[#fbe6e1] to-[#f3bfb3]",
+  "from-[#e3f1ea] to-[#bcd9ca] dark:from-emerald-950 dark:to-emerald-900/70 dark:hover:ring-emerald-400/40",
+  "from-[#fdf0c9] to-[#f6dc8a] dark:from-amber-950 dark:to-amber-900/60 dark:hover:ring-amber-400/40",
+  "from-[#e6f0ea] to-[#a8d1bc] dark:from-teal-950 dark:to-teal-900/60 dark:hover:ring-teal-400/40",
+  "from-[#fde8d6] to-[#f6c9a3] dark:from-orange-950 dark:to-orange-900/60 dark:hover:ring-orange-400/40",
+  "from-[#e3ecfa] to-[#bfd3f2] dark:from-sky-950 dark:to-sky-900/60 dark:hover:ring-sky-400/40",
+  "from-[#fbe6e1] to-[#f3bfb3] dark:from-rose-950 dark:to-rose-900/60 dark:hover:ring-rose-400/40",
 ];
  
 /** Fades and slides its child in the first time it scrolls into view. */
@@ -189,19 +189,22 @@ export default function FoodListingPage() {
   }
  
   const chipBase = "inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[12px] font-semibold transition-all duration-200";
-  const chipOff = "border border-neutral-200 bg-white text-neutral-600 hover:border-[#237a57] hover:text-[#237a57]";
+  const chipOff =
+    "border border-neutral-200 bg-white text-neutral-600 hover:border-[#237a57] hover:text-[#237a57] dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-emerald-400 dark:hover:bg-emerald-400/10 dark:hover:text-emerald-400";
   const selectCls =
-    "rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700 hover:border-[#237a57] focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57]";
+    "rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700 transition-colors hover:border-[#237a57] focus:border-[#237a57] focus:outline-none focus:ring-1 focus:ring-[#237a57] dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-emerald-400 dark:focus:border-emerald-400 dark:focus:ring-emerald-400";
+  const heroPill =
+    "inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 ring-1 ring-white/25 backdrop-blur transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/25 dark:bg-white/5 dark:ring-white/10 dark:hover:bg-white/10";
  
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] text-[#1b2b24]">
+    <div className="min-h-screen w-full bg-[#faf8f4] text-[#1b2b24] transition-colors dark:bg-neutral-950 dark:text-white">
       {/* ---------- hero ---------- */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-br from-[#1b6a49] via-[#237a57] to-[#34a073] px-4 pb-20 pt-12 text-white sm:px-8 sm:pb-24 sm:pt-16 lg:px-12">
-        <div aria-hidden className="pointer-events-none absolute -left-20 top-6 -z-10 size-72 rounded-full bg-white/10 blur-3xl" />
-        <div aria-hidden className="pointer-events-none absolute -right-16 bottom-0 -z-10 size-80 rounded-full bg-[#f2a900]/25 blur-3xl" />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-[#1b6a49] via-[#237a57] to-[#34a073] px-4 pb-20 pt-12 text-white sm:px-8 sm:pb-24 sm:pt-16 lg:px-12 dark:from-emerald-950 dark:via-emerald-900 dark:to-neutral-900">
+        <div aria-hidden className="pointer-events-none absolute -left-20 top-6 -z-10 size-72 rounded-full bg-white/10 blur-3xl dark:bg-emerald-400/10" />
+        <div aria-hidden className="pointer-events-none absolute -right-16 bottom-0 -z-10 size-80 rounded-full bg-[#f2a900]/25 blur-3xl dark:bg-amber-400/10" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 opacity-30"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-30 dark:opacity-20"
           style={{
             backgroundImage: "radial-gradient(rgba(255,255,255,0.35) 1px, transparent 1px)",
             backgroundSize: "22px 22px",
@@ -218,16 +221,16 @@ export default function FoodListingPage() {
           </p>
  
           <ul className="mt-6 flex flex-wrap gap-2.5 text-[12px] font-semibold">
-            <li className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 ring-1 ring-white/25 backdrop-blur">
+            <li className={heroPill}>
               <UtensilsCrossed size={14} aria-hidden /> {menus.length} dishes
             </li>
             {restaurantNames.length > 0 && (
-              <li className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 ring-1 ring-white/25 backdrop-blur">
+              <li className={heroPill}>
                 <Store size={14} aria-hidden /> {restaurantNames.length} kitchens
               </li>
             )}
             {categories.length > 0 && (
-              <li className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 ring-1 ring-white/25 backdrop-blur">
+              <li className={heroPill}>
                 {categories.length} categories
               </li>
             )}
@@ -237,8 +240,8 @@ export default function FoodListingPage() {
  
       {/* ---------- search (floats over the hero edge) ---------- */}
       <div className="relative z-10 mx-auto -mt-8 max-w-[1500px] px-4 sm:px-8 lg:px-12">
-        <div className="mx-auto flex max-w-3xl items-center gap-3 rounded-2xl bg-white px-4 shadow-xl ring-1 ring-black/5 transition-shadow focus-within:shadow-2xl focus-within:ring-2 focus-within:ring-[#237a57]/50 sm:px-5">
-          <Search size={18} aria-hidden className="shrink-0 text-neutral-400" />
+        <div className="mx-auto flex max-w-3xl items-center gap-3 rounded-2xl bg-white px-4 shadow-xl ring-1 ring-black/5 transition-all duration-300 focus-within:shadow-2xl focus-within:ring-2 focus-within:ring-[#237a57]/50 hover:shadow-2xl sm:px-5 dark:bg-neutral-900 dark:shadow-black/40 dark:ring-white/10 dark:focus-within:ring-emerald-400/60 dark:hover:ring-emerald-400/30">
+          <Search size={18} aria-hidden className="shrink-0 text-neutral-400 dark:text-neutral-500" />
           <label htmlFor="food-search" className="sr-only">
             Search food
           </label>
@@ -249,7 +252,7 @@ export default function FoodListingPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search dishes, categories or restaurants"
-            className="min-w-0 flex-1 bg-transparent py-4 text-[14px] placeholder:text-neutral-400 focus:outline-none [&::-webkit-search-cancel-button]:hidden"
+            className="min-w-0 flex-1 bg-transparent py-4 text-[14px] placeholder:text-neutral-400 focus:outline-none dark:text-white dark:placeholder:text-neutral-500 [&::-webkit-search-cancel-button]:hidden"
           />
           {query ? (
             <button
@@ -259,12 +262,12 @@ export default function FoodListingPage() {
                 searchRef.current?.focus();
               }}
               aria-label="Clear search"
-              className="rounded-full p-1.5 text-neutral-500 hover:bg-neutral-100"
+              className="rounded-full p-1.5 text-neutral-500 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
             >
               <X size={16} aria-hidden />
             </button>
           ) : (
-            <kbd className="hidden rounded-md border border-neutral-200 px-2 py-0.5 font-mono text-[11px] text-neutral-400 sm:block">
+            <kbd className="hidden rounded-md border border-neutral-200 px-2 py-0.5 font-mono text-[11px] text-neutral-400 sm:block dark:border-neutral-700 dark:text-neutral-500">
               /
             </kbd>
           )}
@@ -274,20 +277,20 @@ export default function FoodListingPage() {
       {/* ---------- category tiles (only while browsing, not filtering) ---------- */}
       {category === "All" && query.trim() === "" && categories.length > 1 && (
         <section aria-label="Browse by category" className="mx-auto mt-8 max-w-[1500px] px-4 sm:px-8 lg:px-12">
-          <h2 className="text-[14px] font-bold text-neutral-500">Browse by category</h2>
+          <h2 className="text-[14px] font-bold text-neutral-500 dark:text-neutral-400">Browse by category</h2>
           <div className="-mx-1 mt-3 flex gap-3 overflow-x-auto px-1 pb-3">
             {categories.map(([name, count], i) => (
               <button
                 key={name}
                 type="button"
                 onClick={() => setCategory(name)}
-                className={`group relative h-24 w-40 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br p-3 text-left text-[#1b2b24] shadow-sm transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2b24] motion-safe:hover:-translate-y-1 ${
+                className={`group relative h-24 w-40 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br p-3 text-left text-[#1b2b24] shadow-sm ring-1 ring-transparent transition-all duration-200 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1b2b24] motion-safe:hover:-translate-y-1 dark:text-white dark:shadow-none dark:focus-visible:ring-emerald-400 ${
                   tileColors[i % tileColors.length]
                 }`}
               >
                 <span
                   aria-hidden
-                  className="absolute -bottom-4 -right-1 text-[72px] font-black leading-none text-white/50 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none"
+                  className="absolute -bottom-4 -right-1 text-[72px] font-black leading-none text-white/50 transition-transform duration-300 group-hover:scale-110 motion-reduce:transition-none dark:text-white/10"
                 >
                   {name.charAt(0).toUpperCase()}
                 </span>
@@ -302,7 +305,7 @@ export default function FoodListingPage() {
       )}
  
       {/* ---------- sticky filters ---------- */}
-      <div className="sticky top-[90px] z-30 mt-6 border-y border-neutral-200/70 bg-[#faf8f4]/85 backdrop-blur-md">
+      <div className="sticky top-[90px] z-30 mt-6 border-y border-neutral-200/70 bg-[#faf8f4]/85 backdrop-blur-md transition-colors dark:border-neutral-800 dark:bg-neutral-950/85">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-12">
           <div role="group" aria-label="Filter by category" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 lg:pb-0">
             {[["All", menus.length] as const, ...categories].map(([name, count]) => {
@@ -313,10 +316,14 @@ export default function FoodListingPage() {
                   type="button"
                   aria-pressed={on}
                   onClick={() => setCategory(name)}
-                  className={`${chipBase} ${on ? "bg-[#237a57] text-white shadow-md shadow-[#237a57]/30" : chipOff}`}
+                  className={`${chipBase} ${
+                    on
+                      ? "bg-[#237a57] text-white shadow-md shadow-[#237a57]/30 dark:bg-emerald-500 dark:text-neutral-950 dark:shadow-emerald-500/20"
+                      : chipOff
+                  }`}
                 >
                   {name}
-                  <span className={`font-mono text-[10px] ${on ? "text-white/80" : "text-neutral-400"}`}>{count}</span>
+                  <span className={`font-mono text-[10px] ${on ? "text-white/80 dark:text-neutral-950/70" : "text-neutral-400 dark:text-neutral-500"}`}>{count}</span>
                 </button>
               );
             })}
@@ -328,14 +335,18 @@ export default function FoodListingPage() {
                 type="button"
                 aria-pressed={veganOnly}
                 onClick={() => setVeganOnly((v) => !v)}
-                className={`${chipBase} ${veganOnly ? "bg-[#e3f1ea] text-[#237a57] ring-1 ring-[#237a57]/40" : chipOff}`}
+                className={`${chipBase} ${
+                  veganOnly
+                    ? "bg-[#e3f1ea] text-[#237a57] ring-1 ring-[#237a57]/40 dark:bg-emerald-400/10 dark:text-emerald-400 dark:ring-emerald-400/40"
+                    : chipOff
+                }`}
               >
                 <Leaf size={13} aria-hidden /> Vegan only
               </button>
             )}
  
             {maxPrice > 0 && (
-              <label className="flex items-center gap-3 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700">
+              <label className="flex items-center gap-3 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700 transition-colors hover:border-[#237a57] dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-emerald-400">
                 <span className="whitespace-nowrap">
                   Up to <span className="font-mono">${cap}</span>
                 </span>
@@ -350,7 +361,7 @@ export default function FoodListingPage() {
                     setPriceCap(v >= maxPrice ? null : v);
                   }}
                   aria-label="Maximum price"
-                  className="h-1.5 w-24 cursor-pointer accent-[#237a57] sm:w-32"
+                  className="h-1.5 w-24 cursor-pointer accent-[#237a57] sm:w-32 dark:accent-emerald-400"
                 />
               </label>
             )}
@@ -394,13 +405,13 @@ export default function FoodListingPage() {
         <div className="flex flex-wrap items-baseline justify-between gap-3" aria-live="polite">
           <h2 className="text-[18px] font-bold sm:text-[20px]">
             {category === "All" ? "All dishes" : category}
-            <span className="ml-2 font-mono text-[13px] font-normal text-neutral-500">
+            <span className="ml-2 font-mono text-[13px] font-normal text-neutral-500 dark:text-neutral-400">
               {visible.length}
               {visible.length !== menus.length && ` of ${menus.length}`}
             </span>
           </h2>
           {filtersActive && (
-            <button type="button" onClick={clearAll} className="text-[12px] font-semibold text-[#237a57] hover:underline">
+            <button type="button" onClick={clearAll} className="text-[12px] font-semibold text-[#237a57] hover:underline dark:text-emerald-400">
               Clear filters
             </button>
           )}
@@ -415,14 +426,14 @@ export default function FoodListingPage() {
             ))}
           </div>
         ) : (
-          <section className="mx-auto mt-10 max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center">
-            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57]">
+          <section className="mx-auto mt-10 max-w-md rounded-3xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center transition-colors hover:border-[#237a57]/50 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-emerald-400/50">
+            <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
               <UtensilsCrossed size={24} aria-hidden />
             </span>
             <p className="mt-4 text-[16px] font-bold">
               {menus.length === 0 ? "No dishes yet" : "No dishes match your search"}
             </p>
-            <p className="mt-2 text-[13px] text-neutral-500">
+            <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
               {menus.length === 0
                 ? "Check back soon. Kitchens are adding new dishes all the time."
                 : "Try a different word, another category, or raise the price limit."}
@@ -431,7 +442,7 @@ export default function FoodListingPage() {
               <button
                 type="button"
                 onClick={clearAll}
-                className="mt-5 rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white transition-colors hover:bg-[#1b6a49]"
+                className="mt-5 rounded-full bg-[#237a57] px-5 py-2.5 text-[12px] font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1b6a49] dark:bg-emerald-500 dark:text-neutral-950 dark:hover:bg-emerald-400"
               >
                 Clear filters
               </button>
@@ -445,7 +456,7 @@ export default function FoodListingPage() {
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         aria-label="Back to top"
-        className={`fixed bottom-5 right-5 z-40 grid size-12 place-items-center rounded-full bg-[#1b2b24] text-white shadow-xl transition-all duration-300 hover:bg-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57] focus-visible:ring-offset-2 ${
+        className={`fixed bottom-5 right-5 z-40 grid size-12 place-items-center rounded-full bg-[#1b2b24] text-white shadow-xl transition-all duration-300 hover:bg-[#237a57] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57] focus-visible:ring-offset-2 dark:bg-emerald-500 dark:text-neutral-950 dark:shadow-[0_10px_30px_-8px_rgba(52,211,153,0.5)] dark:hover:bg-emerald-400 dark:focus-visible:ring-emerald-400 dark:focus-visible:ring-offset-neutral-950 ${
           showTop ? "translate-y-0 opacity-100" : "invisible translate-y-4 opacity-0"
         }`}
       >
