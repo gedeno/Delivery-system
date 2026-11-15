@@ -8,6 +8,8 @@ import FoodCard from "@/components/Ui/FoodCard";
 import { useParams } from "next/navigation";
 // components/RestaurantProfile.tsx
 
+const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!border-emerald-400 dark:hover:!bg-emerald-400/10 dark:hover:!text-emerald-400";
+
 export default function RestaurantProfile() {
   const params = useParams()
   const id = Number(params.id)
@@ -29,35 +31,35 @@ export default function RestaurantProfile() {
   ];
  
   return (
-    <section className="w-full bg-[#faf8f3] pb-12">
+    <section className="w-full bg-[#faf8f3] pb-12 text-[#1b2b24] transition-colors dark:bg-neutral-950 dark:text-white">
       {/* Banner */}
-      <div className="h-32 w-full bg-[#1b3b2f] md:h-44">
+      <div className="group h-32 w-full overflow-hidden bg-[#1b3b2f] md:h-44 dark:bg-neutral-900">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={current_restaurant?.image} alt="" className="h-full w-full object-cover" />
+        <img src={current_restaurant?.image} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none dark:brightness-90" />
       </div>
  
       <div className="mx-auto w-full max-w-[90rem] px-6 md:px-[70px]">
         {/* Header */}
         <div className="-mt-10 flex flex-wrap items-end gap-4">
-          <div className="grid h-20 w-20 place-items-center rounded-2xl border-4 border-[#faf8f3] bg-[#237a57] text-[24px] font-bold text-white">
+          <div className="grid h-20 w-20 place-items-center rounded-2xl border-4 border-[#faf8f3] bg-[#237a57] text-[24px] font-bold text-white shadow-md transition-transform duration-300 hover:-rotate-3 hover:scale-105 dark:border-neutral-950 dark:bg-emerald-500 dark:text-neutral-950 dark:shadow-[0_0_30px_-8px_rgba(52,211,153,0.5)]">
             {initials}
           </div>
           <div className="flex-1 pb-1">
-            <h1 className="text-[26px] font-extrabold tracking-tight text-[#1b2b24]">{current_restaurant?.Res_name}</h1>
-            <p className="text-[13px] text-neutral-500">{current_restaurant?.address}</p>
+            <h1 className="text-[26px] font-extrabold tracking-tight text-[#1b2b24] dark:text-white">{current_restaurant?.Res_name}</h1>
+            <p className="text-[13px] text-neutral-500 dark:text-neutral-400">{current_restaurant?.address}</p>
           </div>
           <div className="flex gap-2 pb-1">
             <Button href={`tel:${current_restaurant?.phone}`}>Call</Button>
-            <Button href={`mailto:${current_restaurant?.email}`} variant="outline">Email</Button>
+            <Button href={`mailto:${current_restaurant?.email}`} variant="outline" className={outlineDark}>Email</Button>
           </div>
         </div>
  
         {/* Stats */}
-        <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-200 sm:grid-cols-4">
+        <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-200 sm:grid-cols-4 dark:border-neutral-800 dark:bg-neutral-800">
           {stats.map(([label, value]) => (
-            <div key={label} className="bg-white p-4">
-              <dd className="text-[18px] font-bold text-[#1b2b24]">{value}</dd>
-              <dt className="mt-1 text-[11px] text-neutral-500">{label}</dt>
+            <div key={label} className="bg-white p-4 transition-colors duration-200 hover:bg-[#e3efe4]/60 dark:bg-neutral-900 dark:hover:bg-emerald-400/10">
+              <dd className="text-[18px] font-bold text-[#1b2b24] dark:text-white">{value}</dd>
+              <dt className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">{label}</dt>
             </div>
           ))}
         </dl>
@@ -65,8 +67,8 @@ export default function RestaurantProfile() {
         <div className="mt-8 grid items-start gap-6 lg:grid-cols-[1fr_320px]">
           {/* Menu listing */}
           <div>
-            <h2 className="text-[20px] font-bold text-[#1b2b24]">
-              All menu items <span className="text-[14px] font-normal text-neutral-500">{menus.length}</span>
+            <h2 className="text-[20px] font-bold text-[#1b2b24] dark:text-white">
+              All menu items <span className="text-[14px] font-normal text-neutral-500 dark:text-neutral-400">{menus.length}</span>
             </h2>
             {menus.length ? (
               <div className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -75,32 +77,32 @@ export default function RestaurantProfile() {
                 ))}
               </div>
             ) : (
-              <p className="mt-4 text-[14px] text-neutral-500">No menu items yet.</p>
+              <p className="mt-4 text-[14px] text-neutral-500 dark:text-neutral-400">No menu items yet.</p>
             )}
           </div>
  
           {/* Sidebar */}
           <aside className="space-y-4 lg:sticky lg:top-24">
-            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
-              <iframe title={`Map of ${current_restaurant?.Res_name}`} src={mapSrc} loading="lazy" className="h-44 w-full border-0" />
+            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white transition-all duration-300 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-emerald-400/40 dark:hover:shadow-[0_14px_30px_-16px_rgba(52,211,153,0.3)]">
+              <iframe title={`Map of ${current_restaurant?.Res_name}`} src={mapSrc} loading="lazy" className="h-44 w-full border-0 dark:opacity-90 dark:[filter:invert(0.92)_hue-rotate(180deg)]" />
               <div className="p-4">
-                <p className="text-[13px] font-bold text-[#1b2b24]">{current_restaurant?.address}</p>
+                <p className="text-[13px] font-bold text-[#1b2b24] dark:text-white">{current_restaurant?.address}</p>
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  <Button variant="outline" href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`}>Directions</Button>
-                  <Button variant="outline" href={`tel:${current_restaurant?.phone}`}>Call</Button>
+                  <Button variant="outline" className={outlineDark} href={`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`}>Directions</Button>
+                  <Button variant="outline" className={outlineDark} href={`tel:${current_restaurant?.phone}`}>Call</Button>
                 </div>
               </div>
             </div>
  
-            <div className="rounded-2xl border border-neutral-200 bg-white p-4">
-              <h3 className="text-[11px] font-bold uppercase tracking-wide text-neutral-500">Hours</h3>
-              <p className="mt-2 text-[13px] text-neutral-700">
+            <div className="rounded-2xl border border-neutral-200 bg-white p-4 transition-all duration-300 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-emerald-400/40 dark:hover:shadow-[0_14px_30px_-16px_rgba(52,211,153,0.3)]">
+              <h3 className="text-[11px] font-bold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">Hours</h3>
+              <p className="mt-2 text-[13px] text-neutral-700 dark:text-neutral-200">
                 {current_restaurant?.opening_time} – {current_restaurant?.closing_time}
               </p>
  
-              <h3 className="mt-5 text-[11px] font-bold uppercase tracking-wide text-neutral-500">About</h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-neutral-600">{current_restaurant?.description}</p>
-              <span className="mt-3 inline-block rounded-full bg-[#e3efe4] px-3 py-1 text-[11px] font-semibold text-[#237a57]">
+              <h3 className="mt-5 text-[11px] font-bold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">About</h3>
+              <p className="mt-2 text-[13px] leading-relaxed text-neutral-600 dark:text-neutral-300">{current_restaurant?.description}</p>
+              <span className="mt-3 inline-block rounded-full bg-[#e3efe4] px-3 py-1 text-[11px] font-semibold text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
                 {current_restaurant?.cuisine_type}
               </span>
             </div>
@@ -110,4 +112,3 @@ export default function RestaurantProfile() {
     </section>
   );
 }
- 
