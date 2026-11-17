@@ -20,6 +20,7 @@ import {
   User,
   Users,
   UtensilsCrossed,
+  Wallet,
   X,
 } from "lucide-react";
 import { UserData } from "@/app/lib/Userdata";
@@ -39,6 +40,7 @@ const customer: NavItem[] = [
 const delivery: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Deliveries", href: "/dashboard/delivery/orders", icon: <Truck className="h-5 w-5" /> },
+  { label: "Earnings", href: "/dashboard/delivery/earnings", icon: <Wallet className="h-5 w-5" /> },
   { label: "Profile", href: "/dashboard/delivery/profile", icon: <User className="h-5 w-5" /> },
 ];
 
