@@ -71,8 +71,9 @@ const initials = (name: string) =>
     .join("");
  
 const panel =
-  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md focus-within:border-[#237a57]/40 sm:p-6";
-const heading = "text-[15px] font-bold text-[#1b2b24]";
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus-within:border-[#237a57]/40 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:hover:border-neutral-700 dark:focus-within:border-emerald-400/40";
+const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
+const rise = "animate-[fadeUp_.6s_ease-out_backwards] motion-reduce:animate-none";
  
 /** Runs one section's save: validates, shows saving/done/failed, and never double-submits. */
 async function runFlow(
@@ -104,15 +105,20 @@ const clearNotice = (setFlow: Dispatch<SetStateAction<Flow>>) =>
 function Notice({ kind, title, text }: { kind: "ok" | "error"; title: string; text?: string }) {
   const ok = kind === "ok";
   return (
-    <div role={ok ? "status" : "alert"} className={`mt-5 flex gap-3 rounded-xl p-4 ${ok ? "bg-[#e6f0ea]" : "bg-[#fdeee6]"}`}>
+    <div
+      role={ok ? "status" : "alert"}
+      className={`mt-5 flex gap-3 rounded-xl p-4 animate-[fadeUp_.4s_ease-out_backwards] motion-reduce:animate-none ${
+        ok ? "bg-[#e6f0ea] dark:bg-emerald-400/10" : "bg-[#fdeee6] dark:bg-[#d4472f]/15"
+      }`}
+    >
       {ok ? (
-        <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57]" />
+        <CheckCircle2 size={16} aria-hidden className="mt-0.5 shrink-0 text-[#237a57] dark:text-emerald-400" />
       ) : (
-        <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f]" />
+        <AlertCircle size={16} aria-hidden className="mt-0.5 shrink-0 text-[#d4472f] dark:text-[#ff8a73]" />
       )}
       <div>
         <p className="text-[12px] font-bold">{title}</p>
-        {text && <p className="mt-1 text-[11px] text-neutral-600">{text}</p>}
+        {text && <p className="mt-1 text-[11px] text-neutral-600 dark:text-neutral-400">{text}</p>}
       </div>
     </div>
   );
@@ -126,12 +132,12 @@ function Switch({ checked, onChange, label }: { checked: boolean; onChange: () =
       aria-checked={checked}
       aria-label={label}
       onClick={onChange}
-      className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57] focus-visible:ring-offset-2 ${
-        checked ? "bg-[#237a57]" : "bg-neutral-300"
+      className={`relative inline-flex h-7 w-12 shrink-0 items-center rounded-full transition-all duration-300 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57] focus-visible:ring-offset-2 dark:focus-visible:ring-emerald-400 dark:focus-visible:ring-offset-neutral-900 ${
+        checked ? "bg-[#237a57] dark:bg-emerald-500" : "bg-neutral-300 dark:bg-neutral-700"
       }`}
     >
       <span
-        className={`inline-block size-5 rounded-full bg-white shadow transition-transform ${
+        className={`inline-block size-5 rounded-full bg-white shadow transition-transform duration-300 ${
           checked ? "translate-x-6" : "translate-x-1"
         }`}
       />
@@ -234,12 +240,12 @@ export default function OwnerProfilePage({
   const Inti = `${users?.first_name?.[0] ?? ""}${users?.last_name?.[0] ?? ""}`;
  
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] sm:px-8 lg:px-10">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       {/* Heading */}
-      <header>
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57]">Vendor workspace</p>
+      <header className={rise}>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#237a57] dark:text-emerald-400">Vendor workspace</p>
         <h1 className="mt-2 text-[26px] font-bold tracking-tight sm:text-[32px]">Profile</h1>
-        <p className="mt-2 text-[13px] text-neutral-500">
+        <p className="mt-2 text-[13px] text-neutral-500 dark:text-neutral-400">
           Manage your personal details, password and how we keep you in the loop.
         </p>
       </header>
@@ -247,35 +253,38 @@ export default function OwnerProfilePage({
       <div className="mt-6 grid items-start gap-6 xl:grid-cols-[340px_1fr]">
         {/* ---------- left: identity ---------- */}
         <aside className="space-y-4 xl:sticky xl:top-6">
-          <section className={`${panel} text-center`}>
+          <section className={`${panel} ${rise} group text-center`} style={{ animationDelay: "80ms" }}>
             <div
               aria-hidden
-              className="mx-auto grid size-20 place-items-center rounded-2xl bg-[#8a5a1f] text-[26px] font-bold text-white shadow-sm"
+              className="mx-auto grid size-20 place-items-center rounded-2xl bg-[#8a5a1f] text-[26px] font-bold text-white shadow-sm ring-4 ring-[#8a5a1f]/15 transition-all duration-300 group-hover:rotate-3 group-hover:scale-105 group-hover:ring-8"
             >
               {Inti}
             </div>
             <h2 className="mt-4 truncate text-[18px] font-bold">{`${users?.first_name} ${users?.last_name} `}</h2>
-            <p className="mt-1 truncate text-[12px] text-neutral-500">{users?.email}</p>
-            <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#e3f1ea] px-3 py-1.5 text-[11px] font-semibold text-[#237a57]">
-              <span className="size-1.5 rounded-full bg-[#237a57]" />
+            <p className="mt-1 truncate text-[12px] text-neutral-500 dark:text-neutral-400">{users?.email}</p>
+            <span className="mt-3 inline-flex items-center gap-2 rounded-full bg-[#e3f1ea] px-3 py-1.5 text-[11px] font-semibold text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
+              <span className="relative flex size-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#237a57] opacity-75 motion-reduce:animate-none dark:bg-emerald-400" />
+                <span className="relative inline-flex size-1.5 rounded-full bg-[#237a57] dark:bg-emerald-400" />
+              </span>
              {users?.role}
             </span>
  
-            <dl className="mt-5 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left">
+            <dl className="mt-5 grid grid-cols-2 divide-x divide-neutral-200 rounded-2xl bg-[#faf8f4] py-3 text-left dark:divide-neutral-800 dark:bg-neutral-950">
               <div className="px-4">
                 <dd className="font-mono text-[17px] font-semibold tabular-nums">{restaurantCount}</dd>
-                <dt className="mt-0.5 text-[11px] text-neutral-500">Restaurants</dt>
+                <dt className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">Restaurants</dt>
               </div>
               <div className="px-4">
                 <dd className="text-[14px] font-semibold leading-[1.6]">{memberSince}</dd>
-                <dt className="mt-0.5 text-[11px] text-neutral-500">Member since</dt>
+                <dt className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">Member since</dt>
               </div>
             </dl>
           </section>
  
-          <section className="rounded-2xl bg-[#e6f0ea] p-5">
+          <section className={`${rise} rounded-2xl bg-[#e6f0ea] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-emerald-400/10 dark:hover:shadow-none`} style={{ animationDelay: "160ms" }}>
             <h3 className="text-[14px] font-bold">Good food. Good neighbors.</h3>
-            <p className="mt-2 text-[11px] text-neutral-600">Need a hand with your account? Our local support team is here.</p>
+            <p className="mt-2 text-[11px] text-neutral-600 dark:text-neutral-300">Need a hand with your account? Our local support team is here.</p>
             <Button variant="light" href="/support" className="mt-3">
               Contact support ↗
             </Button>
@@ -285,7 +294,7 @@ export default function OwnerProfilePage({
         {/* ---------- right: forms ---------- */}
         <div className="min-w-0 space-y-6">
           {/* Personal details */}
-          <form onSubmit={saveProfile} noValidate className={panel}>
+          <form onSubmit={saveProfile} noValidate className={`${panel} ${rise}`} style={{ animationDelay: "120ms" }}>
             <h2 className={heading}>Personal details</h2>
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
@@ -330,14 +339,14 @@ export default function OwnerProfilePage({
               {pFlow.failed && <Notice kind="error" title="We couldn’t save your details" text="Check your connection and try again." />}
             </div>
             <div className="mt-5 flex justify-end">
-              <Button type="submit" disabled={pFlow.saving} className="w-full sm:w-auto">
+              <Button type="submit" disabled={pFlow.saving} className="w-full hover:-translate-y-0.5 active:translate-y-0 sm:w-auto">
                 {pFlow.saving ? "Saving…" : "Save changes"}
               </Button>
             </div>
           </form>
  
           {/* Password */}
-          <form onSubmit={savePassword} noValidate className={panel}>
+          <form onSubmit={savePassword} noValidate className={`${panel} ${rise}`} style={{ animationDelay: "200ms" }}>
             <h2 className={heading}>Change password</h2>
             <div className="mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2">
               <Input
@@ -372,7 +381,7 @@ export default function OwnerProfilePage({
  
             <ul className="mt-4 grid gap-1.5 text-[11px] sm:grid-cols-3">
               {rules.map((r) => (
-                <li key={r.label} className={`flex items-center gap-1.5 ${r.ok ? "text-[#237a57]" : "text-neutral-500"}`}>
+                <li key={r.label} className={`flex items-center gap-1.5 transition-colors duration-300 ${r.ok ? "text-[#237a57] dark:text-emerald-400" : "text-neutral-500 dark:text-neutral-400"}`}>
                   {r.ok ? <CheckCircle2 size={13} aria-hidden /> : <Circle size={13} aria-hidden />}
                   {r.label}
                 </li>
@@ -386,21 +395,21 @@ export default function OwnerProfilePage({
               )}
             </div>
             <div className="mt-5 flex justify-end">
-              <Button type="submit" disabled={wFlow.saving} className="w-full sm:w-auto">
+              <Button type="submit" disabled={wFlow.saving} className="w-full hover:-translate-y-0.5 active:translate-y-0 sm:w-auto">
                 {wFlow.saving ? "Updating…" : "Update password"}
               </Button>
             </div>
           </form>
  
           {/* Notifications */}
-          <section className={panel}>
+          <section className={`${panel} ${rise}`} style={{ animationDelay: "280ms" }}>
             <h2 className={heading}>Notifications</h2>
-            <ul className="mt-2 divide-y divide-neutral-100">
+            <ul className="mt-2 divide-y divide-neutral-100 dark:divide-neutral-800">
               {prefRows.map((row) => (
-                <li key={row.key} className="flex items-center justify-between gap-4 py-4">
+                <li key={row.key} className="-mx-3 flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors duration-200 hover:bg-neutral-50 dark:hover:bg-neutral-800/50">
                   <div className="min-w-0">
                     <p className="text-[13px] font-semibold">{row.label}</p>
-                    <p className="mt-0.5 text-[11px] text-neutral-500">{row.hint}</p>
+                    <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">{row.hint}</p>
                   </div>
                   <Switch checked={prefState[row.key]} onChange={() => togglePref(row.key)} label={row.label} />
                 </li>
@@ -414,7 +423,7 @@ export default function OwnerProfilePage({
               <Button
                 type="button"
                 disabled={nFlow.saving}
-                className="w-full sm:w-auto"
+                className="w-full hover:-translate-y-0.5 active:translate-y-0 sm:w-auto"
                 onClick={() => runFlow(setNFlow, true, () => onSavePrefs?.(prefState))}
               >
                 {nFlow.saving ? "Saving…" : "Save preferences"}
@@ -423,10 +432,10 @@ export default function OwnerProfilePage({
           </section>
  
           {/* Sign out */}
-          <section className={`${panel} flex flex-wrap items-center justify-between gap-4`}>
+          <section className={`${panel} ${rise} flex flex-wrap items-center justify-between gap-4`} style={{ animationDelay: "360ms" }}>
             <div>
               <h2 className={heading}>Sign out</h2>
-              <p className="mt-1 text-[11px] text-neutral-500">You’ll need to sign in again to manage your restaurants.</p>
+              <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">You’ll need to sign in again to manage your restaurants.</p>
             </div>
             <Button type="button" variant="outline" disabled={signingOut} onClick={signOut} className="w-full sm:w-auto">
               <LogOut size={14} aria-hidden /> {signingOut ? "Signing out…" : "Sign out"}
@@ -437,4 +446,3 @@ export default function OwnerProfilePage({
     </div>
   );
 }
- 
