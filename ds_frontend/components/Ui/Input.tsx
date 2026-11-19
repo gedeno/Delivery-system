@@ -6,6 +6,7 @@ import {
   useId,
   useState,
   type ChangeEvent,
+  type ChangeEventHandler,
   type InputHTMLAttributes,
 } from "react";
 
@@ -50,11 +51,14 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     control = (
       <select
         id={fieldId}
-        value={rest.value ?? ""}
         name={rest.name}
         required={rest.required}
         disabled={rest.disabled}
-        defaultValue={String(rest.defaultValue ?? options[0])}
+        // controlled when `value` is passed, otherwise uncontrolled (never both)
+        {...(rest.value !== undefined
+          ? { value: String(rest.value) }
+          : { defaultValue: String(rest.defaultValue ?? options[0]) })}
+        onChange={onChange as unknown as ChangeEventHandler<HTMLSelectElement>}
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         className={`${fieldBase} ${stateClass}`}
@@ -95,14 +99,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     /* ---- text, email, tel, password ... ---- */
     control = (
       <input
-         {...rest}
-      ref={ref}
-      id={fieldId}
-      
-      onChange={onChange}
-      aria-describedby={describedBy}
-      aria-invalid={error ? true : undefined}
-      className={`${fieldBase} ${stateClass}`}
+        {...rest}
+        ref={ref}
+        id={fieldId}
+        onChange={onChange}
+        aria-describedby={describedBy}
+        aria-invalid={error ? true : undefined}
+        className={`${fieldBase} ${stateClass}`}
       />
     );
   }

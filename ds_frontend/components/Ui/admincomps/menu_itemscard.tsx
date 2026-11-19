@@ -51,7 +51,7 @@ export default function MenuItemCard({ m }: { m: MenuItemCardData }) {
             {m.Item_name}
           </h3>
           <p className="shrink-0 font-mono text-[15px] font-semibold text-[#237a57] transition-transform duration-300 group-hover:scale-105 dark:text-emerald-400">
-            ${m.price.toFixed(2)}
+            ${Number(m.price).toFixed(2)}
           </p>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
