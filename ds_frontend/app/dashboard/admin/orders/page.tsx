@@ -1,26 +1,10 @@
-// app/dashboard/admin/orders/page.tsx  (UI only: static sample data, no logic)
+"use client";
+// app/dashboard/admin/orders/page.tsx
 import { Download } from "lucide-react";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
-import OrderRow, { orderCols, type OrderRowData } from "@/components/Ui/admincomps/orderrow";
-
-/* ---------- sample data (replace with your orders) ---------- */
-
-const o = (id: number, status: string, total_amount: number, ordered_at: string, first: string, last: string, Res_name: string, delivery_address: string, items: number): OrderRowData => ({
-  id, status, total_amount, ordered_at, delivery_address,
-  customer: { first_name: first, last_name: last },
-  restaurant: { Res_name },
-  orderItems: Array.from({ length: items }, (_, i) => ({ id: i, quantity: 1 })),
-});
-
-const orders = [
-  o(1050, "New", 19.75, "12:36 PM", "Jordan", "Lee", "Maple Kitchen", "42 Cedar Ave, Apt 3", 2),
-  o(2210, "Preparing", 38.9, "12:30 PM", "Morgan", "Bell", "Little Ember Pizza", "250 Harbor St", 3),
-  o(1048, "On the way", 40.84, "12:08 PM", "Alex", "Morgan", "Maple Kitchen", "128 Maple Street", 3),
-  o(1047, "On the way", 27.5, "12:02 PM", "Priya", "Nair", "Block Burger", "88 Orchard Rd", 2),
-  o(1044, "Delivered", 12.4, "11:20 AM", "Casey", "Kim", "Daily Grind", "7 Pine Court", 2),
-  o(1041, "Canceled", 15.3, "11:05 AM", "Robin", "Patel", "Green Table", "31 Elm Street", 2),
-];
+import OrderRow, { orderCols } from "@/components/Ui/admincomps/orderrow";
+import { AdminOrderfetch } from "@/app/lib/orders";
 
 const stats = [
   ["Orders today", "312", "24 active right now"],
@@ -34,6 +18,8 @@ const panel = "rounded-3xl border border-neutral-200 bg-white shadow-sm transiti
 const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 
 export default function AdminOrdersPage() {
+  const orders = AdminOrderfetch() || [];
+
   return (
     <div className="min-h-screen w-full bg-[#faf8f4] px-4 py-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -83,8 +69,12 @@ export default function AdminOrdersPage() {
             ))}
           </ul>
 
+          {orders.length === 0 && (
+            <p className="px-4 py-10 text-center text-[13px] text-neutral-500 dark:text-neutral-400">No orders found.</p>
+          )}
+
           <div className="flex items-center justify-between gap-3 border-t border-neutral-100 px-4 py-3 dark:border-neutral-800">
-            <p className="text-[12px] text-neutral-500 dark:text-neutral-400">Showing 1–6 of 312</p>
+            <p className="text-[12px] text-neutral-500 dark:text-neutral-400">Showing {orders.length} orders</p>
             <div className="flex gap-2">
               <Button variant="outline" className={`!px-3 !py-2 !text-[12px] ${outlineDark}`} disabled>Previous</Button>
               <Button variant="outline" className={`!px-3 !py-2 !text-[12px] ${outlineDark}`}>Next</Button>
