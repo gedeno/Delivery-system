@@ -19,6 +19,11 @@ export default function AdminUsersPage() {
   const owners = allusers.filter(user => user.role==="owner").length
 
 
+  console.log("All users:", allusers);
+  console.log("First user:", allusers[0]);
+  console.log("First user ID:", allusers[0]?.id);
+
+
   const pills = [`All ${allusers.length}`, `Customers ${constomerss}`,`Owners ${owners}`, "Couriers 142", "Admins 4"];
   const stats = [
   { label: "Total users", value: `${allusers.length}`, hint: "+38 this week" },
@@ -77,7 +82,7 @@ export default function AdminUsersPage() {
 
           <ul className="divide-y divide-neutral-100 dark:divide-neutral-800">
             {allusers.map((u) => (
-              <UserRow key={u.id} u={u} />
+                <UserRow key={u.id} u={u} />
             ))}
           </ul>
 

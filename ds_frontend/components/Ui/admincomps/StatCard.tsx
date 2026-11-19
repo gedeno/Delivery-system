@@ -30,10 +30,15 @@ export default function UserRow({ u }: { u: RegisterData }) {
   const role = roles[u.role] ?? { label: u.role, chip: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300" };
   const online = u.Delivery_status === "Online";
   
-  const Delete = () =>{
-    api.delete(`/users/edituser/${u.id}/`)
-
-  }
+  const Delete = async () => {
+    try {
+        const res = await api.delete(`/users/edituser/${u.id}/`);
+        console.log("Success:", res.data);
+    } catch (error: any) {
+        console.log("Status:", error.response?.status);
+        console.log("Backend error:", error.response?.data);
+    }
+};
 
   return (
     <li

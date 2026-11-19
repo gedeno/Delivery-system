@@ -31,6 +31,12 @@ class EditUsers(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = Userserializer
     permission_classes = [AllowAny]
+
     def destroy(self, request, *args, **kwargs):
-        user = User.objects.filter(id = self.request.query_params.get("user_id"))
-        return super().destroy(request, *args, **kwargs)
+        user = self.get_object()
+        user.delete()
+
+        return Response(
+            {"message": "User deleted successfully"},
+            status=200
+        )
