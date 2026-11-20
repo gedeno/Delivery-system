@@ -3,7 +3,6 @@ import Link from "next/link";
 import Button from "@/components/Ui/Button";
 import Input from "@/components/Ui/Input";
 
-
 import type { Restaurant } from "@/app/lib/types";
 import RestaurantPreview, { FormSection } from "@/components/Ui/restauranteditcomponent";
 
@@ -26,24 +25,53 @@ const r: Restaurant = {
 };
 
 const half = "col-span-2 sm:col-span-1";
+// same dark override for outline buttons as the admin settings page
+const outlineDark = "dark:!border-neutral-700 dark:!text-neutral-100 dark:hover:!bg-neutral-800";
 
 export default function RestaurantEditPage() {
   return (
-    <div className="min-h-screen w-full bg-[#faf8f4] px-4 pb-10 pt-6 text-[#1b2b24] sm:px-8 lg:px-10">
+    <div className="min-h-screen w-full bg-[#faf8f4] px-4 pb-10 pt-6 text-[#1b2b24] transition-colors sm:px-8 lg:px-10 dark:bg-neutral-950 dark:text-white">
       <header>
-        <Link href="/dashboard" className="text-[12px] font-semibold text-[#d4472f] hover:underline">← Back to dashboard</Link>
+        <Link
+          href="/dashboard"
+          className="text-[12px] font-semibold text-[#d4472f] transition hover:underline dark:text-red-300 dark:hover:text-red-200"
+        >
+          ← Back to dashboard
+        </Link>
         <h1 className="mt-3 text-[28px] font-bold tracking-tight sm:text-[32px]">Edit restaurant</h1>
-        <p className="mt-1 text-[13px] text-neutral-500">Update the details customers see on your profile.</p>
+        <p className="mt-1 text-[13px] text-neutral-500 dark:text-neutral-400">
+          Update the details customers see on your profile.
+        </p>
       </header>
 
       <div className="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_360px]">
         <form className="space-y-6">
           <FormSection title="Basic info">
             <Input className="col-span-2" label="Restaurant name" name="Res_name" defaultValue={r.Res_name} />
-            <Input className={half} label="Cuisine" name="cuisine_type" defaultValue={r.cuisine_type} options={["Healthy bowls", "Pizza", "Burgers", "Plant-based", "Asian", "Coffee & bakery"]} />
-            <Input className={half} label="Rating" name="rating" defaultValue={r.rating} disabled hint="Calculated from customer reviews." />
+            <Input
+              className={half}
+              label="Cuisine"
+              name="cuisine_type"
+              defaultValue={r.cuisine_type}
+              options={["Healthy bowls", "Pizza", "Burgers", "Plant-based", "Asian", "Coffee & bakery"]}
+            />
+            <Input
+              className={half}
+              label="Rating"
+              name="rating"
+              defaultValue={r.rating}
+              disabled
+              hint="Calculated from customer reviews."
+            />
             <Input className="col-span-2" label="Description" name="description" defaultValue={r.description} />
-            <Input className="col-span-2" label="Cover image URL" name="image" type="url" placeholder="https://..." defaultValue={r.image} />
+            <Input
+              className="col-span-2"
+              label="Cover image URL"
+              name="image"
+              type="url"
+              placeholder="https://..."
+              defaultValue={r.image}
+            />
           </FormSection>
 
           <FormSection title="Contact">
@@ -64,7 +92,9 @@ export default function RestaurantEditPage() {
 
           <div className="flex flex-wrap gap-3">
             <Button type="submit">Save changes</Button>
-            <Button href="/dashboard" variant="outline">Cancel</Button>
+            <Button href="/dashboard" variant="outline" className={outlineDark}>
+              Cancel
+            </Button>
           </div>
         </form>
 
