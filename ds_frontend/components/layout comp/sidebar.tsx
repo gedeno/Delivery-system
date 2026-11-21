@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
   ClipboardList,
   CreditCard,
+  Home,
   LayoutDashboard,
   Settings,
   ShoppingBag,
@@ -29,7 +30,11 @@ import { UserData } from "@/app/lib/Userdata";
 
 type NavItem = { label: string; href: string; icon: ReactNode };
 
+// shown at the top of the menu for every user
+const home: NavItem = { label: "Home", href: "/", icon: <Home className="h-5 w-5" /> };
+
 const customer: NavItem[] = [
+  home,
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "Restaurants", href: "/restaurantlist", icon: <Store className="h-5 w-5" /> },
   { label: "My Orders", href: "/dashboard/customer/orders", icon: <ShoppingBag className="h-5 w-5" /> },
@@ -38,6 +43,7 @@ const customer: NavItem[] = [
 ];
 
 const delivery: NavItem[] = [
+  home,
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Deliveries", href: "/dashboard/delivery/orders", icon: <Truck className="h-5 w-5" /> },
   { label: "Earnings", href: "/dashboard/delivery/earnings", icon: <Wallet className="h-5 w-5" /> },
@@ -45,6 +51,7 @@ const delivery: NavItem[] = [
 ];
 
 const owner: NavItem[] = [
+  home,
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "My Restaurants", href: "/dashboard/owner/Myrestaurant", icon: <Store className="h-5 w-5" /> },
   { label: "Orders", href: "/dashboard/owner/order", icon: <ClipboardList className="h-5 w-5" /> },
@@ -52,6 +59,7 @@ const owner: NavItem[] = [
 ];
 
 const admin: NavItem[] = [
+  home,
   { label: "Dashboard", href: "/dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "Users", href: "/dashboard/admin/users", icon: <Users className="h-5 w-5" /> },
   { label: "Restaurants", href: "/dashboard/admin/restaurants", icon: <Store className="h-5 w-5" /> },
