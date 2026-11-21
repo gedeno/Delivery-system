@@ -13,6 +13,8 @@ import { Clock, Search, Star, UtensilsCrossed, X } from "lucide-react";
 
 import { RestaurantData } from "@/app/lib/restaurantdata";
 import RestaurantCard from "@/components/Ui/RestaurantCard";
+import RestaurantListLoading from "@/components/Ui/Loadings/Restaurantlistloding";
+
  
 /* ---------- types ---------- */
  
@@ -97,7 +99,10 @@ function Reveal({ children, delay = 0 }: { children: ReactNode; delay?: number }
 /* ---------- main component ---------- */
  
 export default function RestaurantListingPage() {
-  const restaurants = (RestaurantData() || []) as Restaurant[];
+  const data = RestaurantData();
+  // the hook returns nothing until the restaurants arrive
+  const loading = data == null;
+  const restaurants = (data || []) as Restaurant[];
  
   const [query, setQuery] = useState("");
   const [cuisine, setCuisine] = useState("All");
@@ -144,6 +149,9 @@ export default function RestaurantListingPage() {
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [restaurants, query, cuisine, openOnly, sort, nowMin]);
+
+  // show the loading screen while data is on its way (kept after all hooks)
+  if (loading) return <RestaurantListLoading />;
  
   const openCount = restaurants.filter(isOpen).length;
   const rated = restaurants.map((r) => Number(r.rating)).filter(Number.isFinite);
