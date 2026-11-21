@@ -23,12 +23,12 @@ import { Orders } from "@/app/lib/types";
 type StatusKey = "pending" | "confirmed" | "preparing" | "on_the_way" | "delivered" | "cancelled";
 
 export const STATUS: Record<StatusKey, { label: string; badge: string; dot: string }> = {
-  pending: { label: "Waiting for kitchen", badge: "bg-[#fdf0c9] text-[#8a6100]", dot: "bg-[#f2a900]" },
-  confirmed: { label: "Confirmed", badge: "bg-[#e3f1ea] text-[#237a57]", dot: "bg-[#237a57]" },
-  preparing: { label: "Being prepared", badge: "bg-[#e3f1ea] text-[#237a57]", dot: "bg-[#237a57]" },
-  on_the_way: { label: "On the way", badge: "bg-[#e3f1ea] text-[#237a57]", dot: "bg-[#237a57]" },
-  delivered: { label: "Delivered", badge: "bg-neutral-100 text-neutral-600", dot: "bg-neutral-400" },
-  cancelled: { label: "Cancelled", badge: "bg-[#fdeee6] text-[#d4472f]", dot: "bg-[#d4472f]" },
+  pending: { label: "Waiting for kitchen", badge: "bg-[#fdf0c9] text-[#8a6100] dark:bg-amber-400/10 dark:text-amber-300", dot: "bg-[#f2a900]" },
+  confirmed: { label: "Confirmed", badge: "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400", dot: "bg-[#237a57] dark:bg-emerald-400" },
+  preparing: { label: "Being prepared", badge: "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400", dot: "bg-[#237a57] dark:bg-emerald-400" },
+  on_the_way: { label: "On the way", badge: "bg-[#e3f1ea] text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400", dot: "bg-[#237a57] dark:bg-emerald-400" },
+  delivered: { label: "Delivered", badge: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300", dot: "bg-neutral-400" },
+  cancelled: { label: "Cancelled", badge: "bg-[#fdeee6] text-[#d4472f] dark:bg-red-400/10 dark:text-red-300", dot: "bg-[#d4472f] dark:bg-red-300" },
 };
 
 const STEPS: { key: StatusKey; label: string }[] = [
@@ -101,8 +101,12 @@ const itemPrice = (it: LooseItem): number | null => {
 };
 
 const panel =
-  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-6";
-const heading = "text-[15px] font-bold text-[#1b2b24]";
+  "rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm transition duration-200 hover:shadow-md sm:p-6 dark:border-neutral-800 dark:bg-neutral-900 dark:text-white dark:shadow-none dark:hover:border-neutral-700";
+const heading = "text-[15px] font-bold text-[#1b2b24] dark:text-white";
+
+// shared look for the small pill buttons (expand / call kitchen)
+const pillBtn =
+  "border border-neutral-200 bg-white text-neutral-700 transition-colors hover:border-[#237a57] hover:text-[#237a57] dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200 dark:hover:border-emerald-400 dark:hover:bg-neutral-800 dark:hover:text-emerald-400";
 
 /* ---------- pieces ---------- */
 
@@ -126,22 +130,22 @@ function Tracker({ status }: { status: StatusKey }) {
         return (
           <li key={s.key} className="flex flex-col items-center text-center">
             <div className="flex w-full items-center">
-              <span className={`h-0.5 flex-1 ${i === 0 ? "bg-transparent" : done || now ? "bg-[#237a57]" : "bg-neutral-200"}`} />
+              <span className={`h-0.5 flex-1 ${i === 0 ? "bg-transparent" : done || now ? "bg-[#237a57] dark:bg-emerald-400" : "bg-neutral-200 dark:bg-neutral-700"}`} />
               <span
                 aria-current={now ? "step" : undefined}
                 className={`grid size-6 shrink-0 place-items-center rounded-full border text-white transition-colors ${
                   done
-                    ? "border-[#237a57] bg-[#237a57]"
+                    ? "border-[#237a57] bg-[#237a57] dark:border-emerald-400 dark:bg-emerald-400 dark:text-neutral-950"
                     : now
-                      ? "border-[#237a57] bg-white ring-4 ring-[#237a57]/20"
-                      : "border-neutral-300 bg-white"
+                      ? "border-[#237a57] bg-white ring-4 ring-[#237a57]/20 dark:border-emerald-400 dark:bg-neutral-900 dark:ring-emerald-400/20"
+                      : "border-neutral-300 bg-white dark:border-neutral-600 dark:bg-neutral-900"
                 }`}
               >
-                {done ? <Check size={12} strokeWidth={3} aria-hidden /> : now ? <span className="size-2 rounded-full bg-[#237a57]" /> : null}
+                {done ? <Check size={12} strokeWidth={3} aria-hidden /> : now ? <span className="size-2 rounded-full bg-[#237a57] dark:bg-emerald-400" /> : null}
               </span>
-              <span className={`h-0.5 flex-1 ${i === STEPS.length - 1 ? "bg-transparent" : done ? "bg-[#237a57]" : "bg-neutral-200"}`} />
+              <span className={`h-0.5 flex-1 ${i === STEPS.length - 1 ? "bg-transparent" : done ? "bg-[#237a57] dark:bg-emerald-400" : "bg-neutral-200 dark:bg-neutral-700"}`} />
             </div>
-            <span className={`mt-2 text-[10.5px] font-semibold ${done || now ? "text-[#1b2b24]" : "text-neutral-400"}`}>
+            <span className={`mt-2 text-[10.5px] font-semibold ${done || now ? "text-[#1b2b24] dark:text-white" : "text-neutral-400 dark:text-neutral-500"}`}>
               {s.label}
             </span>
           </li>
@@ -201,8 +205,8 @@ export default function OrderCard({ item }: { item:Orders }) {
 
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] font-bold">{item?.restaurant.Res_name}</p>
-          <p className="mt-0.5 text-[11px] text-neutral-500">
-            Order <span className="font-mono font-semibold text-neutral-700">#{item.id}</span>
+          <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+            Order <span className="font-mono font-semibold text-neutral-700 dark:text-neutral-200">#{item.id}</span>
             {item.ordered_at && <> · {fmtDateTime(item.ordered_at)}</>}
           </p>
         </div>
@@ -211,9 +215,9 @@ export default function OrderCard({ item }: { item:Orders }) {
       </div>
 
       {/* summary row */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 bg-[#faf8f4] px-5 py-3 sm:px-6">
-        <p className="min-w-0 flex-1 truncate text-[13px] text-neutral-600">{summary}</p>
-        <p className="font-mono text-[15px] font-bold text-[#1b2b24]">{money(item.total_amount)}</p>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-100 bg-[#faf8f4] px-5 py-3 sm:px-6 dark:border-neutral-800 dark:bg-neutral-800/50">
+        <p className="min-w-0 flex-1 truncate text-[13px] text-neutral-600 dark:text-neutral-400">{summary}</p>
+        <p className="font-mono text-[15px] font-bold text-[#1b2b24] dark:text-white">{money(item.total_amount)}</p>
       </div>
 
       {/* live tracker / outcome */}
@@ -222,22 +226,22 @@ export default function OrderCard({ item }: { item:Orders }) {
           <>
             <Tracker status={status} />
             {eta && (
-              <p className="mt-4 flex items-center gap-1.5 text-[12px] text-neutral-600">
-                <Clock size={13} aria-hidden className="text-[#237a57]" />
-                Estimated arrival <span className="font-semibold text-[#1b2b24]">{fmtTime(eta)}</span>
-                {fmtDate(eta) !== fmtDate(new Date()) && <span className="text-neutral-500">on {fmtDate(eta)}</span>}
+              <p className="mt-4 flex items-center gap-1.5 text-[12px] text-neutral-600 dark:text-neutral-400">
+                <Clock size={13} aria-hidden className="text-[#237a57] dark:text-emerald-400" />
+                Estimated arrival <span className="font-semibold text-[#1b2b24] dark:text-white">{fmtTime(eta)}</span>
+                {fmtDate(eta) !== fmtDate(new Date()) && <span className="text-neutral-500 dark:text-neutral-400">on {fmtDate(eta)}</span>}
               </p>
             )}
           </>
         )}
         {item?.status === "delivered" && (
-          <p className="flex items-center gap-2 rounded-xl bg-[#e3f1ea] p-3 text-[12px] font-semibold text-[#237a57]">
+          <p className="flex items-center gap-2 rounded-xl bg-[#e3f1ea] p-3 text-[12px] font-semibold text-[#237a57] dark:bg-emerald-400/10 dark:text-emerald-400">
             <Check size={14} strokeWidth={3} aria-hidden />
             Delivered {item.delivered_at ? `on ${fmtDateTime(item.delivered_at)}` : "successfully"}
           </p>
         )}
         {item.status === "cancelled" && (
-          <p className="flex items-center gap-2 rounded-xl bg-[#fdeee6] p-3 text-[12px] font-semibold text-[#d4472f]">
+          <p className="flex items-center gap-2 rounded-xl bg-[#fdeee6] p-3 text-[12px] font-semibold text-[#d4472f] dark:bg-red-400/10 dark:text-red-300">
             <X size={14} strokeWidth={3} aria-hidden />
             This order was cancelled{item?.updated_at ? ` on ${fmtDate(item?.updated_at)}` : ""}.
           </p>
@@ -251,7 +255,7 @@ export default function OrderCard({ item }: { item:Orders }) {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls={detailsId}
-          className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700 transition-colors hover:border-[#237a57] hover:text-[#237a57] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40"
+          className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[12px] font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[#237a57]/40 dark:focus-visible:ring-emerald-400/40 ${pillBtn}`}
         >
           {open ? "Hide details" : "View details"}
           <ChevronDown size={14} aria-hidden className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
@@ -263,7 +267,7 @@ export default function OrderCard({ item }: { item:Orders }) {
             {items.length > 0 && (
               <div>
                 <h3 className="text-[11px] font-bold">Items ({itemCount})</h3>
-                <ul className="mt-2 divide-y divide-neutral-100 rounded-2xl border border-neutral-200">
+                <ul className="mt-2 divide-y divide-neutral-100 rounded-2xl border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
                   {items.map((it, i) => {
                     const price = itemPrice(it);
                     const qty = itemQty(it);
@@ -272,7 +276,7 @@ export default function OrderCard({ item }: { item:Orders }) {
                         <span className="min-w-0 truncate">
                           <span className="font-mono font-semibold">{qty}×</span> {itemName(it)}
                         </span>
-                        {price !== null && <span className="font-mono text-neutral-600">{money(price * qty)}</span>}
+                        {price !== null && <span className="font-mono text-neutral-600 dark:text-neutral-400">{money(price * qty)}</span>}
                       </li>
                     );
                   })}
@@ -283,8 +287,8 @@ export default function OrderCard({ item }: { item:Orders }) {
             {/* delivery */}
             <div>
               <h3 className="text-[11px] font-bold">Delivery address</h3>
-              <p className="mt-2 flex items-start gap-2 rounded-2xl bg-[#faf8f4] p-3 text-[13px] text-neutral-700">
-                <MapPin size={14} aria-hidden className="mt-0.5 shrink-0 text-[#237a57]" />
+              <p className="mt-2 flex items-start gap-2 rounded-2xl bg-[#faf8f4] p-3 text-[13px] text-neutral-700 dark:bg-neutral-800/50 dark:text-neutral-300">
+                <MapPin size={14} aria-hidden className="mt-0.5 shrink-0 text-[#237a57] dark:text-emerald-400" />
                 {item?.delivery_address || "No address on this order."}
               </p>
             </div>
@@ -303,12 +307,12 @@ export default function OrderCard({ item }: { item:Orders }) {
                 )
                   .filter(([, v]) => toDate(v))
                   .map(([label, v]) => (
-                    <div key={label} className="flex justify-between gap-3 text-neutral-600">
+                    <div key={label} className="flex justify-between gap-3 text-neutral-600 dark:text-neutral-400">
                       <dt>{label}</dt>
-                      <dd className="font-mono text-neutral-800">{fmtDateTime(v)}</dd>
+                      <dd className="font-mono text-neutral-800 dark:text-neutral-200">{fmtDateTime(v)}</dd>
                     </div>
                   ))}
-                <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[14px] font-bold text-[#1b2b24]">
+                <div className="flex justify-between gap-3 border-t border-neutral-100 pt-3 text-[14px] font-bold text-[#1b2b24] dark:border-neutral-800 dark:text-white">
                   <dt>Total</dt>
                   <dd className="font-mono">{money(item.total_amount)}</dd>
                 </div>
@@ -317,10 +321,10 @@ export default function OrderCard({ item }: { item:Orders }) {
 
             {/* restaurant */}
             {item?.restaurant && (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#faf8f4] p-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#faf8f4] p-3 dark:bg-neutral-800/50">
                 <div className="min-w-0">
                   <p className="truncate text-[13px] font-bold">{item.restaurant.Res_name}</p>
-                  <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500">
+                  <p className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-neutral-500 dark:text-neutral-400">
                     {item.restaurant.address && <span>{item.restaurant.address}</span>}
                     {Number.isFinite(stars) && (
                       <span className="flex items-center gap-1">
@@ -332,7 +336,7 @@ export default function OrderCard({ item }: { item:Orders }) {
                 {item.restaurant.phone && (
                   <a
                     href={`/`}
-                    className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-[12px] font-semibold text-neutral-700 transition-colors hover:border-[#237a57] hover:text-[#237a57]"
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[12px] font-semibold ${pillBtn}`}
                   >
                     <Phone size={13} aria-hidden /> Call kitchen
                   </a>
